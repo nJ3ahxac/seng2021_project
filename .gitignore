@@ -9,4 +9,7 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 webserver
+.cache
+main.plist
+server.plist
 _deps
