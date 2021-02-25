@@ -12,6 +12,8 @@ include_directories(
 )
 
 add_executable(webserver
+    src/main.cc
+    src/server/server.cc
 )
 
 target_compile_options(webserver PRIVATE
