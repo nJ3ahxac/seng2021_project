@@ -10,7 +10,11 @@ PageHandler::PageHandler()
     for (const auto& filename : files) {
         std::ifstream input;
         input.exceptions(std::ios_base::badbit | std::ios_base::failbit);
-        input.open("web" + filename);
+        try {
+            input.open("web" + filename);
+        } catch (std::exception& e) {
+            throw std::runtime_error("Failed to open file: web" + filename);
+        }
 
         std::string file_contents;
         std::copy(std::istreambuf_iterator<char>(input),
