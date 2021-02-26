@@ -4,8 +4,17 @@ A webserver which communicates with an API.
 
 # Dependencies
 
-- [CMake](https://cmake.org)
-- [Pistache](http://pistache.io)
+- [CMake](https://cmake.org) : CMake is a cross platform, open-source build system generator.
+- [Googletest](https://github.com/google/googletest) : Googletest is a modern C++ testing framework.
+- [Pistache](http://pistache.io) : Pistache is a modern and elegant asynchronous HTTP and REST framework for C++.
+
+# Installation
+
+TODO
+
+# Testing
+
+TODO
 
 # Running
 
