@@ -11,21 +11,8 @@ include_directories(
     src
 )
 
-add_executable(webserver
-    src/main.cc
-    src/server/server.cc
-)
+add_subdirectory(src)
+add_subdirectory(test)
+add_subdirectory(lib/googletest)
 
-target_compile_options(webserver PRIVATE
-    -Wall -Wextra -Wshadow -Wdouble-promotion -Wformat=2 -Wundef -fno-common
-    -Wconversion -g3 -O2 -fsanitize=undefined -Wpedantic -std=c++20
-    #-Wconversion -g0 -O0 -fsanitize=undefined -Wpedantic -std=c++20
-)
 
-target_link_libraries(webserver PRIVATE
-    pistache ssl crypto
-)
-
-target_link_options(webserver PRIVATE
-    -fsanitize=undefined
-)

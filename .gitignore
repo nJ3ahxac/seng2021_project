@@ -12,4 +12,5 @@ webserver
 .cache
 main.plist
 server.plist
+*.a
 _deps
