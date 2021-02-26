@@ -11,6 +11,6 @@ CTestTestfile.cmake
 webserver
 .cache
 main.plist
-server.plist
+*.plist
 *.a
 _deps
