@@ -3,6 +3,8 @@
 
 #include "gtest/gtest.h"
 
+#include "server.hh"
+
 #include <filesystem>
 #include <string_view>
 
