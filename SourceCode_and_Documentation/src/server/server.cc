@@ -8,8 +8,7 @@ PageHandler::PageHandler()
 
     // Copies the files into a std::map with the key as the directory.
     for (const auto& filename : files) {
-        std::ifstream input;
-        input.open("web" + filename);
+        std::ifstream input("web" + filename);
 
         if (!input.good()) {
             throw std::runtime_error("Failed to open file: web" + filename);
@@ -51,5 +50,5 @@ void PageHandler::onRequest(const Pistache::Http::Request& request,
     }
 
     // 3. The page does not exist, in which case we return 404..
-    response.send(Pistache::Http::Code::Not_Found, resources["404.html"]);
+    response.send(Pistache::Http::Code::Not_Found, resources["/404.html"]);
 }
