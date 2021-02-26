@@ -9,10 +9,8 @@ PageHandler::PageHandler()
     // Copies the files into a std::map with the key as the directory.
     for (const auto& filename : files) {
         std::ifstream input;
-        input.exceptions(std::ios_base::badbit | std::ios_base::failbit);
-        try {
-            input.open("web" + filename);
-        } catch (std::exception& e) {
+
+        if (!input.good()) {
             throw std::runtime_error("Failed to open file: web" + filename);
         }
 
