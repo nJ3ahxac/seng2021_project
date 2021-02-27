@@ -19,7 +19,7 @@ target_compile_options(webserver PRIVATE
 )
 
 target_link_libraries(webserver PRIVATE
-    pistache ssl crypto curl
+    pistache ssl crypto curl boost_iostreams
 )
 
 target_link_options(webserver PRIVATE

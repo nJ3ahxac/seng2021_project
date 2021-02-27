@@ -31,6 +31,21 @@ json MovieData::download_url_json(const std::string& url) const {
     return json::parse(download_url(url));
 }
 
+std::string MovieData::gzip_decompress(const std::string& data) const {
+    std::stringstream input;
+    input << data;
+
+    // Use boost to handle gzip decompression.
+    boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
+    in.push(boost::iostreams::gzip_decompressor());
+    in.push(input);
+
+    std::stringstream ret;
+    boost::iostreams::copy(in, ret);
+
+    return ret.str();
+}
+
 MovieData::MovieData(const construct& c) {
     // Do not update cache if constructed with_cache, just read from files.
     if (c == construct::with_cache) {
@@ -46,6 +61,6 @@ MovieData::MovieData(const construct& c) {
     // This url contains a gzipped tsv of all movies in imdb, most notably their
     // identifier. This identifier is used later when grabbing more info.
     const auto url_titles = "https://datasets.imdbws.com/title.basics.tsv.gz";
-    const std::string title_basics_gz = download_url(url_titles);
-    std::cout << title_basics_gz << '\n';
+    const std::string title_basics = gzip_decompress(download_url(url_titles));
+    std::cout << title_basics << '\n';
 }

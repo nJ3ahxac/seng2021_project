@@ -13,10 +13,15 @@ using nlohmann::json;
 #include <fstream>
 #include <string>
 
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
+#include <boost/iostreams/filtering_streambuf.hpp>
+
 class MovieData {
 private:
     std::string download_url(const std::string& url) const;
     json download_url_json(const std::string& url) const;
+    std::string gzip_decompress(const std::string& data) const;
 public:
     class cache_error : public std::exception {
     public:
