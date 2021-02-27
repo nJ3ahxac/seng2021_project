@@ -9,11 +9,14 @@ using nlohmann::json;
 #include <curl/curl.h>
 
 #include <filesystem>
+#include <iostream>
 #include <fstream>
 #include <string>
 
 class MovieData {
 private:
+    std::string download_url(const std::string& url) const;
+    json download_url_json(const std::string& url) const;
 public:
     class cache_error : public std::exception {
     public:

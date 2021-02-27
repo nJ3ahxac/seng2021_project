@@ -3,7 +3,7 @@ set (BINARY ${CMAKE_PROJECT_NAME})
 add_executable(${BINARY}
     main.cc
     server/server.cc
-    client/client.cc
+    #client/client.cc
 )
 
 add_library(${BINARY}_lib STATIC
@@ -19,7 +19,7 @@ target_compile_options(webserver PRIVATE
 )
 
 target_link_libraries(webserver PRIVATE
-    pistache ssl crypto
+    pistache ssl crypto curl
 )
 
 target_link_options(webserver PRIVATE
