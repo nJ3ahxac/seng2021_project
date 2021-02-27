@@ -15,4 +15,5 @@ main.plist
 *.a
 _deps
 SourceCode_and_Documentation/test/webserver_test
+SourceCode_and_Documentation/src/client/json/json.hh
 webserver_test
