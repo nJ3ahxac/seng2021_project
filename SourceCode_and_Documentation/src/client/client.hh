@@ -1,9 +1,12 @@
 #ifndef CLIENT_HH_
 #define CLIENT_HH_
 
-// Library for parsing json; github.com/nlohmann/json
-#include "json/json.hh"
-using nlohmann::json;
+#define RAPIDJSON_HAS_STDSTRING 1
+
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/prettywriter.h>
 
 // Library for making requests.
 #include <curl/curl.h>
@@ -13,6 +16,10 @@ using nlohmann::json;
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <atomic>
+#include <mutex>
+#include <thread>
+#include <chrono> // test include, delete me!
 
 #include <boost/algorithm/string.hpp>
 
@@ -20,19 +27,21 @@ using nlohmann::json;
 #include <boost/iostreams/filter/gzip.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
 
+namespace json = rapidjson;
+
 class MovieData {
 private:
-    json data;
+    json::Document data;
 public:
     static std::string download_url(const std::string& url);
-    static json download_url_json(const std::string& url);
+    static json::Document download_url_json(const std::string& url);
     static std::string gzip_decompress(const std::string& data);
-    static void write_json(const std::string& dir, const json& j);
-    static json open_json(const std::string& dir);
-    static json gzip_download_to_json(const std::string& url);
+    static void write_json(const std::string& dir, const json::Document& j);
+    static json::Document open_json(const std::string& dir);
+    static json::Document gzip_download_to_json(const std::string& url);
 
     std::size_t get_movie_count() const noexcept {
-        return data.size();
+        return data.MemberCount();
     }
 
 public:

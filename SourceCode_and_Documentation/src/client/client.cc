@@ -1,7 +1,7 @@
 #include "client.hh"
 
 std::string MovieData::download_url(const std::string& url) {
-    static CURL* curl = curl_easy_init();
+    CURL* const curl = curl_easy_init();
 
     if (!curl) {
         throw std::runtime_error("Unable to get curl handle for request");
@@ -16,6 +16,10 @@ std::string MovieData::download_url(const std::string& url) {
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, *write_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &request_contents);
+
+    // If less than 5 bytes during 2 seconds, timeout
+    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, 2);
+    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, 5);
     CURLcode result = curl_easy_perform(curl);
     curl_easy_cleanup(curl);
 
@@ -27,8 +31,10 @@ std::string MovieData::download_url(const std::string& url) {
     return request_contents;
 }
 
-json MovieData::download_url_json(const std::string& url) {
-    return json::parse(download_url(url));
+json::Document MovieData::download_url_json(const std::string& url) {
+    json::Document d;
+    d.Parse(download_url(url).c_str());
+    return d;
 }
 
 std::string MovieData::gzip_decompress(const std::string& data) {
@@ -46,14 +52,18 @@ std::string MovieData::gzip_decompress(const std::string& data) {
     return ret.str();
 }
 
-void MovieData::write_json(const std::string& dir, const json& j) {
+void MovieData::write_json(const std::string& dir, const json::Document& j) {
     std::ofstream output;
     output.exceptions(std::ios_base::badbit | std::ios_base::failbit);
     output.open(dir);
-    output << j;
+
+    json::StringBuffer sb;
+    json::Writer<json::StringBuffer> writer(sb);
+    j.Accept(writer);
+    output << sb.GetString();
 }
 
-json MovieData::open_json(const std::string& dir) {
+json::Document MovieData::open_json(const std::string& dir) {
     std::ifstream input;
     input.exceptions(std::ios_base::badbit | std::ios_base::failbit);
     input.open(dir);
@@ -61,7 +71,9 @@ json MovieData::open_json(const std::string& dir) {
     std::copy(std::istreambuf_iterator<char>(input),
               std::istreambuf_iterator<char>(),
               std::inserter(file_contents, file_contents.begin()));
-    return json::parse(file_contents);
+    json::Document d;
+    d.Parse(file_contents.c_str());
+    return d;
 }
 
 static std::size_t get_part_index_of(const std::vector<std::string>& keys,
@@ -76,7 +88,7 @@ static std::size_t get_part_index_of(const std::vector<std::string>& keys,
     return static_cast<std::size_t>(std::distance(keys.begin(), it));
 }
 
-json MovieData::gzip_download_to_json(const std::string& url) {
+json::Document MovieData::gzip_download_to_json(const std::string& url) {
     const std::string title_basics = gzip_decompress(download_url(url));
     std::stringstream ss{title_basics};
 
@@ -91,7 +103,7 @@ json MovieData::gzip_download_to_json(const std::string& url) {
     const std::size_t genre_index = get_part_index_of(keys, "genres");
     const std::size_t title_index = get_part_index_of(keys, "primaryTitle");
 
-    json data;
+    json::Document data(json::kObjectType);
 
     for (std::string line; std::getline(ss, line, '\n');) {
         std::vector<std::string> parts;
@@ -105,16 +117,33 @@ json MovieData::gzip_download_to_json(const std::string& url) {
         if (parts[genre_index] == "\\N") {
             continue;
         }
-        // Use the imdb index (i.e. "ff000451") as the JSON key
-        auto& entry = data[parts[imdb_index]];
+        
+        json::Value entry_value(json::kObjectType);
 
         // store off the primaryTitle in the entry as "title"
-        entry["title"] = parts[title_index];
+        {
+            json::Value title_key{"title"};
+            json::Value title_value{parts[title_index], data.GetAllocator()};
+            entry_value.AddMember(title_key, title_value, data.GetAllocator());
+        }
 
         // store off each comma separated genre in the entry as "genres"
-        std::vector<std::string> genres;
-        boost::split(genres, parts[genre_index], boost::is_any_of(","));
-        entry["genres"] = genres;
+        {
+            std::vector<std::string> genres;
+            boost::split(genres, parts[genre_index], boost::is_any_of(","));
+
+            json::Value genre_value(json::kArrayType);
+            for (const auto& genre : genres) {
+                json::Value entry{genre.c_str(), data.GetAllocator()};
+                genre_value.PushBack(entry.Move(), data.GetAllocator());
+            }
+            json::Value genre_key{"genres"};
+            entry_value.AddMember(genre_key, genre_value, data.GetAllocator());
+        }
+
+        // Use the imdb index (i.e. "ff000451") as the JSON key
+        json::Value entry_key{parts[imdb_index], data.GetAllocator()};
+        data.AddMember(entry_key, entry_value, data.GetAllocator());
     }
 
     return data;

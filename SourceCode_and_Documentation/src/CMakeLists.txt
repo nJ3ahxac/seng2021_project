@@ -14,14 +14,14 @@ add_library(${BINARY}_lib STATIC
 
 target_compile_options(webserver PRIVATE
     -Wall -Wextra -Wshadow -Wdouble-promotion -Wformat=2 -Wundef -fno-common
-    -Wconversion -g3 -O2 -fsanitize=undefined -Wpedantic -std=c++20
-    #-Wconversion -g0 -O0 -fsanitize=undefined -Wpedantic -std=c++20
+    -Wconversion -g3 -O2 -Wpedantic -std=c++20
+    #-fsanitize=undefined
 )
 
 target_link_libraries(webserver PRIVATE
-    pistache ssl crypto curl boost_iostreams
+    pthread pistache ssl crypto curl boost_iostreams
 )
 
 target_link_options(webserver PRIVATE
-    -fsanitize=undefined
+    #-fsanitize=undefined
 )
