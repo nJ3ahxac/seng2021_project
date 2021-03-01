@@ -10,9 +10,12 @@ add_test(NAME ${BINARY} COMMAND ${BINARY})
 target_link_libraries(${BINARY} PUBLIC
     ${CMAKE_PROJECT_NAME}_lib
     gtest
+    pthread
     pistache
     ssl
     crypto
+    curl
+    boost_iostreams
 )
 
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME}_test POST_BUILD

@@ -1,5 +1,5 @@
-#ifndef CLIENT_HH_
-#define CLIENT_HH_
+#ifndef CLIENT_CLIENT_HH_
+#define CLIENT_CLIENT_HH_
 
 #define RAPIDJSON_HAS_STDSTRING 1
 

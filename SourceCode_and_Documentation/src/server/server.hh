@@ -1,5 +1,5 @@
-#ifndef SERVER_HH_
-#define SERVER_HH_
+#ifndef SERVER_SERVER_HH_
+#define SERVER_SERVER_HH_
 
 #include <algorithm>
 #include <fstream>

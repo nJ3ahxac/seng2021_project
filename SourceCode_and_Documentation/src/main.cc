@@ -6,8 +6,8 @@ int main(const int argc, const char* argv[]) {
         std::exit(EXIT_FAILURE);
     }
 
-    std::uint16_t port = 9080;
-    int threads = 1;
+    std::uint16_t port = PORT_DEFAULT;
+    int threads = THREADS_DEFAULT;
 
     try {
         if (argc > 1) {

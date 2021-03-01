@@ -11,4 +11,7 @@
 
 #include <pistache/endpoint.h>
 
+constexpr int PORT_DEFAULT = 9080;
+constexpr int THREADS_DEFAULT = 1;
+
 #endif
