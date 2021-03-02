@@ -9,6 +9,7 @@ add_executable(${BINARY}
 add_library(${BINARY}_lib STATIC
     main.cc
     server/server.cc
+    server/search.cc
     client/client.cc
 )
 

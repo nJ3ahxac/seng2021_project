@@ -18,8 +18,8 @@ std::string MovieData::download_url(const std::string& url) {
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &request_contents);
 
     // If less than 5 bytes during 2 seconds, timeout
-    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, 2);
-    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, 5);
+    //curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, 2);
+    //curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, 5);
     CURLcode result = curl_easy_perform(curl);
     curl_easy_cleanup(curl);
 
@@ -149,11 +149,146 @@ json::Document MovieData::gzip_download_to_json(const std::string& url) {
     return data;
 }
 
+static std::string get_api_key() {
+    const std::string file = "key.txt";
+    std::ifstream key_file(file);
+    if (!key_file.is_open()) {
+        throw std::runtime_error("Failed to read \"" + file + '\"');
+    }
+
+    std::string api_key;
+    key_file >> api_key;
+
+    if (api_key.length() != 8) {
+        throw std::runtime_error("Likely bad api key in \"" + file + '\"');
+    }
+
+    return api_key;
+}
+
+constexpr auto max_concurrent = 100ul;
+
+[[maybe_unused]] static void backup_all_movies(const json::Document& doc) {
+    std::filesystem::create_directory("backup");
+
+    std::vector<std::thread> threads;
+    threads.reserve(max_concurrent);
+
+    std::mutex lock;
+
+    auto it = doc.GetObject().MemberBegin();
+    const auto end = doc.GetObject().MemberEnd();
+
+    const auto get_next_movie_index = [&]() -> std::string {
+        const std::unique_lock<std::mutex> guard(lock);
+        if (it == end) {
+            return {};
+        }
+        return (it++)->name.GetString();
+    };
+
+    const std::string url_base = "http://www.omdbapi.com/?plot=full&apikey="
+        + get_api_key()
+        + "&i=";
+
+    const auto backup_movie = [&]() -> bool {
+        const std::string index = get_next_movie_index();
+        if (index.empty()) {
+            return false;
+        }
+
+        const std::string url = url_base + index;
+        const std::string result = MovieData::download_url(url);
+
+        auto stream = std::ofstream("backup/" + index);
+        if (!stream.is_open()) {
+            throw std::runtime_error("could not open \"backup/" + result + '\"');
+        }
+        stream << result;
+        
+        return true;
+    };
+
+    const auto backup_movie_thread = [&]() {
+        while (backup_movie()) {}
+    };
+
+    while (threads.size() < max_concurrent) {
+        threads.emplace_back(backup_movie_thread);
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
+}
+
+static void update_movie_omdb_data(json::Document& doc) {
+    std::vector<std::thread> threads;
+    threads.reserve(max_concurrent);
+
+    std::mutex lock;
+
+    auto it = doc.GetObject().MemberBegin();
+    const auto end = doc.GetObject().MemberEnd();
+
+    const auto get_next_movie_it = [&]() -> std::optional<decltype(it)> {
+        const std::unique_lock<std::mutex> guard(lock);
+        if (it == end) {
+            return std::nullopt;
+        }
+        return it++;
+    };
+
+    const std::string url_base = "http://www.omdbapi.com/?plot=full&apikey="
+        + get_api_key()
+        + "&i=";
+
+    const auto download_movie = [&]() -> bool {
+        const auto movie_it_opt = get_next_movie_it();
+        if (!movie_it_opt.has_value()) {
+            return false;
+        }
+        const auto& movie_it = *movie_it_opt;
+
+        const std::string index = movie_it->name.GetString();
+        const auto result = MovieData::download_url_json(url_base + index);
+
+        std::cout << result["Plot"].GetString() << '\n';
+        /*{
+            json::Value rating_key{"rating"};
+            json::Value rating_value{parts[title_index], data.GetAllocator()};
+            entry_value.AddMember(title_key, title_value, data.GetAllocator());
+        }*/
+
+        return true;
+    };
+
+    const auto download_movie_thread = [&]() {
+        while (download_movie()) {}
+    };
+
+    while (threads.size() < max_concurrent) {
+        threads.emplace_back(download_movie_thread);
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
+}
+
 MovieData::MovieData(const construct& c) {
     // Do not update cache if constructed with_cache, just read from files.
     if (c == construct::with_cache) {
         try {
             this->data = open_json("cache/title_basics.json");
+
+            constexpr auto do_backup = false;
+            if constexpr (do_backup) {
+                backup_all_movies(this->data);
+            }
+    
+            update_movie_omdb_data(this->data);
+
         } catch (...) {
             throw cache_error();
         }
@@ -168,4 +303,6 @@ MovieData::MovieData(const construct& c) {
 
     std::filesystem::create_directory("cache");
     write_json("cache/title_basics.json", this->data);
+
+    update_movie_omdb_data(this->data);
 }

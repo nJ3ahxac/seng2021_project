@@ -16,10 +16,10 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+
 #include <atomic>
 #include <mutex>
 #include <thread>
-#include <chrono> // test include, delete me!
 
 #include <boost/algorithm/string.hpp>
 
@@ -29,10 +29,9 @@
 
 namespace json = rapidjson;
 
-class MovieData {
-private:
+struct MovieData {
     json::Document data;
-public:
+    
     static std::string download_url(const std::string& url);
     static json::Document download_url_json(const std::string& url);
     static std::string gzip_decompress(const std::string& data);
@@ -40,11 +39,6 @@ public:
     static json::Document open_json(const std::string& dir);
     static json::Document gzip_download_to_json(const std::string& url);
 
-    std::size_t get_movie_count() const noexcept {
-        return data.MemberCount();
-    }
-
-public:
     class cache_error : public std::exception {
     public:
         virtual const char* what() const noexcept override { 

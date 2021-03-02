@@ -26,22 +26,22 @@ int main(const int argc, const char* argv[]) {
 
     // Attempt to initialise MovieData via our cache. If it doesn't exist,
     // we will redownload the cache (lest our server serves no data).
-    std::optional<MovieData> movie_data;
+    std::optional<MovieData> movies;
     try {
         std::cout << "Loading pre-existing movie data cache.\n";
-        movie_data = MovieData(MovieData::construct::with_cache);
+        movies = MovieData(MovieData::construct::with_cache);
     } catch (const MovieData::cache_error& e) {
         std::cout << "Failed to load movie data from pre-existing cache.\n"
                      "Regenerating cache. This may take a while.\n";
-        movie_data = MovieData(MovieData::construct::without_cache);
+        movies = MovieData(MovieData::construct::without_cache);
         std::cout << "Movie data cache regenerated.\n";
     } catch (const std::exception& e) {
-        std::cerr << "Bad movie_data initialisation: " << e.what() << '\n';
+        std::cerr << "Bad movie data initialisation: " << e.what() << '\n';
         std::exit(EXIT_FAILURE);
     }
 
     std::cout << "Database size: "
-        << movie_data->get_movie_count()
+        << movies->data.MemberCount()
         << " films.\n";
 
     const Pistache::Address addr(Pistache::Ipv4::any(), Pistache::Port(port));
