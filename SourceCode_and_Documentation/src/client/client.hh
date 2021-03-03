@@ -16,12 +16,13 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <unordered_set>
 
-#include <atomic>
 #include <mutex>
 #include <thread>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/trim_all.hpp>
 
 #include <boost/iostreams/copy.hpp>
 #include <boost/iostreams/filter/gzip.hpp>

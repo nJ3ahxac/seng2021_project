@@ -18,6 +18,10 @@ target_link_libraries(${BINARY} PUBLIC
     boost_iostreams
 )
 
+target_compile_options(${BINARY} PUBLIC    
+    -Wno-ambiguous-reversed-operator
+)
+
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME}_test POST_BUILD
     COMMAND webserver_test
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../

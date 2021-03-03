@@ -2,6 +2,7 @@
 #define MAIN_HH_
 
 #include "server/server.hh"
+#include "server/search.hh"
 #include "client/client.cc"
 
 #include <iostream>
