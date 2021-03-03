@@ -37,7 +37,7 @@ void search::initialise(const MovieData& movies) {
     for (const auto& movie : data.GetObject()) {
         movie_entries.emplace_back(movie_entry{
             .imdb_index = tokenise_imdb_index(movie.name.GetString()),
-            .keywords = array_to_set(movie.value["keywords"])});
+            .keywords = array_to_set(movie.value["genres"])});
     }
 }
 
