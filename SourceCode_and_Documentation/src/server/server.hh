@@ -30,6 +30,13 @@ public:
     // Called on each request, handles all traffic.
     void onRequest(const Pistache::Http::Request& request,
                    Pistache::Http::ResponseWriter response) override;
+
+    const std::map<std::string, std::string>& get_bindings() const noexcept {
+        return bindings;
+    }
+    const std::map<std::string, std::string>& get_resources() const noexcept {
+        return resources;
+    }
 };
 
 #endif

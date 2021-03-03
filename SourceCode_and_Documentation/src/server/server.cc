@@ -10,7 +10,7 @@ PageHandler::PageHandler()
     for (const auto& filename : files) {
         std::ifstream input("web" + filename);
 
-        if (!input.good()) {
+        if (!input.is_open()) {
             throw std::runtime_error("Failed to open file: web" + filename);
         }
 
@@ -25,7 +25,7 @@ PageHandler::PageHandler()
 
 void PageHandler::onRequest(const Pistache::Http::Request& request,
                             Pistache::Http::ResponseWriter response) {
-    std::cout << "Got request with resource: " << request.resource() << '\n';
+    //std::cout << "Got request with resource: " << request.resource() << '\n';
 
     // TODO: handle more than get requests
     if (request.method() != Pistache::Http::Method::Get) {
