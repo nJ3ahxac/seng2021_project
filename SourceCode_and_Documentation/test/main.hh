@@ -1,5 +1,5 @@
-#ifndef MAIN_HH_
-#define MAIN_HH_
+#ifndef TEST_MAIN_HH_
+#define TEST_MAIN_HH_
 
 #include "gtest/gtest.h"
 

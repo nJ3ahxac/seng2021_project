@@ -73,7 +73,7 @@ struct keyword_rating {
 // return a std::vector of populated keyword_ratings sorted by descending rating
 static std::vector<keyword_rating> rate_token_keywords(const token& token) {
     std::vector<keyword_rating> ret;
-    ret.reserve(token.entries.size());
+    ret.reserve(all_keywords.size());
 
     for (const auto& word : all_keywords) {
         ret.push_back({get_keyword_rating(token, word), word});
@@ -107,7 +107,7 @@ void search::advance_token(token& token, const bool remove) {
     const std::vector<keyword_rating> ratings = rate_token_keywords(token);
 
     if (const auto& front = ratings.front(); front.rating == 0.0f) {
-        token.suggestion = token.entries.front();
+        token.suggestion = movie_entries[static_cast<std::size_t>(token.entries.front())].imdb_index;
     } else {
         token.keyword = front.keyword;
     }
