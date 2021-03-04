@@ -67,7 +67,7 @@ protected:
         };
 
         const auto start = std::chrono::steady_clock::now();
-        while (!has_responded) {
+        while (!has_responded("localhost", test_port)) {
             const auto now = std::chrono::steady_clock::now();
             if (now > start + std::chrono::seconds(1)) {
                 throw std::runtime_error("Fixture server did not respond");
