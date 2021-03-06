@@ -18,8 +18,8 @@ target_link_libraries(${BINARY} PUBLIC
     boost_iostreams
 )
 
-target_compile_options(${BINARY} PUBLIC    
-    -Wno-ambiguous-reversed-operator
+target_compile_options(${BINARY} PUBLIC
+    -Wno-ambiguous-reversed-operator -O2
 )
 
 add_custom_command(TARGET ${CMAKE_PROJECT_NAME}_test POST_BUILD

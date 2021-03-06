@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>CinemaScout</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/bulma-divider/dist/css/bulma-divider.min.css">
         <link rel="shortcut icon" href="/favicon.ico">
     </head>
 
     <div class="container">
-        <div class=navbar is-mobile>
+        <div class="navbar">
             <div class="navbar-brand">
                 <a class="navbar-item" href="">
                     <img src="res/cinema_mask.png">
@@ -28,33 +29,97 @@
                     </a>
                 </div>
                 <div class="navbar-end">
-                    <button class="button my-4">
-                        <span class="icon">
-                            <i class="fab fa-github">
-                            </i>
-                        </span>
-                        <span>
-                            View on <strong>GitHub</strong>
-                        </span>
-                    </button>
+                    <form action="https://github.com/nJ3ahxac/seng2021_project" target="_blank">
+                        <button class="button is-link my-4" href="">
+                            <span class="icon">
+                                <i class="fab fa-github">
+                                </i>
+                            </span>
+                            <span>
+                                View on <strong>GitHub</strong>
+                            </span>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <body class="layout-default">
-        <section class="bd-index-section style="--bd-section-h: 330deg;">
-            <div class="bd-heading">
-                <span class="has-text-primary is-size-2-widescreeen">
-                    <div> Content </div>
-                </span>
+    <div class="container">
+        <section class="section is-medium">
+            <div class="columns is-vcentered is-mobile">
+                <div class="column is-8">
+                    <h1 class="title">
+                        The ultrafast movie database traversal tool.
+                    </h1>
+                    <h2 class="subtitle">
+                        Filter through hundreds of thousands of titles to find that one worth watching.
+                    </h2>
+                </div>
+                <div class="column">
+                    <figure class="image">
+                        <img src="res/eye.png">
+                    </figure>
+                </div>
             </div>
         </section>
-    </body>
-
+        <div class="is-divider"></div>
+        <section class="section is-medium">
+            <div class="columns is-vcentered is-mobile">
+                <div class="column is-half">
+                    <figure class="image">
+                        <img src="res/horse.png">
+                    </figure>
+                </div>
+                <div class="column">
+                    <h1 class="title">
+                        When watching them all just isn't fast enough.
+                    </h1>
+                    <h2 class="subtitle">
+                        Optimised search algorithms let you find what you want, when you want.
+                    </h2>
+                </div>
+            </div>
+        </section>
+        <div class="is-divider"></div>
+        <section class="section is-medium">
+            <div class="columns is-vcentered is-mobile">
+                <div class="column">
+                    <h1 class="title">
+                        Incredibly unique, just like you.
+                    </h1>
+                    <h2 class="subtitle">
+                        A procedurally generated questionaire that evolves with each answer ensures pinpoint accuracy.
+                    </h2>
+                </div>
+                <div class="column is-one-third">
+                    <figure class="image">
+                        <img src="res/charizard.png">
+                    </figure>
+                </div>
+            </div>
+        </section>
+        <div class="is-divider"></div>
+        <section class="section is-small">
+            <div class="level">
+                <div class="level-item has-text-centered">
+                    <div class="column is-half">
+                        <h1 class="title">
+                            Did we mention it's free?
+                        </h1>
+                        <form action="search">
+                            <button class="button is-large is-link mt-4">
+                                Try it out!
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
     <footer class="footer">
         <div class="content has-text-centered">
-            <strong>&copy CinemaScout 2021:</strong> All rights reserved.
+            <strong>&copy CinemaScout 2021:</strong> All rights reserved
         </div>
     </footer>
 <script src="main.js"></script>
