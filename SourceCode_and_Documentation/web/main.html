@@ -1,1 +1,62 @@
-<div>Our main page, we need to include a stylesheet etc</div>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>CinemaScout</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+
+    <div class="container">
+        <div class=navbar is-mobile>
+            <div class="navbar-brand">
+                <a class="navbar-item" href="">
+                    <img src="res/cinema_mask.png">
+                </a>
+            </div>
+            <div class="navbar-menu">
+                <div class="navbar-start is-justify-content-center is-flex-grow-1">
+                    <a class="navbar-item" href="">
+                    Overview
+                    </a>
+                    <a class="navbar-item" href="search">
+                    Search
+                    </a>
+                    <a class="navbar-item" href="about">
+                    About
+                    </a>
+                </div>
+                <div class="navbar-end">
+                    <button class="button my-4">
+                        <span class="icon">
+                            <i class="fab fa-github">
+                            </i>
+                        </span>
+                        <span>
+                            View on <strong>GitHub</strong>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <body class="layout-default">
+        <section class="bd-index-section style="--bd-section-h: 330deg;">
+            <div class="bd-heading">
+                <span class="has-text-primary is-size-2-widescreeen">
+                    <div> Content </div>
+                </span>
+            </div>
+        </section>
+    </body>
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <strong>&copy CinemaScout 2021:</strong> All rights reserved.
+        </div>
+    </footer>
+<script src="main.js"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+</html>
