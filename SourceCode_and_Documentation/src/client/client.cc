@@ -296,7 +296,8 @@ static void update_movie_omdb_data(json::Document& doc) {
                     || !result_has_good("Plot")
                     || !result_has_good("imdbRating")
                     || !result_has_good("imdbVotes")
-                    || !result_has_good("Language")) {
+                    || !result_has_good("Language")
+                    || !result_has_good("Year")) {
                 return true;
             }
         }
@@ -316,20 +317,38 @@ static void update_movie_omdb_data(json::Document& doc) {
 
         const float rating = [&] {
             try {
-                const float rating = std::stof(result["imdbRating"].GetString());
-
-                // remove commas returned by api
-                std::string votes = result["imdbVotes"].GetString();
-                boost::erase_all(votes, ",");
-
-                return rating * static_cast<float>(std::stoi(votes));
+                return std::stof(result["imdbRating"].GetString());
             } catch (...) {
                 return 0.0f;
             }
         }();
-
         json::Value rating_key{"rating"};
         movie_it->value.AddMember(rating_key, rating, doc.GetAllocator());
+
+        const int votes = [&] {
+            try {
+                std::string votes = result["imdbVotes"].GetString();
+                // remove commas returned by api
+                boost::erase_all(votes, ",");
+                return std::stoi(votes);
+            } catch (...) {
+                return 0;
+            }
+        }();
+        json::Value votes_key{"votes"};
+        movie_it->value.AddMember(votes_key, votes, doc.GetAllocator());
+
+        const int year = [&] {
+            try {
+                // Can't call GetInt with rapidjson since the API returns 
+                // {"Year", "1985"} instead of {"Year", 1985} for example.
+                return std::stoi(result["Year"].GetString());
+            } catch (...) {
+                return 1970;
+            }
+        }();
+        json::Value year_key{"year"};
+        movie_it->value.AddMember(year_key, year, doc.GetAllocator());
 
         json::Value language_key{"language"};
         json::Value language_value{result["Language"].GetString(), doc.GetAllocator()};
@@ -374,6 +393,10 @@ static void prune_movie_data(json::Document& doc) {
         }
         // Insufficient rating?
         if (!entry.HasMember("rating") || entry["rating"].GetFloat() == 0.0f) {
+            remove = true;
+        }
+        // No rating votes?
+        if (!entry.HasMember("votes") || entry["votes"].GetInt() == 0) {
             remove = true;
         }
 
