@@ -13,8 +13,7 @@ Build dependencies:
 Runtime dependencies:
 - [IMDb](https://www.imdb.com/interfaces) : IMDb is an online database of information related to films and other visual media.
 - [OMDb](https://www.omdbapi.com) : The OMDb API is a RESTful web service to obtain movie information. <strong>(PRIVATE API KEY REQUIRED)</strong>
-- [The Great Noun List](http://www.desiquintans.com/nounlist) : A list of the most frequently-used common nouns in English.
-
+- [Bulma](https://www.bulma.io) : Bulma is a free and open source CSS framework.
 
 # Building from Source
 
