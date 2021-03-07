@@ -21,6 +21,7 @@ static long ping_url(const std::string& url, const int port) {
     curl_easy_setopt(curl, CURLOPT_PORT, port);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, *write_callback);
     CURLcode result = curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
 
     if (result != CURLE_OK) {
         throw std::runtime_error(std::string("Request failed: ") +
