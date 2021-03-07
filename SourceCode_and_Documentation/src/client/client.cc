@@ -296,7 +296,8 @@ static void update_movie_omdb_data(json::Document& doc) {
                     || !result_has_good("Plot")
                     || !result_has_good("imdbRating")
                     || !result_has_good("imdbVotes")
-                    || !result_has_good("Language")) {
+                    || !result_has_good("Language")
+                    || !result_has_good("Year")) {
                 return true;
             }
         }
@@ -330,6 +331,19 @@ static void update_movie_omdb_data(json::Document& doc) {
 
         json::Value rating_key{"rating"};
         movie_it->value.AddMember(rating_key, rating, doc.GetAllocator());
+
+        const int year = [&] {
+            try {
+                // Can't call GetInt with rapidjson since the API returns 
+                // {"Year", "1985"} instead of {"Year", 1985} for example.
+                return std::stoi(result["Year"].GetString());
+            } catch (...) {
+                return 1970;
+            }
+        }();
+
+        json::Value year_key{"year"};
+        movie_it->value.AddMember(year_key, year, doc.GetAllocator());
 
         json::Value language_key{"language"};
         json::Value language_value{result["Language"].GetString(), doc.GetAllocator()};
