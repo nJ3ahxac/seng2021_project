@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Search | CinemaScout</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/bulma-divider/dist/css/bulma-divider.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-switch@2.0.0/dist/css/bulma-switch.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/bulma-slider/dist/css/bulma-slider.min.css">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+
+    <div class="container">
+        <div class="navbar">
+            <div class="navbar-brand">
+                <a class="navbar-item" href="/">
+                    <img src="res/cinema_mask.png">
+                </a>
+            </div>
+            <div class="navbar-menu">
+                <div class="navbar-start is-justify-content-center is-flex-grow-1">
+                    <a class="navbar-item" href="/">
+                    Overview
+                    </a>
+                    <a class="navbar-item" href="search">
+                    Search
+                    </a>
+                    <a class="navbar-item" href="about">
+                    About
+                    </a>
+                </div>
+                <div class="navbar-end">
+                    <form action="https://github.com/nJ3ahxac/seng2021_project" target="_blank">
+                        <button class="button is-link my-4" href="">
+                            <span class="icon">
+                                <i class="fab fa-github">
+                                </i>
+                            </span>
+                            <span>
+                                View on <strong>GitHub</strong>
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <section class="section is-small">
+            <div class="box">
+                <progress class="progress is-primary is-large" value="5" max="16">
+                </progress>
+                <section class="section is-medium">
+                    <div class="columns is-centered is-mobile mx-6">
+                        <div class="column">
+                                <h1 class="title">
+                                    Just a few things before we start
+                                </h1>
+                                <h2 class="subtitle">
+                                    Some common hard passes...
+                                </h2>
+                                <div class="field">
+                                  <input id="switch_english" type="checkbox" name="switchLarge" class="switch is-large" checked="unchecked">
+                                  <label for="switch_english">Include non-English language films</label>
+                                </div>
+                                <div class="field">
+                                  <input id="switch_bw" type="checkbox" name="switchLarge" class="switch is-large">
+                                  <label for="switch_bw">Include black and white films</label>
+                                </div>
+                                <div class="field">
+                                  <input id="switch_early" type="checkbox" name="switchLarge" class="switch is-large">
+                                  <label for="switch_early">Include pre-1980 films</label>
+                                </div>
+                                <div class="field">
+                                  <input id="switch_silent" type="checkbox" name="switchLarge" class="switch is-large">
+                                  <label for="switch_silent">Include silent films</label>
+                                </div>
+                                <div class="field">
+                                  <input id="switch_adult" type="checkbox" name="switchLarge" class="switch is-large is-danger">
+                                  <label for="switch_adult">Include adult films</label>
+                                </div>
+                        </div>
+                        <div class="column is-one-third mx-6">
+                            <figure class="image">
+                                <img src="res/binoculars.png">
+                            </figure>
+                        </div>
+                    </div>
+                    <div class="level">
+                        <div class="level-item has-text-centered">
+                            <button class="button is-large is-primary">
+                                Begin search
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </div>
+    <footer class="footer is-fixed-bottom" style="bottom: 0; left: 0; position: fixed; right: 0; z-index: 30;">
+        <div class="content has-text-centered">
+            <strong>&copy CinemaScout 2021:</strong> All rights reserved
+        </div>
+    </footer>
+<script src="search.js"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+</html>

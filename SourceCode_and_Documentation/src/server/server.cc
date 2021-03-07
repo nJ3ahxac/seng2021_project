@@ -1,13 +1,25 @@
 #include "server.hh"
 
 PageHandler::PageHandler()
-    : Pistache::Http::Handler(), bindings{{"/", "/main.html"}}, resources() {
+    : Pistache::Http::Handler(), bindings{{"/", "/main.html"},
+                                          {"/search", "/search.html"},
+                                          {"/about", "/about.html"}},
+      resources() {
     // Put new files in files, put new bindings in bindings!
-    const std::vector<std::string> files = {
-        "/404.html",           "/main.html",        "/main.js",
-        "/res/birds.png",       "/res/charizard.png", "/res/cinema_mask.png",
-        "/res/cinemascout.png", "/res/eye.png",       "/res/horse.png",
-        "/res/mask.png"};
+    const std::vector<std::string> files = {"/404.html",
+                                            "/main.html",
+                                            "/main.js",
+                                            "/about.html",
+                                            "/search.html",
+                                            "/search.js",
+                                            "/res/birds.png",
+                                            "/res/charizard.png",
+                                            "/res/cinema_mask.png",
+                                            "/res/cinemascout.png",
+                                            "/res/eye.png",
+                                            "/res/horse.png",
+                                            "/res/mask.png",
+                                            "/res/binoculars.png"};
 
     // Copies the files into a std::map with the key as the directory.
     for (const auto& filename : files) {
@@ -28,7 +40,8 @@ PageHandler::PageHandler()
 
 void PageHandler::onRequest(const Pistache::Http::Request& request,
                             Pistache::Http::ResponseWriter response) {
-    // std::cout << "Got request with resource: " << request.resource() << '\n';
+    // std::cout << "Got request with resource: " << request.resource() <<
+    // '\n';
 
     // TODO: handle more than get requests
     if (request.method() != Pistache::Http::Method::Get) {
