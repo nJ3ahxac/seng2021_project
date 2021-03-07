@@ -38,13 +38,30 @@ PageHandler::PageHandler()
     }
 };
 
+void PageHandler::handle_post_request(
+    const Pistache::Http::Request& request,
+    Pistache::Http::ResponseWriter& response) {
+    // TODO: Handle post request here
+}
+
 void PageHandler::onRequest(const Pistache::Http::Request& request,
                             Pistache::Http::ResponseWriter response) {
     // std::cout << "Got request with resource: " << request.resource() <<
     // '\n';
+    const auto method = request.method();
+    if (method != Pistache::Http::Method::Post &&
+        method != Pistache::Http::Method::Get) {
+        return;
+    }
 
-    // TODO: handle more than get requests
-    if (request.method() != Pistache::Http::Method::Get) {
+    if (method == Pistache::Http::Method::Post) {
+        try {
+            handle_post_request(request, response);
+        } catch (const std::exception& e) {
+            // Return a simple json error message if we can't parse the post.
+            std::string resp = "{error: " + std::string(e.what()) + "}";
+            response.send(Pistache::Http::Code::Bad_Request, resp);
+        }
         return;
     }
 

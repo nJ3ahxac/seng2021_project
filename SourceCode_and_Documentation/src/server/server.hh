@@ -30,6 +30,9 @@ public:
     // Called on each request, handles all traffic.
     void onRequest(const Pistache::Http::Request& request,
                    Pistache::Http::ResponseWriter response) override;
+    // Handles post requests, if an exception was thrown, the response is bad
+    void handle_post_request(const Pistache::Http::Request& request,
+                             Pistache::Http::ResponseWriter& response);
 
     const std::map<std::string, std::string>& get_bindings() const noexcept {
         return bindings;
