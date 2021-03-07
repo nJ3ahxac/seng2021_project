@@ -25,7 +25,7 @@
 
     search::token t = search::create_token();
     while (!t.suggestion.has_value()) {
-        std::cout << "Best keyword is " << t.keyword << '\n';
+        std::cout << t.entries.size() << " movies left, best keyword is " << t.keyword << '\n';
         std::cout << "(r)emove or (k)eep keyword? ";
 
         char answer; std::cin >> answer;
@@ -37,6 +37,9 @@
     }
 
     std::cout << "Your movie suggestion is IMDB index " << t.suggestion.value() << '\n';
+    if (t.entries.size() > 1) {
+        std::cout << "However, there are " << t.entries.size() - 1 << " alternatives\n";
+    }
 
     std::exit(EXIT_SUCCESS);
 }
