@@ -4,11 +4,16 @@ using namespace search;
 
 struct movie_entry {
     std::int32_t imdb_index;
+    float rating;
     std::unordered_set<std::string> keywords;
 };
 
 static std::vector<movie_entry> movie_entries;
 static std::unordered_set<std::string> all_keywords;
+
+static const movie_entry& movie_from_index(const std::uint32_t index) {
+    return movie_entries[static_cast<std::size_t>(index)];
+}
 
 // Expects an imdb string with the leading "tt" characters, i.e. "tt00015132"
 static std::int32_t tokenise_imdb_index(const std::string& imdb) {
@@ -29,6 +34,22 @@ static std::unordered_set<std::string> array_to_set(const json::Value& array) {
     return ret;
 }
 
+static float calc_movie_rating(const json::Value& entry) {
+    constexpr float error_value = 0.0f;
+    const json::Value& rating = entry["rating"];
+    if (!rating.IsFloat()) {
+        return error_value;
+    }
+    const json::Value& votes = entry["votes"];
+    if (!votes.IsInt()) {
+        return error_value;
+    }
+    
+    // Prefer higher rated movies but don't recommend movies with few votes.
+    const float vote_count = static_cast<float>(votes.GetInt());
+    return std::pow(rating.GetFloat() / 10.0f, 10.0f) * vote_count;
+}
+
 void search::initialise(const MovieData& movies) {
     const json::Document& data = movies.data;
 
@@ -37,6 +58,7 @@ void search::initialise(const MovieData& movies) {
     for (const auto& movie : data.GetObject()) {
         movie_entries.emplace_back(movie_entry{
             .imdb_index = tokenise_imdb_index(movie.name.GetString()),
+            .rating = calc_movie_rating(movie.value),
             .keywords = array_to_set(movie.value["genres"])});
     }
 }
@@ -95,20 +117,26 @@ token search::create_token() {
     ret.keyword = best;
     return ret;
 }
+
 void search::advance_token(token& token, const bool remove) {
     const auto should_remove = [&](const std::uint32_t index) {
-        const bool contains = movie_entries[index].keywords.contains(token.keyword);
-        return remove ? contains : !contains;
+        const auto& keywords = movie_from_index(index).keywords;
+        return keywords.contains(token.keyword) ? remove : !remove;
     };
-
     const auto erase_it = std::remove_if(token.entries.begin(), token.entries.end(), should_remove);
     token.entries.erase(erase_it, token.entries.end());
 
     const std::vector<keyword_rating> ratings = rate_token_keywords(token);
 
-    if (const auto& front = ratings.front(); front.rating == 0.0f) {
-        token.suggestion = movie_entries[static_cast<std::size_t>(token.entries.front())].imdb_index;
-    } else {
-        token.keyword = front.keyword;
+    if (ratings.front().rating != 0.0f) {
+        token.keyword = ratings.front().keyword;
+        return;
     }
+    // No more possible questions to ask - return best according to rating.
+    const auto has_better_rating = [](const std::uint32_t& a, const std::uint32_t& b) {
+        return movie_from_index(a).rating > movie_from_index(b).rating;
+    };
+    std::ranges::sort(token.entries, has_better_rating);
+
+    token.suggestion = movie_from_index(token.entries.front()).imdb_index;
 }
