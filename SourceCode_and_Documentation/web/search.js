@@ -30,8 +30,8 @@ function update_progress_bar() {
     for (const item of bars) {
         let id = item.getAttribute("id");
         if (id === "progress_bar") {
-            item.setAttribute("value", movies_current);
             item.setAttribute("max", movies_max); // not necessary after 1st
+            item.setAttribute("value", movies_current);
         }
     }
 }
@@ -168,6 +168,7 @@ function remove_begin_elements() {
 }
 
 function update_global_variables(json) {
+    movies_current = 10500;
     // It's a bit pointless to write this if we haven't written the server
     // post response yet.
 }
