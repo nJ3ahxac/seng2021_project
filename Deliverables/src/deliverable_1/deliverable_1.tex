@@ -33,7 +33,7 @@ such as the utilisation of user stories and Connextra notation.
 We will enumerate over a series of problem statements, tangibly solved by
 software, potentially resolved in our prototype. Subsequently, we will choose
 to target a specific problem statement within the remainder of our report.
-\subsection{Problem Statement}
+\subsection{Media Recommendations Problem Statement}
 Recommendations of visual media on contemporary popular internet platforms are
 inaccurate, biased or limited. Recommendation algorithms on such platforms are
 often a small subsection of a larger media streaming or distribution service, 
@@ -41,7 +41,7 @@ restricting the scope of recommendation to those within such a service. Moreover
 recommendation systems are typically implemented with small data sets and cheap 
 computational cost as a priority. As a result, recommendations provided to a 
 user are fragmented, unreliable and erroneous.
-\subsection{Problem Statement}
+\subsection{Internet Misinformation Problem Statement}
 Information presented by news media outlets and online sources of information
 can frequently be misleading or malicious. In addition, the advent of social
 media platforms permitting and stimulating the concept of sudden, mass 
@@ -49,16 +49,95 @@ popularity has encouraged the threat of misinformation spreading routinely and
 to great negitive effect. In response, the employment of paid moderators have
 only further exacerbated the issue, with themselves enforcing their baiases
 regarding which information is legal.
-\subsection{Problem Statement}
+\subsection{Credential Security Problem Statement}
 Due to the prevalence of database leaks combined with the tendency of internet
 users to share credentials across multiple platforms, identities on the internet
 are frequently hijacked. Moreover, specific individuals are often targeted in
 order to spread disinformation and aid in monentary theft. Current database
 credential storage technologies are inadquate in reducing user harm during the
 seemingly inevitable event that a webserver security solution is bypassed.
+\subsection*{Chosen Problem Statement}
+We have decided to focus our attention towards developing a software prototype
+which solves the media recommendations problem statement. The alternative 
+problem statements are difficult to target in the small timeframe we have been
+provided. In contrast, a solution to the media recommendation problem statement 
+is relatively managable to implement. Moreover, it also fulfills the requirement
+of communicating with an information archive via an API
+(application programming interface).
 
+\section{Features and User Stories}
+We will initially decompose our chosen problem statement into a set of high
+level requirements. Our high level requirements will then be further classified
+into a set of features. We will utilise Connextra notation when describing
+each feature, concluding by elicitating a set of user stories that accurately
+describe our feature set.
+\subsection{High Level Requirements and Features}
+\begin{enumerate}
+\item
+\textbf{High Level Requirement}: A device agnostic web based user interface.
+\newline
+\textbf{Feature}: A lightweight HTML (Hyper Text Markup Language) and Javascript
+based user interface utilising the open source Bulma CSS (Cascading Style Sheets)
+stylesheet.
+\item 
+\textbf{High Level Requirement}: A media recommendation system.\newline
+\textbf{Feature}: A procedurally generated series of questions which narrows
+down a set of recommended movies based on the previous response.
+\item 
+\textbf{High Level Requirement}: Information about specific media. \newline
+\textbf{Feature}: Requests to the IMDb (Internet Movie Database) and OMDB
+(Open Movie Database) retrieving the title, rating and description of movies,
+among others.
+\item
+\textbf{High Level Requirement}: A performant webserver stack capable of fast
+responses under a heavy workload per user session.\newline
+\textbf{Feature}: The use of a compiled, high performance programming language
+along with the Pistache HTTP and REST (Representational State Transfer)
+framework.
+\item
+\textbf{High Level Requirement}: Reliability and maintainability for any 
+software written ensuring user frontend stability.\newline
+\textbf{Feature}:
+The use of the GoogleTest C++ testing framework, javascript and HTML linters
+along with continuous integration testing.
+\end{enumerate}
+\subsection{User Stories}
+The following user stories are symbolically linked to the aforementioned high
+level requirments and features.
+\begin{itemize}
+\item
+\textbf{Mobile User}: As a user of multiple devices, each with their own set
+of human interface devices, I want to be able to access the website through
+either device. Given that I am using a mobile phone or desktop, I wish to
+be able to receive movie recommendations regardless of my choice of device.
 
-\section{User Stories}
+\item
+\textbf{Media Recommendation System}: As an avid film consumer, I want to
+receive tailored, specific recommendations relevant to me. Given that I am
+visiting the website, I wish to be able to discover esoteric and popular
+films alike without being limited to a biased or limited database.
+
+\item
+\textbf{Media Information}: As a selective film consumer, I wish to cherry pick
+a movie based on specific details such as film rating, length and content. After
+I have been recommended a film, I want to see detailed information about the
+film, with the ability to reject the recommendation if appropriate.
+
+\item
+\textbf{High performance}: As a power user, I wish to be able to receive many
+movie recommmendations over a short period of time. After I have received
+a recommendation, I wish to be able to perform several other searches in rapid
+succession without being subject to captchas, wait periods or other load
+balancing techniques.
+
+\item
+\textbf{Reliability}: As an international user, I wish to be able to recieve 
+movie recommendations regardless of the date and time in the server provider's
+origin. When I visit the website, I want to be able to receive recommendations 
+at any point in time without maintenance periods.
+\end{itemize}
+
+\iffalse
 \begin{table}[H]
 \begin{tabular}{|l|}
 \hline
@@ -108,6 +187,7 @@ seemingly inevitable event that a webserver security solution is bypassed.
 \hline
 \end{tabular}
 \end{table}
+\fi
 
 \section{Low-Fiedelity Prototype}
 The following images are rough sketches of a potential final website design.
@@ -131,6 +211,10 @@ The following images are rough sketches of a potential final website design.
 \caption{Rough sketch of the about page.}
 \end{figure}
 \subsection{Storyboard Composite}
+As an alternative to the traditional arrows used in storyboards and due to the
+complexity of the user interface, we have instead represented each page
+chronologically in appearance to a user and used colour to represent links
+to other pages.
 \begin{figure}[H]
 \includegraphics[width=\columnwidth]{res/arrows.png}
 \caption{Storyboard sketch of all previous figures.}
