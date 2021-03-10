@@ -57,34 +57,54 @@ order to spread disinformation and aid in monentary theft. Current database
 credential storage technologies are inadquate in reducing user harm during the
 seemingly inevitable event that a webserver security solution is bypassed.
 
+
 \section{User Stories}
-\begin{table}[h]
+\begin{table}[H]
 \begin{tabular}{|l|}
 \hline
-\textbf{Feature:} Search movie by key words   \\
+\textbf{Feature:} Search movie by tabs   \\
 \textbf{As a:} User\\
 \textbf{So that:} I can find the movie I want\\
-\textbf{I want to:} Search movie by its key words\\
-\textbf{Scenario:} Search movie by key words\\
-\textbf{GIVEN:} I am on sysName home page\\
-\textbf{WHEN:} I type key words into "Search Movie" search bar\\
-\textbf{AND:} I press "search" button\\
-\textbf{THEN:} I should see all movies which are related to the key words\\
+\textbf{I want to:} Search movie by its tabs\\
+\textbf{Scenario:} Search movie by tabs\\
+\textbf{GIVEN:} I am on Cinemascout search page\\
+\textbf{WHEN:} I will be asked about my preference for a certain tab including movie type, cast year and script\\
+\textbf{AND:} I press "include" or "exclude" button\\
+\textbf{THEN:} I should be given the next movie tab untill Cinemascout find a certain movie which satisfy all my preference\\
+\textbf{THEN:} I should be on this movie's detail page\\
 \hline
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[H]
 \begin{tabular}{|l|}
 \hline
-\textbf{Feature:} \\
-\textbf{As a:} \\
-\textbf{So that:} \\
-\textbf{I want to:} \\
+\textbf{Feature:} A detailed and readable detail page for each movie\\
+\textbf{As a:} User\\
+\textbf{So that:} I can find movie's details including Years, cast, an picture of that movie, script\\
+\textbf{I want to:} Read movie's details on a movie detail page\\
 \textbf{Scenario:} \\
-\textbf{GIVEN:} \\
-\textbf{WHEN:} \\
-\textbf{THEN:} \\
+\textbf{GIVEN:} I am on a search result page\\
+\textbf{WHEN:} I click on one of the movies\\
+\textbf{THEN:} I should be on "movie's details" page\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\begin{tabular}{|l|}
+\hline
+\textbf{Feature:} A custom search system\\
+\textbf{As a:} User\\
+\textbf{So that:} I can filter out the movies I don't want\\
+\textbf{I want to:} Customize a search system\\
+\textbf{Scenario:} \\
+\textbf{GIVEN:} I am on Cinemascout landing page\\
+\textbf{WHEN:} I click on "search" button or "try it out" button\\
+\textbf{THEN:} I should be given some options about my movie preference\\
+\textbf{WHEN:} I finish choosing my movie preference\\
+\textbf{AND:} I click on "Begin Search" button\\
+\textbf{THEN:} I should be on search page\\
 \hline
 \end{tabular}
 \end{table}
