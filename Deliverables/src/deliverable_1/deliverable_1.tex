@@ -20,40 +20,40 @@ the contents of our report in the following format.
 \begin{enumerate}
 \item \textbf{Problem Statements}: A series of problem statements which will
 investigate a number of problems we will solve via our software prototype.
-\item \textbf{User Stories}: An idenfitication of features based on the problem
+\item \textbf{User Stories}: An identification of features based on the problem
 statement previously specified.
 \item \textbf{Low-Fidelity Prototype}: A paper physical sketch of the UI 
 elements integrated with a storyboard-like chronological script.
 \item \textbf{High-Fidelity Prototype}: A computerised render of the
 low-fidelity prototype previously specified.
 \end{enumerate}
-Our report will strictly harbor to controlled software engineering notation, 
+Our report will strictly harbour to controlled software engineering notation, 
 such as the utilisation of user stories and Connextra notation.
 \section{Problem Statements}
 We will enumerate over a series of problem statements tangibly solved by
 software to be resolved in our prototype.
 
 \subsection{Restricted Database Problem Statement}
-Contemprorary internet recommendation algorithms are typically a smaller
+Contemporary internet recommendation algorithms are typically a smaller
 software component of a larger media streaming or distribution service,
 restricting the scope of recommendation to media within such a service.
 \subsection{Speculative Result Problem Statement}
 Current media recommendation services typically infer recommendations based
 on the initial media consumption habits of its users. Consequently,
-the resultant recommendations are implicly obtained and therefore unreliable
+the resultant recommendations are implicitly obtained and therefore unreliable
 and largely erroneous.
 \subsection{Cheap Implementation Problem Statement}
 The computational requirements of competing recommendation algorithms are
-often minimised in order to mitigate the resource load on a multifaceded
+often minimised in order to mitigate the resource load on a multifaceted
 service which also provides streaming or forum capabilities.
-\subsection{User Requrement Problem Statement}
+\subsection{User Requirement Problem Statement}
 Database leaks are prevalent and inevitable, and any service which needlessly
 requires user account creation risks fracturing the privacy and trust of its
 user base upon such a database breach.
 \subsection{User Input Sanitisation Problem Statement}
 Contemporary internet recommendation algorithms rely solely on the input
 of its user base in providing results, enabling the possibility of malicious
-actors explotiting the system to redirect users to dangerous or illicit content.
+actors exploiting the system to redirect users to dangerous or illicit content.
 \subsection{Corporate Bias Problem Statement}
 Due to the for-profit nature of widely used media recommendation algorithms,
 results are often skewed towards benefiting publishers who can afford to
@@ -71,7 +71,7 @@ Database) sourced database.
 specific recommendations relevant to me.
 \newline
 \textbf{Scenario}:
-Given that I am on the website and that I perform a movie search, when I recieve
+Given that I am on the website and that I perform a movie search, when I receive 
 results, then I should see results which are most relevant to me.
 \newline
 
@@ -83,12 +83,12 @@ The serving of a procedurally generated series of questions based solely on the
 reponses of the current session.
 \newline
 \textbf{User Story}:
-As someone who enjoys multiple movie genres, I want to recieve recommendations
+As someone who enjoys multiple movie genres, I want to receive recommendations
 which are not based on my previous viewing sessions.
 \newline
 \textbf{Scenario}:
 Given that I am on the website and I have previously made a search and I 
-perform a new search, when I recieve results, then the results should not be
+perform a new search, when I receive results, then the results should not be
 an amalgamation of my previous sessions.
 \newline
 
@@ -104,17 +104,17 @@ a short period of time.
 \newline
 \textbf{Scenario}:
 Given that I have performed many searches recently, and I want to perform a new
-search, when I recieve results, then the new results are not rate limited.
+search, when I receive results, then the new results are not rate limited.
 \newline
 
 \item
-\textbf{High Level Requirement}: Non compulsary user account creation.
+\textbf{High Level Requirement}: Non compulsory user account creation.
 \newline
 \textbf{Feature}:
 An accountless search ability.
 \newline
 \textbf{User Story}:
-As a first time website visiter, I wish to be able to perform a search without 
+As a first time website visitor, I wish to be able to perform a search without 
 offering my credentials and other personal information to first generate an 
 account.
 \newline
@@ -145,7 +145,7 @@ results, then the results should be free from user generated content.
 A keyword based search mechanism.
 \newline
 \textbf{User Story}:
-As a user of the service, I do not wish to recieve recommendations based on
+As a user of the service, I do not wish to receive recommendations based on
 corporate interests or monetary influence.
 \newline
 \textbf{Scenario}:
@@ -154,7 +154,7 @@ results, then the results should be free from corporate bias.
 \newline
 \end{enumerate}
 
-\section{Low-Fiedelity Prototype}
+\section{Low-Fidelity Prototype}
 The following images are rough sketches of a potential final website design.
 \subsection{Landing Page}
 \begin{figure}[H]
@@ -181,20 +181,21 @@ The following images are rough sketches of a potential final website design.
 \caption{Storyboard sketch of all previous figures.}
 \end{figure}
 
-\section{High-Fiedelity Prototype}
+\section{High-Fidelity Prototype}
 The following images are a work in progress and do not represent the final
 design of the product. All images were captured at a resolution of 1920 x
-1080 using a default Chromium browser on Arch Linux. An interactable, 
+1080 using a default Chromium browser on Arch Linux. An interactive, 
 high-fidelity prototype is available on GitHub.
 \subsection{Landing Page}
-\begin{figure}[H]
+
+\begin{figure}[p]
 \includegraphics[width=\columnwidth]{res/landing_1.png}
 \caption{Upper portion of the landing page.}
-\end{figure}
-\begin{figure}[H]
+
 \includegraphics[width=\columnwidth]{res/landing_2.png}
 \caption{Lower portion of the landing page.}
 \end{figure}
+
 \subsection{Search Page}
 \begin{figure}[H]
 \includegraphics[width=\columnwidth]{res/search_1.png}
