@@ -1,3 +1,4 @@
+# Makefile + CMake ignores
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
@@ -8,13 +9,20 @@ cmake_install.cmake
 install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
-webserver
-.cache
 main.plist
 *.plist
 *.a
 _deps
-SourceCode_and_Documentation/test/webserver_test
-SourceCode_and_Documentation/src/client/json/json.hh
+.cache
+
+# Latex ignores
+*.aux
+*.log
+
+# Binary ignores
+webserver
 webserver_test
+googletest
+
+# Runtime ignores
 key.txt
