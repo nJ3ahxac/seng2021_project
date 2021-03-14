@@ -4,6 +4,7 @@ add_executable(${BINARY}
     main.cc
     server/server.cc
     server/search.cc
+    util/util.cc
     #client/client.cc
 )
 
@@ -12,6 +13,7 @@ add_library(${BINARY}_lib STATIC
     server/server.cc
     server/search.cc
     client/client.cc
+    util/util.cc
 )
 
 target_compile_options(webserver PRIVATE

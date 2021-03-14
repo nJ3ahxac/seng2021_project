@@ -82,6 +82,6 @@ void PageHandler::onRequest(const Pistache::Http::Request& request,
         return;
     }
 
-    // 3. The page does not exist, in which case we return 404..
+    // 3. The page does not exist, in which case we return 404.
     response.send(Pistache::Http::Code::Not_Found, resources["/404.html"]);
 }

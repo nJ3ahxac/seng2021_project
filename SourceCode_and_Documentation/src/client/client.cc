@@ -1,84 +1,7 @@
 #include "client.hh"
 
-std::string MovieData::download_url(const std::string& url) {
-    CURL* const curl = curl_easy_init();
-
-    if (!curl) {
-        throw std::runtime_error("Unable to get curl handle for request");
-    }
-
-    std::string request_contents;
-    const auto write_callback = [](char* contents, std::size_t size,
-                                   std::size_t nmemb, std::string* userp) {
-        userp->append(contents, size * nmemb);
-        return size * nmemb;
-    };
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, *write_callback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &request_contents);
-
-    //curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, 2);
-    //curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, 5);
-    CURLcode result = curl_easy_perform(curl);
-    curl_easy_cleanup(curl);
-
-    if (result != CURLE_OK) {
-        throw std::runtime_error('\"'
-                + url
-                + "\" request failed: "
-                + curl_easy_strerror(result));
-    }
-
-    return request_contents;
-}
-
-json::Document MovieData::download_url_json(const std::string& url) {
-    json::Document d;
-    d.Parse(download_url(url).c_str());
-    return d;
-}
-
-std::string MovieData::gzip_decompress(const std::string& data) {
-    std::stringstream input;
-    input << data;
-
-    // Use boost to handle gzip decompression.
-    boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
-    in.push(boost::iostreams::gzip_decompressor());
-    in.push(input);
-
-    std::stringstream ret;
-    boost::iostreams::copy(in, ret);
-
-    return ret.str();
-}
-
-void MovieData::write_json(const std::string& dir, const json::Document& j) {
-    std::ofstream output;
-    output.exceptions(std::ios_base::badbit | std::ios_base::failbit);
-    output.open(dir);
-
-    json::StringBuffer sb;
-    json::Writer<json::StringBuffer> writer(sb);
-    j.Accept(writer);
-    output << sb.GetString();
-}
-
-json::Document MovieData::open_json(const std::string& dir) {
-    std::ifstream input;
-    input.exceptions(std::ios_base::badbit | std::ios_base::failbit);
-    input.open(dir);
-    std::string file_contents;
-    std::copy(std::istreambuf_iterator<char>(input),
-              std::istreambuf_iterator<char>(),
-              std::inserter(file_contents, file_contents.begin()));
-    json::Document d;
-    d.Parse(file_contents.c_str());
-    return d;
-}
-
 static std::size_t get_part_index_of(const std::vector<std::string>& keys,
-        const std::string& name) {
+                                     const std::string& name) {
     const auto key_has_name = [&name](const std::string& key) {
         return key == name;
     };
@@ -90,7 +13,8 @@ static std::size_t get_part_index_of(const std::vector<std::string>& keys,
 }
 
 json::Document MovieData::gzip_download_to_json(const std::string& url) {
-    const std::string title_basics = gzip_decompress(download_url(url));
+    const std::string title_basics =
+        util::gzip_decompress(util::download_url(url));
     std::stringstream ss{title_basics};
 
     std::string entries;
@@ -118,7 +42,7 @@ json::Document MovieData::gzip_download_to_json(const std::string& url) {
         if (parts[genre_index] == "\\N") {
             continue;
         }
-        
+
         json::Value entry_value(json::kObjectType);
 
         // store off the primaryTitle in the entry as "title"
@@ -188,9 +112,8 @@ constexpr auto max_concurrent = 100ul;
         return (it++)->name.GetString();
     };
 
-    const std::string url_base = "http://www.omdbapi.com/?plot=full&apikey="
-        + get_api_key()
-        + "&i=";
+    const std::string url_base =
+        "http://www.omdbapi.com/?plot=full&apikey=" + get_api_key() + "&i=";
 
     const auto backup_movie = [&]() -> bool {
         const std::string index = get_next_movie_index();
@@ -199,19 +122,21 @@ constexpr auto max_concurrent = 100ul;
         }
 
         const std::string url = url_base + index;
-        const std::string result = MovieData::download_url(url);
+        const std::string result = util::download_url(url);
 
         auto stream = std::ofstream("backup/" + index);
         if (!stream.is_open()) {
-            throw std::runtime_error("could not open \"backup/" + result + '\"');
+            throw std::runtime_error("could not open \"backup/" + result +
+                                     '\"');
         }
         stream << result;
-        
+
         return true;
     };
 
     const auto backup_movie_thread = [&]() {
-        while (backup_movie()) {}
+        while (backup_movie()) {
+        }
     };
 
     while (threads.size() < max_concurrent) {
@@ -225,9 +150,7 @@ constexpr auto max_concurrent = 100ul;
 
 static std::unordered_set<std::string> string_words(std::string in) {
     // replace nonalphanumeric characters with spacebars
-    const auto is_nonalpha = [](const char c) {
-        return !std::isalpha(c);
-    };
+    const auto is_nonalpha = [](const char c) { return !std::isalpha(c); };
     std::replace_if(in.begin(), in.end(), is_nonalpha, ' ');
 
     // remove consecutive spacebars
@@ -240,8 +163,9 @@ static std::unordered_set<std::string> string_words(std::string in) {
 }
 
 static std::unordered_set<std::string> get_keywords() {
-    const std::string url = "http://www.desiquintans.com/downloads/nounlist/nounlist.txt";
-    const std::string nouns = MovieData::download_url(url);
+    const std::string url =
+        "http://www.desiquintans.com/downloads/nounlist/nounlist.txt";
+    const std::string nouns = util::download_url(url);
 
     std::unordered_set<std::string> keywords;
     boost::split(keywords, nouns, boost::is_any_of("\n"));
@@ -266,9 +190,8 @@ static void update_movie_omdb_data(json::Document& doc) {
         return it++;
     };
 
-    const std::string url_base = "http://www.omdbapi.com/?plot=full&apikey="
-        + get_api_key()
-        + "&i=";
+    const std::string url_base =
+        "http://www.omdbapi.com/?plot=full&apikey=" + get_api_key() + "&i=";
     const std::unordered_set<std::string> keywords = get_keywords();
 
     const auto download_movie = [&]() -> bool {
@@ -283,28 +206,28 @@ static void update_movie_omdb_data(json::Document& doc) {
         std::optional<json::Document> result_opt;
         while (!result_opt.has_value()) {
             try {
-                result_opt = MovieData::download_url_json(url_base + index);
+                result_opt = util::download_url_json(url_base + index);
             } catch (...) {
                 continue;
             }
 
             const auto result_has_good = [&](const std::string& str) {
-                return result_opt->HasMember(str) && (*result_opt)[str].IsString();
+                return result_opt->HasMember(str) &&
+                       (*result_opt)[str].IsString();
             };
 
-            if (!result_opt->IsObject()
-                    || !result_has_good("Plot")
-                    || !result_has_good("imdbRating")
-                    || !result_has_good("imdbVotes")
-                    || !result_has_good("Language")
-                    || !result_has_good("Year")) {
+            if (!result_opt->IsObject() || !result_has_good("Plot") ||
+                !result_has_good("imdbRating") ||
+                !result_has_good("imdbVotes") || !result_has_good("Language") ||
+                !result_has_good("Year")) {
                 return true;
             }
         }
         const auto& result = *result_opt;
 
         json::Value keyword_value(json::kArrayType);
-        for (const std::string& word : string_words(result["Plot"].GetString())) {
+        for (const std::string& word :
+             string_words(result["Plot"].GetString())) {
             if (!keywords.contains(word)) {
                 continue;
             }
@@ -313,7 +236,8 @@ static void update_movie_omdb_data(json::Document& doc) {
             keyword_value.PushBack(entry.Move(), doc.GetAllocator());
         }
         json::Value keyword_key{"keywords"};
-        movie_it->value.AddMember(keyword_key, keyword_value, doc.GetAllocator());
+        movie_it->value.AddMember(keyword_key, keyword_value,
+                                  doc.GetAllocator());
 
         const float rating = [&] {
             try {
@@ -340,7 +264,7 @@ static void update_movie_omdb_data(json::Document& doc) {
 
         const int year = [&] {
             try {
-                // Can't call GetInt with rapidjson since the API returns 
+                // Can't call GetInt with rapidjson since the API returns
                 // {"Year", "1985"} instead of {"Year", 1985} for example.
                 return std::stoi(result["Year"].GetString());
             } catch (...) {
@@ -351,13 +275,16 @@ static void update_movie_omdb_data(json::Document& doc) {
         movie_it->value.AddMember(year_key, year, doc.GetAllocator());
 
         json::Value language_key{"language"};
-        json::Value language_value{result["Language"].GetString(), doc.GetAllocator()};
-        movie_it->value.AddMember(language_key, language_value, doc.GetAllocator());
+        json::Value language_value{result["Language"].GetString(),
+                                   doc.GetAllocator()};
+        movie_it->value.AddMember(language_key, language_value,
+                                  doc.GetAllocator());
 
         return true;
     };
 
-    const std::size_t likely_max = doc.GetObject().MemberCount() / max_concurrent;
+    const std::size_t likely_max =
+        doc.GetObject().MemberCount() / max_concurrent;
 
     const auto download_movie_thread = [&](const bool report) {
         for (std::size_t count = 0; download_movie(); ++count) {
@@ -384,11 +311,12 @@ static void update_movie_omdb_data(json::Document& doc) {
 
 static void prune_movie_data(json::Document& doc) {
     const auto& object = doc.GetObject();
-    for (auto it = object.begin(); it < object.end(); ) {
+    for (auto it = object.begin(); it < object.end();) {
         auto& entry = it->value;
         bool remove = false;
         // No plot entry in OMDB/no keywords?
-        if (!entry.HasMember("keywords") || entry["keywords"].GetArray().Size() < 1) {
+        if (!entry.HasMember("keywords") ||
+            entry["keywords"].GetArray().Size() < 1) {
             remove = true;
         }
         // Insufficient rating?
@@ -413,7 +341,7 @@ MovieData::MovieData(const construct& c) {
     // Do not update cache if constructed with_cache, just read from files.
     if (c == construct::with_cache) {
         try {
-            this->data = open_json("cache/title_basics.json");
+            this->data = util::open_json("cache/title_basics.json");
         } catch (...) {
             throw cache_error();
         }
@@ -431,11 +359,13 @@ MovieData::MovieData(const construct& c) {
     // now it is possible to filter out all non-movie entries from our dataset.
     const auto url_titles = "https://datasets.imdbws.com/title.basics.tsv.gz";
     this->data = gzip_download_to_json(url_titles);
-    // Download all movie plots from omdb and store keywords to be searched with.
+    // Download all movie plots from omdb and store keywords to be searched
+    // with.
     update_movie_omdb_data(this->data);
-    // Remove entries with little data or relevance (i.e. no keywords or low rating)
+    // Remove entries with little data or relevance (i.e. no keywords or low
+    // rating)
     prune_movie_data(this->data);
 
     std::filesystem::create_directory("cache");
-    write_json("cache/title_basics.json", this->data);
+    util::write_json("cache/title_basics.json", this->data);
 }
