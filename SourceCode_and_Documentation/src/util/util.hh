@@ -34,9 +34,9 @@ private:
 
 public:
     request(const std::string& url, const long& port = 0);
-    const CURLcode& get_result() { return result; }
-    const long& get_code() { return code; }
-    const std::string& get_contents() { return contents; }
+    const CURLcode& get_result() const noexcept { return result; }
+    const long& get_code() const noexcept { return code; }
+    const std::string& get_contents() const noexcept { return contents; }
 };
 
 std::string download_url(const std::string& url);

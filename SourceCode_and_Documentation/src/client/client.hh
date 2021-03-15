@@ -37,10 +37,11 @@ struct MovieData {
 
     static json::Document gzip_download_to_json(const std::string& url);
 
-    class cache_error : public std::exception {
+    class cache_error : public std::runtime_error {
     public:
+        cache_error(const std::string& m) : std::runtime_error(m) {}
         virtual const char* what() const noexcept override {
-            return "Bad cache read";
+            return std::runtime_error::what();
         }
     };
 

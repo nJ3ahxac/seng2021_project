@@ -342,8 +342,8 @@ MovieData::MovieData(const construct& c) {
     if (c == construct::with_cache) {
         try {
             this->data = util::read_file_json("cache/title_basics.json");
-        } catch (...) {
-            throw cache_error();
+        } catch (std::exception& e) {
+            throw cache_error(e.what());
         }
         return;
     }

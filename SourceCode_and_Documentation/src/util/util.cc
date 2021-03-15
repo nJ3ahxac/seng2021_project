@@ -88,7 +88,7 @@ void util::write_file_json(const std::string& dir, const json::Document& j) {
 }
 
 json::Document util::read_file_json(const std::string& dir) {
-    std::string file_contents = util::read_file(dir);
+    const std::string file_contents = util::read_file(dir);
     json::Document d;
     d.Parse(file_contents.c_str());
     return d;
