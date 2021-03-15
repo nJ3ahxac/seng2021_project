@@ -341,7 +341,7 @@ MovieData::MovieData(const construct& c) {
     // Do not update cache if constructed with_cache, just read from files.
     if (c == construct::with_cache) {
         try {
-            this->data = util::open_json("cache/title_basics.json");
+            this->data = util::read_file_json("cache/title_basics.json");
         } catch (...) {
             throw cache_error();
         }
@@ -367,5 +367,5 @@ MovieData::MovieData(const construct& c) {
     prune_movie_data(this->data);
 
     std::filesystem::create_directory("cache");
-    util::write_json("cache/title_basics.json", this->data);
+    util::write_file_json("cache/title_basics.json", this->data);
 }

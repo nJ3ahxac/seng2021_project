@@ -44,10 +44,10 @@ json::Document download_url_json(const std::string& url);
 
 std::string gzip_decompress(const std::string& data);
 
-std::string open_file(const std::string& dir);
+std::string read_file(const std::string& dir);
 
-void write_json(const std::string& dir, const json::Document& j);
-json::Document open_json(const std::string& dir);
+void write_file_json(const std::string& dir, const json::Document& j);
+json::Document read_file_json(const std::string& dir);
 } // namespace util
 
 #endif

@@ -62,10 +62,10 @@ std::string util::gzip_decompress(const std::string& data) {
     return ret.str();
 }
 
-std::string util::open_file(const std::string& dir) {
+std::string util::read_file(const std::string& dir) {
     std::ifstream input(dir);
     if (!input.is_open()) {
-        throw std::runtime_error("Failed to open readable: " + dir);
+        throw std::runtime_error("Failed to open readable file: " + dir);
     }
     std::string file_contents;
     std::copy(std::istreambuf_iterator<char>(input),
@@ -74,10 +74,10 @@ std::string util::open_file(const std::string& dir) {
     return file_contents;
 }
 
-void util::write_json(const std::string& dir, const json::Document& j) {
+void util::write_file_json(const std::string& dir, const json::Document& j) {
     std::ofstream output(dir);
     if (!output.is_open()) {
-        throw std::runtime_error("Failed to open writable: " + dir);
+        throw std::runtime_error("Failed to open writable file: " + dir);
     }
     output.open(dir);
 
@@ -87,8 +87,8 @@ void util::write_json(const std::string& dir, const json::Document& j) {
     output << sb.GetString();
 }
 
-json::Document util::open_json(const std::string& dir) {
-    std::string file_contents = util::open_file(dir);
+json::Document util::read_file_json(const std::string& dir) {
+    std::string file_contents = util::read_file(dir);
     json::Document d;
     d.Parse(file_contents.c_str());
     return d;

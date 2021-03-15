@@ -23,7 +23,7 @@ PageHandler::PageHandler()
 
     // Copies the files into a std::map with the key as the directory.
     for (const auto& filename : files) {
-        const std::string file_contents = util::open_file("web" + filename);
+        const std::string file_contents = util::read_file("web" + filename);
         resources.insert({filename, file_contents});
     }
 };
