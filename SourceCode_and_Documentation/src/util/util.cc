@@ -1,8 +1,7 @@
 #include "util.hh"
-#include <iostream>
 
 // Request methods.
-util::request::request(const std::string& url, const long& port) : code(0L) {
+util::request::request(const std::string& url, const long& port) {
     CURL* const curl = curl_easy_init();
 
     if (!curl) {
@@ -63,9 +62,23 @@ std::string util::gzip_decompress(const std::string& data) {
     return ret.str();
 }
 
+std::string util::open_file(const std::string& dir) {
+    std::ifstream input(dir);
+    if (!input.is_open()) {
+        throw std::runtime_error("Failed to open readable: " + dir);
+    }
+    std::string file_contents;
+    std::copy(std::istreambuf_iterator<char>(input),
+              std::istreambuf_iterator<char>(),
+              std::inserter(file_contents, file_contents.begin()));
+    return file_contents;
+}
+
 void util::write_json(const std::string& dir, const json::Document& j) {
-    std::ofstream output;
-    output.exceptions(std::ios_base::badbit | std::ios_base::failbit);
+    std::ofstream output(dir);
+    if (!output.is_open()) {
+        throw std::runtime_error("Failed to open writable: " + dir);
+    }
     output.open(dir);
 
     json::StringBuffer sb;
@@ -75,13 +88,7 @@ void util::write_json(const std::string& dir, const json::Document& j) {
 }
 
 json::Document util::open_json(const std::string& dir) {
-    std::ifstream input;
-    input.exceptions(std::ios_base::badbit | std::ios_base::failbit);
-    input.open(dir);
-    std::string file_contents;
-    std::copy(std::istreambuf_iterator<char>(input),
-              std::istreambuf_iterator<char>(),
-              std::inserter(file_contents, file_contents.begin()));
+    std::string file_contents = util::open_file(dir);
     json::Document d;
     d.Parse(file_contents.c_str());
     return d;

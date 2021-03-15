@@ -32,7 +32,7 @@ protected:
         // Blocking until the server starts.
         const auto start_server = []() {
             const Pistache::Address addr(Pistache::Ipv4::any(),
-                                         Pistache::Port(++test_port));
+                                         Pistache::Port(test_port));
             const auto opts =
                 Pistache::Http::Endpoint::options().threads(THREADS_DEFAULT);
             Pistache::Http::Endpoint server(addr);
@@ -41,6 +41,7 @@ protected:
             server.setHandler(Pistache::Http::make_handler<PageHandler>());
             server.serve();
         };
+        ++test_port;
         this->server_thread = std::thread(start_server);
     }
     // To avoid a race condition, we must wait for the server to init on the

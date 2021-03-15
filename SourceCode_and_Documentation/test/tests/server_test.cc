@@ -31,14 +31,7 @@ TEST_F(ServerTest, not_existent_code_404) {
 TEST_F(ServerTest, bindings_same_file) {
     PageHandler handler;
     for (const auto& b : handler.get_bindings()) {
-        std::ifstream input("web" + b.second);
-        if (!input.is_open()) {
-            throw std::runtime_error("Failed to open file: web" + b.second);
-        }
-        std::string file;
-        std::copy(std::istreambuf_iterator<char>(input),
-                  std::istreambuf_iterator<char>(),
-                  std::inserter(file, file.begin()));
+        std::string file = util::open_file("web" + b.second);
         const auto url = "localhost" + b.first;
         EXPECT_EQ(file, util::request(url, test_port).get_contents());
     }
@@ -47,14 +40,7 @@ TEST_F(ServerTest, bindings_same_file) {
 TEST_F(ServerTest, resources_same_file) {
     PageHandler handler;
     for (const auto& r : handler.get_resources()) {
-        std::ifstream input("web" + r.first);
-        if (!input.is_open()) {
-            throw std::runtime_error("Failed to open file: web" + r.second);
-        }
-        std::string file;
-        std::copy(std::istreambuf_iterator<char>(input),
-                  std::istreambuf_iterator<char>(),
-                  std::inserter(file, file.begin()));
+        std::string file = util::open_file("web" + r.first);
         const auto url = "localhost" + r.first;
         EXPECT_EQ(file, util::request(url, test_port).get_contents());
     }

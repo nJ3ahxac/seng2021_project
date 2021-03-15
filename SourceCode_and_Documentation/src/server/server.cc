@@ -23,17 +23,7 @@ PageHandler::PageHandler()
 
     // Copies the files into a std::map with the key as the directory.
     for (const auto& filename : files) {
-        std::ifstream input("web" + filename);
-
-        if (!input.is_open()) {
-            throw std::runtime_error("Failed to open file: web" + filename);
-        }
-
-        std::string file_contents;
-        std::copy(std::istreambuf_iterator<char>(input),
-                  std::istreambuf_iterator<char>(),
-                  std::inserter(file_contents, file_contents.begin()));
-
+        const std::string file_contents = util::open_file("web" + filename);
         resources.insert({filename, file_contents});
     }
 };

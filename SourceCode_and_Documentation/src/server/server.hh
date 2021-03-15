@@ -10,6 +10,8 @@
 
 #include <pistache/endpoint.h>
 
+#include "util/util.hh"
+
 class PageHandler : public Pistache::Http::Handler {
 private:
     // This structure maps a binding to a filename, ie, "/" -> "/main.html"

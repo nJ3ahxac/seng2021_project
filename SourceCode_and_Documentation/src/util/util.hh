@@ -26,12 +26,11 @@ namespace json = rapidjson;
 
 namespace util {
 // Curl wrapper class to avoid code duplication.
-// This will throw std::runtime_error if the request fails
 class request {
 private:
-    CURLcode result;
+    CURLcode result = CURLE_OK;
     std::string contents;
-    long code;
+    long code = 0;
 
 public:
     request(const std::string& url, const long& port = 0);
@@ -44,6 +43,8 @@ std::string download_url(const std::string& url);
 json::Document download_url_json(const std::string& url);
 
 std::string gzip_decompress(const std::string& data);
+
+std::string open_file(const std::string& dir);
 
 void write_json(const std::string& dir, const json::Document& j);
 json::Document open_json(const std::string& dir);

@@ -11,14 +11,12 @@
         setrlimit(RLIMIT_NOFILE, &r);
     };
     auto limits = read_limits();
-    std::cout << "old limit: " << limits.rlim_cur << '\n';
     limits.rlim_cur = n == 0 ? limits.rlim_max : n;
     set_limits(limits);
-    std::cout << "new limit: " << limits.rlim_cur << '\n';
 }
 
 int main(int argc, char* argv[]) {
-    //set_file_limit(0);
+    set_file_limit(0);
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
