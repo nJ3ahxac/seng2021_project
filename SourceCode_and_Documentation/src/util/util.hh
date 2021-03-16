@@ -37,6 +37,7 @@ public:
     const CURLcode& get_result() const noexcept { return result; }
     const long& get_code() const noexcept { return code; }
     const std::string& get_contents() const noexcept { return contents; }
+    bool is_good() const noexcept { return !this->result; }
 };
 
 std::string download_url(const std::string& url);

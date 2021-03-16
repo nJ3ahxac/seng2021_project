@@ -10,7 +10,7 @@ TEST_F(ServerTest, bindings_code_200) {
     const PageHandler handler;
     for (const auto& b : handler.get_bindings()) {
         const auto url = "localhost" + b.first;
-        EXPECT_EQ(util::request(url, test_port).get_code(), 200L);
+        EXPECT_EQ(util::request(url, servertest::test_port).get_code(), 200L);
     }
 }
 
@@ -18,14 +18,14 @@ TEST_F(ServerTest, resources_code_200) {
     const PageHandler handler;
     for (const auto& r : handler.get_resources()) {
         const auto url = "localhost" + r.first;
-        EXPECT_EQ(util::request(url, test_port).get_code(), 200L);
+        EXPECT_EQ(util::request(url, servertest::test_port).get_code(), 200L);
     }
 }
 
 TEST_F(ServerTest, non_existent_code_404) {
     const PageHandler handler;
     const auto url = "localhost/_____DOES_NOT_EXIST.wav";
-    EXPECT_EQ(util::request(url, test_port).get_code(), 404L);
+    EXPECT_EQ(util::request(url, servertest::test_port).get_code(), 404L);
 }
 
 TEST_F(ServerTest, bindings_first_same_file) {
@@ -33,7 +33,8 @@ TEST_F(ServerTest, bindings_first_same_file) {
     for (const auto& b : handler.get_bindings()) {
         const std::string file = util::read_file("web" + b.second);
         const auto url = "localhost" + b.first;
-        EXPECT_EQ(file, util::request(url, test_port).get_contents());
+        EXPECT_EQ(file,
+                  util::request(url, servertest::test_port).get_contents());
     }
 }
 
@@ -42,7 +43,8 @@ TEST_F(ServerTest, bindings_second_same_file) {
     for (const auto& b : handler.get_bindings()) {
         const std::string file = util::read_file("web" + b.second);
         const auto url = "localhost" + b.second;
-        EXPECT_EQ(file, util::request(url, test_port).get_contents());
+        EXPECT_EQ(file,
+                  util::request(url, servertest::test_port).get_contents());
     }
 }
 
@@ -51,6 +53,7 @@ TEST_F(ServerTest, resources_first_same_file) {
     for (const auto& r : handler.get_resources()) {
         const std::string file = util::read_file("web" + r.first);
         const auto url = "localhost" + r.first;
-        EXPECT_EQ(file, util::request(url, test_port).get_contents());
+        EXPECT_EQ(file,
+                  util::request(url, servertest::test_port).get_contents());
     }
 }

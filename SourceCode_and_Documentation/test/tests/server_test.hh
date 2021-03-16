@@ -18,7 +18,9 @@
 #include "server/server.hh"
 #include "util/util.hh"
 
+namespace servertest {
 static int test_port = PORT_DEFAULT;
+}
 
 // Since googletest inits a new fixtures each test, we will have to work around
 // failing to bind to the same port within short periods by incrementing
@@ -32,7 +34,7 @@ protected:
         // Blocking until the server starts.
         const auto start_server = []() {
             const Pistache::Address addr(Pistache::Ipv4::any(),
-                                         Pistache::Port(test_port));
+                                         Pistache::Port(servertest::test_port));
             const auto opts =
                 Pistache::Http::Endpoint::options().threads(THREADS_DEFAULT);
             Pistache::Http::Endpoint server(addr);
@@ -41,14 +43,15 @@ protected:
             server.setHandler(Pistache::Http::make_handler<PageHandler>());
             server.serve();
         };
-        ++test_port;
+        ++servertest::test_port;
         this->server_thread = std::thread(start_server);
     }
     // To avoid a race condition, we must wait for the server to init on the
     // other thread before running any tests.
     void SetUp() override {
         const auto start = std::chrono::steady_clock::now();
-        while (util::request("localhost", test_port).get_code() != 200) {
+        while (util::request("localhost", servertest::test_port).get_code() !=
+               200) {
             const auto now = std::chrono::steady_clock::now();
             if (now > start + std::chrono::seconds(1)) {
                 throw std::runtime_error("Fixture server did not respond");

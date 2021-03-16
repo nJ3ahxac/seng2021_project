@@ -3,6 +3,7 @@ set (BINARY ${CMAKE_PROJECT_NAME}_test)
 add_executable(${BINARY}
     main.cc
     tests/server_test.cc
+    tests/util_test.cc
 )
 
 add_test(NAME ${BINARY} COMMAND ${BINARY})
