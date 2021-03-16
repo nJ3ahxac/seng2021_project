@@ -15,7 +15,7 @@ static bool has_internet = true;
 } // namespace utiltest
 
 // This class creates a tmp file for each test and also inits a has_internet
-// bool which is useful if we have no internet and run our tests.
+// bool which allows us to early out in tests which require internet.
 class UtilTest : public ::testing::Test {
 private:
     std::fstream tmp_file;
