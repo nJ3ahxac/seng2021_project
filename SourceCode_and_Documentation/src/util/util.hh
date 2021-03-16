@@ -46,6 +46,7 @@ json::Document download_url_json(const std::string& url);
 std::string decompress_gzip(const std::string& data);
 
 std::string read_file(const std::string& dir);
+std::ofstream open_file(const std::string& dir);
 
 void write_file_json(const std::string& dir, const json::Document& j);
 json::Document read_file_json(const std::string& dir);

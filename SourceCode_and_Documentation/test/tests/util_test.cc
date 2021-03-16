@@ -67,3 +67,32 @@ TEST_F(UtilTest, decompress_gzip_invalid) {
 TEST_F(UtilTest, read_file_empty) {
     EXPECT_EQ(util::read_file(utiltest::test_filename), std::string{});
 }
+
+TEST_F(UtilTest, read_file_nonexistent) {
+    std::filesystem::remove(utiltest::test_filename);
+    try {
+        util::read_file(utiltest::test_filename);
+    } catch (...) {
+        return;
+    }
+    throw std::runtime_error("read_file suceeded when there was no file");
+}
+
+TEST_F(UtilTest, write_file_valid) { util::open_file(utiltest::test_filename); }
+
+TEST_F(UtilTest, write_file_bad_directory) {
+    try {
+        util::open_file("./doesnotexist/" + utiltest::test_filename);
+    } catch (...) {
+        return;
+    }
+    throw std::runtime_error("write_file suceeded when the dir did not exist");
+}
+
+TEST_F(UtilTest, read_write_file_equal) {
+    const std::string contents = "Example contents.";
+    auto file = util::open_file(utiltest::test_filename);
+    file << contents;
+    file.close();
+    EXPECT_EQ(util::read_file(utiltest::test_filename), contents);
+}

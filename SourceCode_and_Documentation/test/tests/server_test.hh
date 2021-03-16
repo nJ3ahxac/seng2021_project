@@ -45,10 +45,9 @@ protected:
         };
         ++servertest::test_port;
         this->server_thread = std::thread(start_server);
-    }
-    // To avoid a race condition, we must wait for the server to init on the
-    // other thread before running any tests.
-    void SetUp() override {
+
+        // To avoid a race condition, we must wait for the server to init on the
+        // other thread before running any tests.
         const auto start = std::chrono::steady_clock::now();
         while (util::request("localhost", servertest::test_port).get_code() !=
                200) {
@@ -58,8 +57,7 @@ protected:
             }
         }
     }
-
-    ~ServerTest() override { server_thread.detach(); };
+    virtual ~ServerTest() override { server_thread.detach(); };
 };
 
 #endif

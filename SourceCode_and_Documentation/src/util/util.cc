@@ -74,12 +74,16 @@ std::string util::read_file(const std::string& dir) {
     return file_contents;
 }
 
-void util::write_file_json(const std::string& dir, const json::Document& j) {
-    std::ofstream output(dir);
-    if (!output.is_open()) {
+std::ofstream util::open_file(const std::string& dir) {
+    std::ofstream ret(dir);
+    if (!ret.is_open()) {
         throw std::runtime_error("Failed to open writable file: " + dir);
     }
-    output.open(dir);
+    return ret;
+}
+
+void util::write_file_json(const std::string& dir, const json::Document& j) {
+    auto output = util::open_file(dir);
 
     json::StringBuffer sb;
     json::Writer<json::StringBuffer> writer(sb);

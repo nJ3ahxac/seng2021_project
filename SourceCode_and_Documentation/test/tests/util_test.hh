@@ -35,17 +35,15 @@ protected:
                 util::request{utiltest::test_url}.is_good();
             once = true;
         }
-    }
-
-    void SetUp() override {
         if (!utiltest::has_internet) {
             std::cerr << "example.com is unreachable, test will auto pass\n";
         }
     }
 
-    void TearDown() override { wipe_tmpfile(utiltest::test_filename); }
-
-    ~UtilTest() override { std::filesystem::remove(utiltest::test_filename); };
+    virtual ~UtilTest() override {
+        wipe_tmpfile(utiltest::test_filename);
+        std::filesystem::remove(utiltest::test_filename);
+    };
 };
 
 #endif
