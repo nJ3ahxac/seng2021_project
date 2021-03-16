@@ -47,7 +47,7 @@ json::Document util::download_url_json(const std::string& url) {
     return d;
 }
 
-std::string util::gzip_decompress(const std::string& data) {
+std::string util::decompress_gzip(const std::string& data) {
     std::stringstream input;
     input << data;
 

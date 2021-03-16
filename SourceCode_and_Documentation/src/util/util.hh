@@ -43,7 +43,7 @@ public:
 std::string download_url(const std::string& url);
 json::Document download_url_json(const std::string& url);
 
-std::string gzip_decompress(const std::string& data);
+std::string decompress_gzip(const std::string& data);
 
 std::string read_file(const std::string& dir);
 

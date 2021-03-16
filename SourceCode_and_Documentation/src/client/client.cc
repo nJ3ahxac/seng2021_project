@@ -14,7 +14,7 @@ static std::size_t get_part_index_of(const std::vector<std::string>& keys,
 
 json::Document MovieData::gzip_download_to_json(const std::string& url) {
     const std::string title_basics =
-        util::gzip_decompress(util::download_url(url));
+        util::decompress_gzip(util::download_url(url));
     std::stringstream ss{title_basics};
 
     std::string entries;

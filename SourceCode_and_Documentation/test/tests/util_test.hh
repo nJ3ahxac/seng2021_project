@@ -30,7 +30,11 @@ private:
 protected:
     UtilTest() {
         wipe_tmpfile(utiltest::test_filename);
-        utiltest::has_internet = util::request{utiltest::test_url}.is_good();
+        if (static bool once; !once) {
+            utiltest::has_internet =
+                util::request{utiltest::test_url}.is_good();
+            once = true;
+        }
     }
 
     void SetUp() override {
