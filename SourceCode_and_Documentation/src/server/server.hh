@@ -13,7 +13,9 @@
 #include <iterator>
 #include <unordered_map>
 #include <string>
+#include <ranges>
 
+namespace json = rapidjson;
 
 class PageHandler : public Pistache::Http::Handler {
 private:
@@ -45,6 +47,14 @@ private:
                              Pistache::Http::ResponseWriter& response);
     void handle_get_request(const Pistache::Http::Request& request,
                              Pistache::Http::ResponseWriter& response);
+
+    void handle_token_init(const json::Document& d, Pistache::Http::ResponseWriter& response);
+    void handle_token_info(const json::Document& d, Pistache::Http::ResponseWriter& response);
+    void handle_token_advance(const json::Document& d, Pistache::Http::ResponseWriter& response);
+    void handle_token_results(const json::Document& d, Pistache::Http::ResponseWriter& response);
+
+    search::token& get_token(const std::int64_t id);
+    search::token& get_token(const json::Document& d);
 };
 
 #endif
