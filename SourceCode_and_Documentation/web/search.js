@@ -1,22 +1,23 @@
 // Global variables which might change based on our requests.
-var movies_max = 200000;
-var movies_current = 0;
-var steps = 0;
-var keyword = "action";
+var g_token = "";
+var g_movies_max = 0;
+var g_movies_current = 0;
+var g_steps = 0;
+var g_keyword = "action";
+var g_is_genre = false;
 
-var best_image = "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg";
-var best_title = "Interstellar";
-var best_description = "In the future...";
-var best_rating = "98";
-var best_year = "2014";
+var g_best_image =
+    "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg";
+var g_best_title = "Interstellar";
+var g_best_year = "2014";
 
-var add_english = false;
-var add_bw = false;
-var add_early = false;
-var add_silent = false;
-var add_adult = false;
+var g_is_foreign = false;
+var g_is_greyscale = false;
+var g_is_silent = false;
+var g_is_pre1980 = false;
+var g_is_adult = false;
 
-var questions = ["How do you feel about this genre?"]
+var questions = [ "How do you feel about this genre?" ]
 
 function uncheck_switches() {
     let switches = document.getElementsByClassName("switch");
@@ -30,21 +31,22 @@ function update_progress_bar() {
     for (const item of bars) {
         let id = item.getAttribute("id");
         if (id === "progress_bar") {
-            item.setAttribute("max", movies_max); // not necessary after 1st
-            item.setAttribute("value", movies_current);
+            item.setAttribute("max", g_movies_max); // not necessary after 1st
+            item.setAttribute("value", g_movies_max - g_movies_current);
         }
     }
 }
 
 function clear_object(item) {
-    while (item.firstChild && item.removeChild(item.firstChild));
+    while (item.firstChild && item.removeChild(item.firstChild))
+        ;
 }
 
 // Constructs a "do you want x" prompt with buttons.
 function draw_column_left(parent) {
     let title = document.createElement("h1");
     title.setAttribute("class", "title has-text-centered");
-    title.innerText = questions[steps];
+    title.innerText = questions[g_steps];
 
     let subtitle = document.createElement("h2");
     subtitle.setAttribute("class", "subtitle has-text-centered");
@@ -53,7 +55,7 @@ function draw_column_left(parent) {
     let word = document.createElement("h1");
     word.setAttribute("class", "title has-text-centered");
     word.setAttribute("style", "font-size: 60px;");
-    word.innerHTML = "<br>" + keyword;
+    word.innerHTML = "<br>" + g_keyword;
 
     let level = document.createElement("div");
     level.setAttribute("class", "level mt-6 pt-6");
@@ -69,7 +71,6 @@ function draw_column_left(parent) {
     exclude_button.setAttribute("class", "button is-large is-primary");
     exclude_button.setAttribute("id", "button_advance_exclude");
     exclude_button.innerText = "Exclude";
-
 
     parent.appendChild(title);
     parent.appendChild(subtitle);
@@ -92,7 +93,7 @@ function draw_column_right(parent) {
     let figure = document.createElement("figure");
     figure.setAttribute("class", "image is-3by4");
     let img = document.createElement("img");
-    img.setAttribute("src", best_image);
+    img.setAttribute("src", g_best_image);
 
     let card_content = document.createElement("div");
     card_content.setAttribute("class", "card-content");
@@ -103,9 +104,11 @@ function draw_column_right(parent) {
     title.innerText = "Current best result";
     let name = document.createElement("div");
     name.setAttribute("class", "subtitle");
-    name.innerText = best_title + ", " + best_year;
+    name.innerText = g_best_title + ", " + g_best_year;
+    /*
     let description = document.createElement("div");
-    description.innerText = best_description;
+    description.innerText = g_best_description;
+    */
 
     parent.appendChild(card);
     card.appendChild(card_image);
@@ -133,32 +136,6 @@ function redraw_column_contents() {
     }
 }
 
-function redraw_buttons() {
-    let levels = document.getElementsByClassName("level");
-    for (const item of levels) {
-        let id = item.getAttribute("id");
-        if (id === "level_button") {
-            clear_object(item);
-            let level_one = document.createElement("div");
-            level_one.setAttribute("class", "level-item has-text-centered");
-            let accept_button = document.createElement("button");
-            accept_button.setAttribute("class", "button is-large is-primary");
-            accept_button.innerText = "Yes please";
-
-            let level_two = document.createElement("div");
-            level_two.setAttribute("class", "level-item has-text-centered");
-            let deny_button = document.createElement("button");
-            deny_button.setAttribute("class", "button is-large is-warning");
-            deny_button.innerText = "No thanks";
-
-            item.appendChild(level_one);
-            level_one.appendChild(accept_button);
-            item.appendChild(level_two);
-            level_one.appendChild(deny_button);
-        }
-    }
-}
-
 // Removes elements that exist only on the first "begin search" page.
 function remove_begin_elements() {
     let begin_search_button = document.getElementById("level_buttons_begin");
@@ -167,29 +144,85 @@ function remove_begin_elements() {
     }
 }
 
+// Regardless of the request, this function should set the correct global vars.
 function update_global_variables(json) {
-    movies_current = 10500;
-    // It's a bit pointless to write this if we haven't written the server
-    // post response yet.
+    let token = json["token"];
+    if (token) {
+        g_token = token;
+    }
+    let max = json["max"];
+    if (max) {
+        g_movies_max = max;
+    }
+    let cur = json["cur"];
+    if (cur) {
+        g_movies_current = cur;
+    }
+    let keyword = json["keyword"];
+    if (keyword) {
+        g_keyword = keyword;
+    }
+    /*
+    let is_genre = json["is_genre"];
+    if (is_genre) {
+        g_is_genre = is_genre;
+    }
+    */
+}
+
+function draw_token_advance() {
+    update_progress_bar();
+    remove_begin_elements();
+    redraw_column_contents();
 }
 
 // This function parses all the json and stores it in the global variables too
-function redraw_box_interior(json) {
-    /*
-    if (json["advanced"] === "false") {
-        // SHOW END PAGE
-        return;
-    }
-    */
-
-    update_global_variables(json);
-    update_progress_bar();
-
-    remove_begin_elements();
-    redraw_column_contents();
-
-    // New buttons require rebinding.
+function redraw_box_interior() {
+    // Eventually this should split into a finished page once we have exhaused
+    // all questions, but for now we have only one branch.
+    draw_token_advance();
     bind_button_listeners();
+}
+
+async function make_init_request() {
+    let json_options = {
+        "type" : "init",
+        "is_foreign" : String(g_is_foreign),
+        "is_greyscale" : String(g_is_greyscale),
+        "is_silent" : String(g_is_silent),
+        "is_pre1980" : String(g_is_pre1980),
+        "is_adult" : String(g_is_adult)
+    };
+    let request_body = {method : "POST", body : JSON.stringify(json_options)};
+    let request_url = window.location.hostname;
+    await fetch(request_url, request_body)
+        .then(response => response.json())
+        .then(data => update_global_variables(data));
+}
+
+async function make_info_request() {
+    let json_options = {
+        "type" : "info",
+        "token" : String(g_token),
+    };
+    let request_body = {method : "POST", body : JSON.stringify(json_options)};
+    let request_url = window.location.hostname;
+    await fetch(request_url, request_body)
+        .then(response => response.json())
+        .then(data => update_global_variables(data));
+}
+
+async function make_advance_request(should_remove) {
+    let json_options = {
+        "type" : "advance",
+        "token" : String(g_token),
+        "remove" : String(should_remove)
+    };
+    let request_body = {method : "POST", body : JSON.stringify(json_options)};
+    let request_url = window.location.hostname;
+    await fetch(request_url, request_body)
+        .then(response => response.json())
+        .then(data => update_global_variables(data));
 }
 
 // Listeners
@@ -198,19 +231,30 @@ function bind_button_listeners() {
     for (const item of buttons) {
         let id = item.getAttribute("id");
         if (id === "button_start") {
-            item.addEventListener("click", event => {
+            item.addEventListener("click", async event => {
                 event.stopPropagation();
-                redraw_box_interior("asdf");
+                event.target.classList.add("is-loading");
+                // These must block or we will have no data to render!
+                // init also relies on info!
+                await make_init_request();
+                await make_info_request();
+                redraw_box_interior();
             });
         } else if (id === "button_advance_include") {
-            item.addEventListener("click", event => {
+            item.addEventListener("click", async event => {
                 event.stopPropagation();
-                alert("button_advance_include js");
+                event.target.classList.add("is-loading");
+                await make_advance_request(false);
+                await make_info_request();
+                redraw_box_interior();
             });
         } else if (id === "button_advance_exclude") {
-            item.addEventListener("click", event => {
+            item.addEventListener("click", async event => {
                 event.stopPropagation();
-                alert("button_advance_exclude js");
+                event.target.classList.add("is-loading");
+                await make_advance_request(true);
+                await make_info_request();
+                redraw_box_interior();
             });
         }
     }
@@ -223,27 +267,27 @@ function bind_switch_listeners() {
         if (id === "switch_english") {
             item.addEventListener("click", event => {
                 event.stopPropagation();
-                add_english = !add_english;
+                g_is_foreign = !g_is_foreign;
             });
         } else if (id === "switch_bw") {
             item.addEventListener("click", event => {
                 event.stopPropagation();
-                add_bw = !add_bw;
+                g_is_greyscale = !g_is_greyscale;
             });
         } else if (id === "switch_early") {
             item.addEventListener("click", event => {
                 event.stopPropagation();
-                add_early = !add_early;
+                g_is_silent = !g_is_silent;
             });
         } else if (id === "switch_silent") {
             item.addEventListener("click", event => {
                 event.stopPropagation();
-                add_silent = !add_silent;
+                g_is_pre1980 = !g_is_pre1980
             });
         } else if (id === "switch_adult") {
             item.addEventListener("click", event => {
                 event.stopPropagation();
-                add_adult = !add_adult;
+                g_is_adult = !g_is_adult;
             });
         }
     }
