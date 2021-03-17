@@ -50,9 +50,8 @@ static std::string get_json_str(const json::Document& d, const std::string& valu
             + "\' when parsing POST request contents.";
         throw std::runtime_error(msg);
     }
-    return it->value.GetString();
+    return {it->value.GetString(), it->value.GetStringLength()};
 }
-
 
 search::token& PageHandler::get_token(const std::int64_t id) {
     const auto token_has_identifier = [id](const search::token& token) {
@@ -67,7 +66,6 @@ search::token& PageHandler::get_token(const std::int64_t id) {
         + "\' could not be found.";
     throw std::runtime_error(msg);
 }
-
 
 search::token& PageHandler::get_token(const json::Document& d) {
     const std::string token_str = get_json_str(d, "token");
@@ -183,6 +181,7 @@ void PageHandler::handle_get_request(
 
 void PageHandler::onRequest(const Pistache::Http::Request& request,
                             Pistache::Http::ResponseWriter response) {
+    response.headers().add<Pistache::Http::Header::ContentType>(MIME(Application, Json));
     try { 
         switch (request.method()) {
         case Pistache::Http::Method::Post:
