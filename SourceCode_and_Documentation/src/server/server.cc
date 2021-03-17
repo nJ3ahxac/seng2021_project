@@ -139,6 +139,7 @@ void PageHandler::handle_token_results(const json::Document& d,
 void PageHandler::handle_post_request(
         const Pistache::Http::Request& request,
         Pistache::Http::ResponseWriter& response) {
+    response.headers().add<Pistache::Http::Header::ContentType>(MIME(Application, Json));
     json::Document d(json::kObjectType);
     d.Parse(request.body());
 
@@ -181,7 +182,6 @@ void PageHandler::handle_get_request(
 
 void PageHandler::onRequest(const Pistache::Http::Request& request,
                             Pistache::Http::ResponseWriter response) {
-    response.headers().add<Pistache::Http::Header::ContentType>(MIME(Application, Json));
     try { 
         switch (request.method()) {
         case Pistache::Http::Method::Post:
