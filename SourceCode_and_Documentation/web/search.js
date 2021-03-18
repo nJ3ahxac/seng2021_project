@@ -17,7 +17,9 @@ var g_is_silent = false;
 var g_is_pre1980 = false;
 var g_is_adult = false;
 
-var questions = [ "How do you feel about this genre?" ]
+var g_prompts = [ "How do you feel about this ", 
+                  "What about this ", 
+                  "And this " ];
 
 function uncheck_switches() {
     let switches = document.getElementsByClassName("switch");
@@ -31,22 +33,29 @@ function update_progress_bar() {
     for (const item of bars) {
         let id = item.getAttribute("id");
         if (id === "progress_bar") {
-            item.setAttribute("max", g_movies_max); // not necessary after 1st
+            item.setAttribute("max", g_movies_max);
             item.setAttribute("value", g_movies_max - g_movies_current);
         }
     }
 }
 
 function clear_object(item) {
-    while (item.firstChild && item.removeChild(item.firstChild))
-        ;
+    while (item.firstChild && item.removeChild(item.firstChild));
+}
+
+function get_prompt() {
+    let suffix = "keyword";
+    if (g_is_genre === "true") {
+        suffix = "genre";
+    }
+    return g_prompts[g_steps % g_prompts.length] + suffix + "?";
 }
 
 // Constructs a "do you want x" prompt with buttons.
 function draw_column_left(parent) {
     let title = document.createElement("h1");
     title.setAttribute("class", "title has-text-centered");
-    title.innerText = questions[g_steps];
+    title.innerText = get_prompt();
 
     let subtitle = document.createElement("h2");
     subtitle.setAttribute("class", "subtitle has-text-centered");
@@ -121,8 +130,6 @@ function draw_column_right(parent) {
 }
 
 function redraw_column_contents() {
-    // remove the contents of the column
-    // !! THIS IS NOT COLUMNS, IT IS COLUMN DIV OBJECT
     let columns = document.getElementsByClassName("column");
     for (const item of columns) {
         let id = item.getAttribute("id");
@@ -162,12 +169,10 @@ function update_global_variables(json) {
     if (keyword) {
         g_keyword = keyword;
     }
-    /*
     let is_genre = json["is_genre"];
     if (is_genre) {
         g_is_genre = is_genre;
     }
-    */
 }
 
 function draw_token_advance() {
@@ -225,37 +230,48 @@ async function make_advance_request(should_remove) {
         .then(data => update_global_variables(data));
 }
 
+async function handle_button_start(event) {
+    event.stopPropagation();
+    event.target.classList.add("is-loading");
+    unbind_request_button_listeners();
+    // These must block or we will have no data to render!
+    // init also relies on info!
+    await make_init_request();
+    await make_info_request();
+    redraw_box_interior();
+}
+
+async function handle_button_advance_include(event) {
+    event.stopPropagation();
+    event.target.classList.add("is-loading");
+    unbind_request_button_listeners();
+    ++g_steps;
+    await make_advance_request(false);
+    await make_info_request();
+    redraw_box_interior();
+}
+
+async function handle_button_advance_exclude(event) {
+    event.stopPropagation();
+    event.target.classList.add("is-loading");
+    unbind_request_button_listeners();
+    ++g_steps;
+    await make_advance_request(true);
+    await make_info_request();
+    redraw_box_interior();
+}
+
 // Listeners
 function bind_button_listeners() {
     let buttons = document.getElementsByClassName("button");
     for (const item of buttons) {
         let id = item.getAttribute("id");
         if (id === "button_start") {
-            item.addEventListener("click", async event => {
-                event.stopPropagation();
-                event.target.classList.add("is-loading");
-                // These must block or we will have no data to render!
-                // init also relies on info!
-                await make_init_request();
-                await make_info_request();
-                redraw_box_interior();
-            });
+            item.addEventListener("click", handle_button_start);
         } else if (id === "button_advance_include") {
-            item.addEventListener("click", async event => {
-                event.stopPropagation();
-                event.target.classList.add("is-loading");
-                await make_advance_request(false);
-                await make_info_request();
-                redraw_box_interior();
-            });
+            item.addEventListener("click", handle_button_advance_include);
         } else if (id === "button_advance_exclude") {
-            item.addEventListener("click", async event => {
-                event.stopPropagation();
-                event.target.classList.add("is-loading");
-                await make_advance_request(true);
-                await make_info_request();
-                redraw_box_interior();
-            });
+            item.addEventListener("click", handle_button_advance_exclude);
         }
     }
 }
@@ -289,6 +305,22 @@ function bind_switch_listeners() {
                 event.stopPropagation();
                 g_is_adult = !g_is_adult;
             });
+        }
+    }
+}
+
+// This function unbinds buttons which make a request so that a user cannot
+// press two buttons and invoke a networked race condition.
+function unbind_request_button_listeners() {
+    let buttons = document.getElementsByClassName("button");
+    for (const item of buttons) {
+        let id = item.getAttribute("id");
+        if (id === "button_start") {
+            item.removeEventListener("click", handle_button_start);
+        } else if (id === "button_advance_include") {
+            item.removeEventListener("click", handle_button_advance_include);
+        } else if (id === "button_advance_exclude") {
+            item.removeEventListener("click", handle_button_advance_exclude);
         }
     }
 }
