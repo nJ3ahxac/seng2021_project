@@ -39,7 +39,7 @@ Finally, compile from source via cmake after moving into the SourceCode_and_Docu
 
 # Usage
 
-The webserver binary should be executed when the current working directory is <strong>inside</strong>`SourceCode_and_Documentation`. To start the server, run the binary `webserver` located in `src`. It should look like the following:
+The webserver binary should be executed when the current working directory is <strong>inside</strong> `SourceCode_and_Documentation`. To start the server, run the binary `webserver` located in `src`. It should look like the following:
 ```console
     $ ./src/webserver
 ```
@@ -53,4 +53,6 @@ After the cache has been updated, the webserver can typically be accessed at `lo
 
 # Testing and Contributing
 
-We are using the testing framework [Googletest](https://github.com/google/googletest). By default, unit tests are automatically executed during the build process. Ensure that no test failures are present before making a pull request. Attempt to follow the current testing layout style. For example, non-statically linked functions that may server a purpose in other areas should be placed in `src/util/util.cc` and tested accordingly in `test/tests/utiltest.cc`. For code which it is not viable to test directly, it is acceptable that the expected behaviour is instead tested more generally through networked means (see `test/tests/servertest.cc` for an example).
+We are using the testing framework [Googletest](https://github.com/google/googletest). By default, unit tests are automatically executed during the build process. Ensure that no test failures are present before making a pull request. Attempt to follow the current testing layout style. For example, non-statically linked functions that may server a purpose in other areas should be placed in `src/util/util.cc` and tested accordingly in `test/tests/utiltest.cc`. 
+
+For code which it is not viable to test directly, it is acceptable that the expected behaviour is instead tested more generally through networked means (see `test/tests/servertest.cc` for an example).
