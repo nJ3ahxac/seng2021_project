@@ -2,21 +2,6 @@
 
 using namespace search;
 
-struct movie_entry {
-    std::int32_t imdb_index;
-    float rating;
-    std::int16_t year, flags;
-    std::unordered_set<std::string> genres, keywords;
-};
-
-static std::vector<movie_entry> movie_entries;
-static std::unordered_set<std::string> all_keywords;
-static std::unordered_set<std::string> all_genres;
-
-static const movie_entry& movie_from_index(const std::int32_t index) {
-    return movie_entries[static_cast<std::size_t>(index)];
-}
-
 // Expects an imdb string with the leading "tt" characters, i.e. "tt00015132"
 static std::int32_t tokenise_imdb_index(const std::string& imdb) {
     const auto should_skip_char = [](const char value) {
@@ -72,22 +57,6 @@ static std::int16_t calc_movie_flags(const movie_entry& movie, const std::string
     return flags;
 }
 
-void search::initialise(const MovieData& movies) {
-    const json::Document& data = movies.data;
-
-    movie_entries.reserve(data.MemberCount());
-
-    for (const auto& movie : data.GetObject()) {
-        auto& entry = movie_entries.emplace_back(movie_entry{
-            .imdb_index = tokenise_imdb_index(movie.name.GetString()),
-            .rating = calc_movie_rating(movie.value),
-            .year = static_cast<std::int16_t>(movie.value["year"].GetInt()),
-            .genres = array_to_set(movie.value["genres"], all_genres),
-            .keywords = array_to_set(movie.value["keywords"], all_keywords)});
-        entry.flags = calc_movie_flags(entry, movie.value["language"].GetString());
-    }
-}
-
 static std::int64_t generate_token_identifier() {
     return std::random_device{"/dev/random"}();
 }
@@ -112,37 +81,10 @@ static bool movie_matches_flags(const movie_entry& movie, const std::int16_t fla
     return true;
 }
 
-static std::vector<std::int32_t> get_top_level_token_entries(const std::int16_t flags) {
-    std::vector<std::int32_t> ret;
-    ret.reserve(movie_entries.size());
-
-    for (std::size_t i = 0; i < movie_entries.size(); ++i) {
-        const auto& movie = movie_entries[i];
-        if (movie_matches_flags(movie, flags)) {
-            ret.push_back(static_cast<std::int32_t>(i));
-        }
-    }
-
-    return ret;
-}
-
-// return a float where a greater number means a genre is more controversial.
-static float get_genre_rating(const token& token, const std::string& genre) {
-    const auto entry_has_genre = [&](const std::int32_t id) {
-        return movie_entries[static_cast<std::size_t>(id)].genres.contains(genre);
-    };
-    const auto matches = std::ranges::count_if(token.entries, entry_has_genre);
-    const float fraction = static_cast<float>(matches) / static_cast<float>(token.entries.size());
-    return fraction > 0.5f ? 1.0f - fraction : fraction;
-}
-
-struct genre_rating {
-    float rating;
-    std::string keyword;
-};
+// SearchData methods.
 
 // return a std::vector of populated genre_ratings sorted by descending rating
-static std::vector<genre_rating> rate_token_genres(const token& token) {
+std::vector<genre_rating> SearchData::rate_token_genres(const token& token) {
     std::vector<genre_rating> ret;
     ret.reserve(all_genres.size());
 
@@ -157,23 +99,12 @@ static std::vector<genre_rating> rate_token_genres(const token& token) {
     return ret;
 }
 
-// return a float where a greater number means a keyword is more controversial.
-static float get_keyword_rating(const token& token, const std::string& keyword) {
-    const auto entry_has_keyword = [&](const std::int32_t id) {
-        return movie_entries[static_cast<std::size_t>(id)].keywords.contains(keyword);
-    };
-    const auto matches = std::ranges::count_if(token.entries, entry_has_keyword);
-    const float fraction = static_cast<float>(matches) / static_cast<float>(token.entries.size());
-    return fraction > 0.5f ? 1.0f - fraction : fraction;
+const movie_entry& SearchData::movie_from_index(const std::int32_t index) {
+    return this->movie_entries[static_cast<std::size_t>(index)];
 }
 
-struct keyword_rating {
-    float rating;
-    std::string keyword;
-};
-
 // return a std::vector of populated keyword_ratings sorted by descending rating
-static std::vector<keyword_rating> rate_token_keywords(const token& token) {
+std::vector<SearchData::keyword_rating> SearchData::rate_token_keywords(const token& token) {
     std::vector<keyword_rating> ret;
     ret.reserve(all_keywords.size());
 
@@ -188,7 +119,58 @@ static std::vector<keyword_rating> rate_token_keywords(const token& token) {
     return ret;
 }
 
-token search::create_token(const std::int16_t flags) {
+// return a float where a greater number means a keyword is more controversial.
+float SearchData::get_keyword_rating(const token& token, const std::string& keyword) {
+    const auto entry_has_keyword = [&](const std::int32_t id) {
+        return movie_entries[static_cast<std::size_t>(id)].keywords.contains(keyword);
+    };
+    const auto matches = std::ranges::count_if(token.entries, entry_has_keyword);
+    const float fraction = static_cast<float>(matches) / static_cast<float>(token.entries.size());
+    return fraction > 0.5f ? 1.0f - fraction : fraction;
+}
+
+std::vector<std::int32_t> SearchData::get_top_level_token_entries(const std::int16_t flags) {
+    std::vector<std::int32_t> ret;
+    ret.reserve(this->movie_entries.size());
+
+    for (std::size_t i = 0; i < this->movie_entries.size(); ++i) {
+        const auto& movie = this->movie_entries[i];
+        if (movie_matches_flags(movie, flags)) {
+            ret.push_back(static_cast<std::int32_t>(i));
+        }
+    }
+
+    return ret;
+}
+
+// return a float where a greater number means a genre is more controversial.
+float SearchData::get_genre_rating(const token& token, const std::string& genre) {
+    const auto entry_has_genre = [&](const std::int32_t id) {
+        return this->movie_entries[static_cast<std::size_t>(id)].genres.contains(genre);
+    };
+    const auto matches = std::ranges::count_if(token.entries, entry_has_genre);
+    const float fraction = static_cast<float>(matches) / static_cast<float>(token.entries.size());
+    return fraction > 0.5f ? 1.0f - fraction : fraction;
+}
+
+
+SearchData::SearchData(const MovieData& movies) {
+    const json::Document& data = movies.data;
+
+    this->movie_entries.reserve(data.MemberCount());
+
+    for (const auto& movie : data.GetObject()) {
+        auto& entry = movie_entries.emplace_back(movie_entry{
+            .imdb_index = tokenise_imdb_index(movie.name.GetString()),
+            .rating = calc_movie_rating(movie.value),
+            .year = static_cast<std::int16_t>(movie.value["year"].GetInt()),
+            .genres = array_to_set(movie.value["genres"], all_genres),
+            .keywords = array_to_set(movie.value["keywords"], all_keywords)});
+        entry.flags = calc_movie_flags(entry, movie.value["language"].GetString());
+    }
+}
+
+token SearchData::create_token(const std::int16_t flags) {
     token ret = {.identifier = generate_token_identifier(),
             .entries = get_top_level_token_entries(flags),
             .keyword = {},
@@ -198,7 +180,7 @@ token search::create_token(const std::int16_t flags) {
     return ret;
 }
 
-void search::advance_token(token& token, const bool remove) {
+void SearchData::advance_token(token& token, const bool remove) {
     // Did the previous question filter genres or keywords?
     if (token.is_filtering_genres) {
         const auto should_remove_genre = [&](const std::int32_t index) {
@@ -236,7 +218,7 @@ void search::advance_token(token& token, const bool remove) {
     }
 
     // No more possible questions to ask - return best according to rating.
-    const auto has_better_rating = [](const std::int32_t a, const std::int32_t b) {
+    const auto has_better_rating = [this](const std::int32_t a, const std::int32_t b) {
         return movie_from_index(a).rating > movie_from_index(b).rating;
     };
     std::ranges::sort(token.entries, has_better_rating);

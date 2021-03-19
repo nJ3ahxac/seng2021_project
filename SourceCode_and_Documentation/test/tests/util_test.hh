@@ -9,6 +9,7 @@
 #include "util/util.hh"
 
 namespace utiltest {
+static const std::string test_dir = "test/tmp";
 static const std::string test_filename = "utiltest.tmp";
 static const std::string test_url = "example.com";
 static bool has_internet = true;
@@ -42,7 +43,7 @@ protected:
 
     virtual ~UtilTest() override {
         wipe_tmpfile(utiltest::test_filename);
-        std::filesystem::remove(utiltest::test_filename);
+        std::filesystem::remove_all(utiltest::test_filename);
     };
 };
 

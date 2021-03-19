@@ -16,36 +16,39 @@
     }
 
     std::cout << "Initialising search database with "
-        << movies->data.MemberCount()
-        << " films.\n";
+              << movies->data.MemberCount() << " films.\n";
 
-    search::initialise(*movies);
+    SearchData searchdata{*movies};
 
     std::cout << "Search initialized, creating token\n";
 
-    search::token t = search::create_token();
+    search::token t = searchdata.create_token();
     while (!t.suggestion.has_value()) {
-        std::cout << t.entries.size() << " movies left, best keyword is " << t.keyword << '\n';
+        std::cout << t.entries.size() << " movies left, best keyword is "
+                  << t.keyword << '\n';
         std::cout << "(r)emove or (k)eep keyword? ";
 
-        char answer; std::cin >> answer;
+        char answer;
+        std::cin >> answer;
         if (answer != 'r' && answer != 'k') {
             continue;
         }
 
-        search::advance_token(t, answer == 'r');
+        searchdata.advance_token(t, answer == 'r');
     }
 
-    std::cout << "Your movie suggestion is IMDB index " << t.suggestion.value() << '\n';
+    std::cout << "Your movie suggestion is IMDB index " << t.suggestion.value()
+              << '\n';
     if (t.entries.size() > 1) {
-        std::cout << "However, there are " << t.entries.size() - 1 << " alternatives\n";
+        std::cout << "However, there are " << t.entries.size() - 1
+                  << " alternatives\n";
     }
 
     std::exit(EXIT_SUCCESS);
 }
 
 int main(const int argc, const char* argv[]) {
-    //test_textmode_client();
+    // test_textmode_client();
     if (argc > 3) {
         std::cout << "Too many arguments: <port=9080> <threads=1>\n";
         std::exit(EXIT_FAILURE);
@@ -71,14 +74,14 @@ int main(const int argc, const char* argv[]) {
 
     // Attempt to initialise MovieData via our cache. If it doesn't exist,
     // we will redownload the cache (lest our server serves no data).
-    std::optional<MovieData> movies;
+    std::optional<MovieData> moviedata;
     try {
         std::cout << "Loading pre-existing movie data cache.\n";
-        movies = MovieData(MovieData::construct::with_cache);
+        moviedata = MovieData(MovieData::construct::with_cache);
     } catch (const MovieData::cache_error& e) {
         std::cout << "Failed to load movie data from pre-existing cache.\n"
                      "Regenerating cache. This may take a while.\n";
-        movies = MovieData(MovieData::construct::without_cache);
+        moviedata = MovieData(MovieData::construct::without_cache);
         std::cout << "Movie data cache regenerated.\n";
     } catch (const std::exception& e) {
         std::cerr << "Bad movie data initialisation: " << e.what() << '\n';
@@ -86,10 +89,7 @@ int main(const int argc, const char* argv[]) {
     }
 
     std::cout << "Initialising search database with: "
-        << movies->data.MemberCount()
-        << " films.\n";
-
-    search::initialise(*movies);
+              << moviedata->data.MemberCount() << " films.\n";
 
     const Pistache::Address addr(Pistache::Ipv4::any(), Pistache::Port(port));
     const auto opts = Pistache::Http::Endpoint::options().threads(threads);
@@ -97,7 +97,8 @@ int main(const int argc, const char* argv[]) {
     server.init(opts);
 
     try {
-        server.setHandler(Pistache::Http::make_handler<PageHandler>());
+        server.setHandler(
+            Pistache::Http::make_handler<PageHandler>(*moviedata));
     } catch (const std::exception& e) {
         std::cerr << "Bad handler set: " << e.what() << '\n';
         std::exit(EXIT_FAILURE);

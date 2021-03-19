@@ -12,7 +12,7 @@ static std::size_t get_part_index_of(const std::vector<std::string>& keys,
     return static_cast<std::size_t>(std::distance(keys.begin(), it));
 }
 
-json::Document MovieData::gzip_download_to_json(const std::string& url) {
+static json::Document gzip_download_to_json(const std::string& url) {
     const std::string title_basics =
         util::decompress_gzip(util::download_url(url));
     std::stringstream ss{title_basics};
@@ -337,11 +337,12 @@ static void prune_movie_data(json::Document& doc) {
     }
 }
 
-MovieData::MovieData(const construct& c) {
+MovieData::MovieData(const construct& c, const std::string& cache_dir) {
+    const std::string cache_file = "title_basics.json";
     // Do not update cache if constructed with_cache, just read from files.
     if (c == construct::with_cache) {
         try {
-            this->data = util::read_file_json("cache/title_basics.json");
+            this->data = util::read_file_json(cache_dir + cache_file);
         } catch (std::exception& e) {
             throw cache_error(e.what());
         }
@@ -366,6 +367,15 @@ MovieData::MovieData(const construct& c) {
     // rating)
     prune_movie_data(this->data);
 
-    std::filesystem::create_directory("cache");
-    util::write_file_json("cache/title_basics.json", this->data);
+    std::filesystem::create_directory(cache_dir);
+    util::write_file_json(cache_dir + cache_file, this->data);
+}
+
+MovieData::MovieData(const MovieData& md) {
+    this->data.CopyFrom(md.data, this->data.GetAllocator());
+}
+
+MovieData MovieData::operator=(const MovieData& md) {
+    this->data.CopyFrom(md.data, this->data.GetAllocator());
+    return *this;
 }

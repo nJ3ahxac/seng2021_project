@@ -35,8 +35,6 @@ namespace json = rapidjson;
 struct MovieData {
     json::Document data;
 
-    static json::Document gzip_download_to_json(const std::string& url);
-
     class cache_error : public std::runtime_error {
     public:
         cache_error(const std::string& m) : std::runtime_error(m) {}
@@ -54,7 +52,9 @@ struct MovieData {
     // with_cache is preferred over without_cache as it is far slower. It
     // should only be performed between long intervals when updating the movie
     // data is necessary.
-    MovieData(const construct&);
+    MovieData(const construct&, const std::string& cache_dir = "cache/");
+    MovieData(const MovieData& md);
+    MovieData operator=(const MovieData& md);
 };
 
 #endif

@@ -1,7 +1,8 @@
 #ifndef SERVER_SERVER_HH_
 #define SERVER_SERVER_HH_
 
-#include "search.hh"
+#include "server/search.hh"
+#include "client/client.hh"
 #include "util/util.hh"
 
 #include <pistache/endpoint.h>
@@ -25,13 +26,15 @@ private:
     const std::unordered_map<std::string, std::string> bindings;
     // Map of all files, where the key is their directory.
     const std::unordered_map<std::string, std::string> resources;
+    // SearchData object for making operations to tokens.
+    SearchData searchdata;
     // Circular buffer of search tokens
     boost::circular_buffer<search::token> tokens;
 public:
     // Caches all web files provided and associates bindings for later lookup.
     // Throws std::runtime_error if a file does not exist, hopefully before the
     // server is started.
-    PageHandler();
+    PageHandler(const MovieData& m);
 
     // Macro for overriding the clone() member function for standard use.
     HTTP_PROTOTYPE(PageHandler)

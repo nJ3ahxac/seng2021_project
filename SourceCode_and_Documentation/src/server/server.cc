@@ -4,19 +4,19 @@ static std::unordered_map<std::string, std::string> create_resources() {
     std::unordered_map<std::string, std::string> resources;
     // Put new files in files, put new bindings in bindings!
     const std::string files[] = {"/404.html",
-                                            "/main.html",
-                                            "/main.js",
-                                            "/about.html",
-                                            "/search.html",
-                                            "/search.js",
-                                            "/res/birds.png",
-                                            "/res/charizard.png",
-                                            "/res/cinema_mask.png",
-                                            "/res/cinemascout.png",
-                                            "/res/eye.png",
-                                            "/res/horse.png",
-                                            "/res/mask.png",
-                                            "/res/binoculars.png"};
+                                 "/main.html",
+                                 "/main.js",
+                                 "/about.html",
+                                 "/search.html",
+                                 "/search.js",
+                                 "/res/birds.png",
+                                 "/res/charizard.png",
+                                 "/res/cinema_mask.png",
+                                 "/res/cinemascout.png",
+                                 "/res/eye.png",
+                                 "/res/horse.png",
+                                 "/res/mask.png",
+                                 "/res/binoculars.png"};
 
     // Copies the files into a std::map with the key as the directory.
     //
@@ -28,26 +28,23 @@ static std::unordered_map<std::string, std::string> create_resources() {
     return resources;
 }
 
-PageHandler::PageHandler()
+PageHandler::PageHandler(const MovieData& m)
     : Pistache::Http::Handler(), bindings{{"/", "/main.html"},
                                           {"/search", "/search.html"},
                                           {"/about", "/about.html"}},
-        resources(create_resources()),
-        tokens(max_token_storage) {
-}
+      resources(create_resources()), searchdata(m), tokens(max_token_storage) {}
 
-static std::string get_json_str(const json::Document& d, const std::string& value) {
+static std::string get_json_str(const json::Document& d,
+                                const std::string& value) {
     const auto it = d.FindMember(value);
     if (it == d.MemberEnd()) {
-        const std::string msg = "No member for expected JSON key \'"
-            + value
-            + "\' when parsing POST request contents.";
+        const std::string msg = "No member for expected JSON key \'" + value +
+                                "\' when parsing POST request contents.";
         throw std::runtime_error(msg);
     }
     if (!it->value.IsString()) {
-        const std::string msg = "Non-string type of JSON key \'"
-            + value
-            + "\' when parsing POST request contents.";
+        const std::string msg = "Non-string type of JSON key \'" + value +
+                                "\' when parsing POST request contents.";
         throw std::runtime_error(msg);
     }
     return {it->value.GetString(), it->value.GetStringLength()};
@@ -61,9 +58,8 @@ search::token& PageHandler::get_token(const std::int64_t id) {
     if (it < tokens.end()) {
         return *it;
     }
-    const std::string msg = "Token of id: \'"
-        + std::to_string(id)
-        + "\' could not be found.";
+    const std::string msg =
+        "Token of id: \'" + std::to_string(id) + "\' could not be found.";
     throw std::runtime_error(msg);
 }
 
@@ -75,15 +71,14 @@ search::token& PageHandler::get_token(const json::Document& d) {
     } catch (const std::runtime_error& e) {
         throw e;
     } catch (...) {
-        const std::string msg = "Failed to convert token string: \'"
-            + token_str
-            + "\' to an int64_t.";
+        const std::string msg = "Failed to convert token string: \'" +
+                                token_str + "\' to an int64_t.";
         throw std::runtime_error(msg);
     }
 }
 
 void PageHandler::handle_token_init(const json::Document& d,
-        Pistache::Http::ResponseWriter& response) {
+                                    Pistache::Http::ResponseWriter& response) {
     std::int16_t flags = 0;
     static std::string checked = "true";
     if (get_json_str(d, "is_foreign") == checked) {
@@ -101,45 +96,41 @@ void PageHandler::handle_token_init(const json::Document& d,
     if (get_json_str(d, "is_adult") == checked) {
         flags |= search::MF_ADULT;
     }
-    tokens.push_front(search::create_token(flags));
-    
-    const std::string msg = "{\"token\":"
-        + std::to_string(tokens.front().identifier)
-        + ", \"max\":"
-        + std::to_string(tokens.front().entries.size())
-        + "}";
+    tokens.push_front(searchdata.create_token(flags));
+
+    const std::string msg =
+        "{\"token\":" + std::to_string(tokens.front().identifier) +
+        ", \"max\":" + std::to_string(tokens.front().entries.size()) + "}";
     response.send(Pistache::Http::Code::Ok, msg);
 }
 
 void PageHandler::handle_token_info(const json::Document& d,
-        Pistache::Http::ResponseWriter& response) {
+                                    Pistache::Http::ResponseWriter& response) {
     auto& token = get_token(d);
-    const std::string msg = "{\"cur\":"
-        + std::to_string(token.entries.size())
-        + ", \"keyword\": \""
-        + token.keyword
-        + "\", \"is_genre\": \""
-        + std::string{token.is_filtering_genres ? "true" : "false"}
-        + "\"}";
+    const std::string msg =
+        "{\"cur\":" + std::to_string(token.entries.size()) +
+        ", \"keyword\": \"" + token.keyword + "\", \"is_genre\": \"" +
+        std::string{token.is_filtering_genres ? "true" : "false"} + "\"}";
     response.send(Pistache::Http::Code::Ok, msg);
 }
 
-void PageHandler::handle_token_advance(const json::Document& d,
-        Pistache::Http::ResponseWriter& response) {
+void PageHandler::handle_token_advance(
+    const json::Document& d, Pistache::Http::ResponseWriter& response) {
     auto& token = get_token(d);
-    search::advance_token(token, get_json_str(d, "remove") == "true");
+    searchdata.advance_token(token, get_json_str(d, "remove") == "true");
     response.send(Pistache::Http::Code::Ok, "{}");
 }
 
-void PageHandler::handle_token_results(const json::Document& d,
-        Pistache::Http::ResponseWriter& response) {
+void PageHandler::handle_token_results(
+    const json::Document& d, Pistache::Http::ResponseWriter& response) {
     throw std::runtime_error("Unimplemented operation");
 }
 
 void PageHandler::handle_post_request(
-        const Pistache::Http::Request& request,
-        Pistache::Http::ResponseWriter& response) {
-    response.headers().add<Pistache::Http::Header::ContentType>(MIME(Application, Json));
+    const Pistache::Http::Request& request,
+    Pistache::Http::ResponseWriter& response) {
+    response.headers().add<Pistache::Http::Header::ContentType>(
+        MIME(Application, Json));
     json::Document d(json::kObjectType);
     d.Parse(request.body());
 
@@ -158,9 +149,8 @@ void PageHandler::handle_post_request(
     }
 }
 
-void PageHandler::handle_get_request(
-        const Pistache::Http::Request& request,
-        Pistache::Http::ResponseWriter& response) {
+void PageHandler::handle_get_request(const Pistache::Http::Request& request,
+                                     Pistache::Http::ResponseWriter& response) {
     // There are three cases for providing files here.
     // 1. The page requested is in our bindings, eg "/" -> "main.html"
     if (const auto it = bindings.find(request.resource());
@@ -182,7 +172,7 @@ void PageHandler::handle_get_request(
 
 void PageHandler::onRequest(const Pistache::Http::Request& request,
                             Pistache::Http::ResponseWriter response) {
-    try { 
+    try {
         switch (request.method()) {
         case Pistache::Http::Method::Post:
             handle_post_request(request, response);
