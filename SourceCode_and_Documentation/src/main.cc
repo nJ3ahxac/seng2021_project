@@ -103,8 +103,12 @@ int main(const int argc, const char* argv[]) {
         std::cerr << "Bad handler set: " << e.what() << '\n';
         std::exit(EXIT_FAILURE);
     }
-    // TODO handle exceptions to do nothing after this point
 
-    std::cout << "Port: " << port << "\nThreads: " << threads << '\n';
-    server.serve();
+    try {
+        std::cout << "Port: " << port << "\nThreads: " << threads << '\n';
+        server.serve();
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Uncaught server exception: " << e.what() << '\n';
+    }
 }

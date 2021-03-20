@@ -9,6 +9,7 @@ static std::unordered_map<std::string, std::string> create_resources() {
                                  "/about.html",
                                  "/search.html",
                                  "/search.js",
+                                 "/res/favicon.ico",
                                  "/res/birds.png",
                                  "/res/charizard.png",
                                  "/res/cinema_mask.png",
@@ -31,7 +32,8 @@ static std::unordered_map<std::string, std::string> create_resources() {
 PageHandler::PageHandler(const MovieData& m)
     : Pistache::Http::Handler(), bindings{{"/", "/main.html"},
                                           {"/search", "/search.html"},
-                                          {"/about", "/about.html"}},
+                                          {"/about", "/about.html"},
+                                          {"/favicon.ico", "/res/favicon.ico"}},
       resources(create_resources()), searchdata(m), tokens(max_token_storage) {}
 
 static std::string get_json_str(const json::Document& d,
