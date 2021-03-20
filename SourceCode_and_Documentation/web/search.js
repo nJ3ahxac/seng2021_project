@@ -175,9 +175,15 @@ function update_global_variables(json) {
     }
 }
 
+function set_column_padding(value) {
+    let column = document.getElementById("columns_question");
+    column.setAttribute("style", "padding-top: " + value + "px;");
+}
+
 function draw_token_advance() {
     update_progress_bar();
     remove_begin_elements();
+    set_column_padding(33);
     redraw_column_contents();
 }
 

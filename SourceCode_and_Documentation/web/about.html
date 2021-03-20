@@ -6,82 +6,94 @@
         <title>About | CinemaScout</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
         <link rel="shortcut icon" href="/favicon.ico">
+        <style media="screen">
+            body {
+                display: flex;
+                min-height: 100vh;
+                flex-direction: column;
+            }
+        </style>
     </head>
 
-    <div class="container">
-        <div class="navbar">
-            <div class="navbar-brand">
-                <a class="navbar-item" href="/">
-                    <img src="res/cinema_mask.png">
-                </a>
-            </div>
-            <div class="navbar-menu">
-                <div class="navbar-start is-justify-content-center is-flex-grow-1">
+    <section header>
+        <div class="container">
+            <div class="navbar">
+                <div class="navbar-brand">
                     <a class="navbar-item" href="/">
-                    Overview
-                    </a>
-                    <a class="navbar-item" href="search">
-                    Search
-                    </a>
-                    <a class="navbar-item" href="about">
-                    About
+                        <img src="res/cinema_mask.png">
                     </a>
                 </div>
-                <div class="navbar-end">
-                    <form action="https://github.com/nJ3ahxac/seng2021_project" target="_blank">
-                        <button class="button is-link my-4" href="">
-                            <span class="icon">
-                                <i class="fab fa-github">
-                                </i>
-                            </span>
-                            <span>
-                                View on <strong>GitHub</strong>
-                            </span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <section class="section is-medium">
-            <div class="columns is-vcentered is-mobile">
-                <div class="column is-8">
-                    <div class="content">
-                        <h1>
-                            A UNSW SENG2021 Project
-                        </h1>
-                        <p>
-                            This website is the result of a university workshop which tasks its members with designing a webserver.
-                            The main requirement of this task is that the webserver interacts with an API.
-                        </p>
-                        <h2>
-                            Made possible with
-                        </h2>
-                        <p>
-                            <a href="https://cmake.org">CMake</a>: CMake is a cross platform, open-source build system generator.<br/>
-                            <a href="https://github.com/google/googletest">Googletest</a>: Googletest is a modern C++ testing framework.<br/>
-                            <a href="http://pistache.io">Pistache</a>: Pistache is a modern and elegant asynchronous HTTP and REST framework for C++.<br/>
-                            <a href="https://www.boost.org">Boost</a>: Boost provides free peer-reviewed portable C++ source libraries.<br/>
-                            <a href="https://curl.se/libcurl">Libcurl</a>: Curl is a free and easy-to-use client side URL transfer library.<br/>
-                            <a href="https://www.imdb.com/interfaces">IMDb</a>: IMDb is an online database of information related to films and other visual media.<br/>
-                            <a href="https://www.omdbapi.com">OMDb</a>: The OMDb API is a RESTful web service to obtain movie information.<br/>
-                            <a href="https://www.bulma.io">Bulma</a>: Bulma is a free and open source CSS framework.
-                        </p>
+                <div class="navbar-menu">
+                    <div class="navbar-start is-justify-content-center is-flex-grow-1">
+                        <a class="navbar-item" href="/">
+                        Overview
+                        </a>
+                        <a class="navbar-item" href="search">
+                        Search
+                        </a>
+                        <a class="navbar-item" href="about">
+                        About
+                        </a>
+                    </div>
+                    <div class="navbar-end">
+                        <form action="https://github.com/nJ3ahxac/seng2021_project" target="_blank">
+                            <button class="button is-link my-4" href="">
+                                <span class="icon">
+                                    <i class="fab fa-github">
+                                    </i>
+                                </span>
+                                <span>
+                                    View on <strong>GitHub</strong>
+                                </span>
+                            </button>
+                        </form>
                     </div>
                 </div>
-                <div class="column">
-                    <figure class="image">
-                        <img src="res/birds.png">
-                    </figure>
-                </div>
             </div>
-        </section>
-    <footer class="footer is-fixed-bottom" style="bottom: 0; left: 0; position: fixed; right: 0; z-index: 30;">
-        <div class="content has-text-centered">
-            <strong>&copy CinemaScout 2021:</strong> All rights reserved
         </div>
-    </footer>
-<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    </section>
+
+    <body>
+        <div class="container">
+            <section class="section is-medium">
+                <div class="columns is-vcentered is-mobile">
+                    <div class="column is-8">
+                        <div class="content">
+                            <h1>
+                                A UNSW SENG2021 Project
+                            </h1>
+                            <p>
+                                This website is the result of a university workshop which tasks its members with designing a webserver.
+                                The main requirement of this task is that the webserver interacts with an API.
+                            </p>
+                            <h2>
+                                Made possible with
+                            </h2>
+                            <p>
+                                <a href="https://cmake.org">CMake</a>: CMake is a cross platform, open-source build system generator.<br/>
+                                <a href="https://github.com/google/googletest">Googletest</a>: Googletest is a modern C++ testing framework.<br/>
+                                <a href="http://pistache.io">Pistache</a>: Pistache is a modern and elegant asynchronous HTTP and REST framework for C++.<br/>
+                                <a href="https://www.boost.org">Boost</a>: Boost provides free peer-reviewed portable C++ source libraries.<br/>
+                                <a href="https://curl.se/libcurl">Libcurl</a>: Curl is a free and easy-to-use client side URL transfer library.<br/>
+                                <a href="https://www.imdb.com/interfaces">IMDb</a>: IMDb is an online database of information related to films and other visual media.<br/>
+                                <a href="https://www.omdbapi.com">OMDb</a>: The OMDb API is a RESTful web service to obtain movie information.<br/>
+                                <a href="https://www.bulma.io">Bulma</a>: Bulma is a free and open source CSS framework.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <figure class="image">
+                            <img src="res/birds.png">
+                        </figure>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <footer class="footer">
+            <div class="content has-text-centered">
+                <strong>&copy; CinemaScout 2021:</strong> All rights reserved
+            </div>
+        </footer>
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    </body>
 </html>

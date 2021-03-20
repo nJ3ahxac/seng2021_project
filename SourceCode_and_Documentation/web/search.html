@@ -9,52 +9,61 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-switch@2.0.0/dist/css/bulma-switch.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/bulma-slider/dist/css/bulma-slider.min.css">
         <link rel="shortcut icon" href="/favicon.ico">
+        <style media="screen">
+            body {
+                display: flex;
+                min-height: 100vh;
+                flex-direction: column;
+            }
+        </style>
     </head>
 
-    <div class="container">
-        <div class="navbar">
-            <div class="navbar-brand">
-                <a class="navbar-item" href="/">
-                    <img src="res/cinema_mask.png">
-                </a>
-            </div>
-            <div class="navbar-menu">
-                <div class="navbar-start is-justify-content-center is-flex-grow-1">
+    <section>
+        <div class="container">
+            <div class="navbar">
+                <div class="navbar-brand">
                     <a class="navbar-item" href="/">
-                    Overview
-                    </a>
-                    <a class="navbar-item" href="search">
-                    Search
-                    </a>
-                    <a class="navbar-item" href="about">
-                    About
+                        <img src="res/cinema_mask.png">
                     </a>
                 </div>
-                <div class="navbar-end">
-                    <form action="https://github.com/nJ3ahxac/seng2021_project" target="_blank">
-                        <button class="button is-link my-4" href="">
-                            <span class="icon">
-                                <i class="fab fa-github">
-                                </i>
-                            </span>
-                            <span>
-                                View on <strong>GitHub</strong>
-                            </span>
-                        </button>
-                    </form>
+                <div class="navbar-menu">
+                    <div class="navbar-start is-justify-content-center is-flex-grow-1">
+                        <a class="navbar-item" href="/">
+                        Overview
+                        </a>
+                        <a class="navbar-item" href="search">
+                        Search
+                        </a>
+                        <a class="navbar-item" href="about">
+                        About
+                        </a>
+                    </div>
+                    <div class="navbar-end">
+                        <form action="https://github.com/nJ3ahxac/seng2021_project" target="_blank">
+                            <button class="button is-link my-4" href="">
+                                <span class="icon">
+                                    <i class="fab fa-github">
+                                    </i>
+                                </span>
+                                <span>
+                                    View on <strong>GitHub</strong>
+                                </span>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="container">
-        <section class="section is-small">
-            <div class="box">
-                <progress class="progress is-primary is-large" value="0" max="1" id="progress_bar">
-                </progress>
-                <div class="columns is-vcentered is-mobile mx-6" id="box_question">
-                    <div class="column" id="column_left">
-                        <section class="section is-medium">
+    <body>
+        <div class="container">
+            <section class="section is-small">
+                <div class="box" style="min-height: 756px; min-width: 1296px; max-height: 756px;">
+                    <progress class="progress is-primary is-large is-flex is-flex-direction-row is-align-content-stretch" value="0" max="1" id="progress_bar">
+                    </progress>
+                    <div class="columns is-vcentered is-mobile mx-6" id="columns_question" style="padding-top: 150px;">
+                        <div class="column" id="column_left">
                             <h1 class="title">
                                 Just a few things before we start
                             </h1>
@@ -81,16 +90,13 @@
                               <input id="switch_adult" type="checkbox" name="switchLarge" class="switch is-large is-danger">
                               <label for="switch_adult">Include adult films</label>
                             </div>
-                        </section>
+                        </div>
+                        <div class="column is-one-third mx-6" id="column_right">
+                             <figure class="image">
+                                 <img src="res/binoculars.png">
+                             </figure>
+                        </div>
                     </div>
-                    <div class="column is-one-third mx-6" id="column_right">
-                        <section class="section is-medium">
-                            <figure class="image">
-                                <img src="res/binoculars.png">
-                            </figure>
-                        </section>
-                    </div>
-                </div>
                     <div class="level" id="level_buttons_begin">
                         <div class="level-item has-text-centered">
                             <button class="button is-large is-primary" id="button_start">
@@ -98,14 +104,15 @@
                             </button>
                         </div>
                     </div>
-            </div>
-        </section>
-    </div>
-    <footer class="footer is-fixed-bottom" style="bottom: 0; left: 0; position: fixed; right: 0; z-index: 30;">
-        <div class="content has-text-centered">
-            <strong>&copy CinemaScout 2021:</strong> All rights reserved
+                </div>
+            </section>
         </div>
-    </footer>
-<script src="search.js"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+        <footer class="footer">
+            <div class="content has-text-centered">
+                <strong>&copy; CinemaScout 2021:</strong> All rights reserved
+            </div>
+        </footer>
+        <script src="search.js"></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    </body>
 </html>

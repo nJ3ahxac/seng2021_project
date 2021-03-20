@@ -7,68 +7,79 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/bulma-divider/dist/css/bulma-divider.min.css">
         <link rel="shortcut icon" href="/favicon.ico">
+        <style media="screen">
+            body {
+                display: flex;
+                min-height: 100vh;
+                flex-direction: column;
+            }
+        </style>
     </head>
 
-    <div class="container">
-        <div class="navbar">
-            <div class="navbar-brand">
-                <a class="navbar-item" href="/">
-                    <img src="res/cinema_mask.png">
-                </a>
-            </div>
-            <div class="navbar-menu">
-                <div class="navbar-start is-justify-content-center is-flex-grow-1">
+    <section>
+        <div class="container">
+            <div class="navbar">
+                <div class="navbar-brand">
                     <a class="navbar-item" href="/">
-                    Overview
-                    </a>
-                    <a class="navbar-item" href="search">
-                    Search
-                    </a>
-                    <a class="navbar-item" href="about">
-                    About
+                        <img src="res/cinema_mask.png">
                     </a>
                 </div>
-                <div class="navbar-end">
-                    <form action="https://github.com/nJ3ahxac/seng2021_project" target="_blank">
-                        <button class="button is-link my-4" href="">
-                            <span class="icon">
-                                <i class="fab fa-github">
-                                </i>
-                            </span>
-                            <span>
-                                View on <strong>GitHub</strong>
-                            </span>
-                        </button>
-                    </form>
+                <div class="navbar-menu">
+                    <div class="navbar-start is-justify-content-center is-flex-grow-1">
+                        <a class="navbar-item" href="/">
+                        Overview
+                        </a>
+                        <a class="navbar-item" href="search">
+                        Search
+                        </a>
+                        <a class="navbar-item" href="about">
+                        About
+                        </a>
+                    </div>
+                    <div class="navbar-end">
+                        <form action="https://github.com/nJ3ahxac/seng2021_project" target="_blank">
+                            <button class="button is-link my-4" href="">
+                                <span class="icon">
+                                    <i class="fab fa-github">
+                                    </i>
+                                </span>
+                                <span>
+                                    View on <strong>GitHub</strong>
+                                </span>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="container">
-        <section class="section is-medium">
-            <div class="columns is-vcentered is-mobile">
-                <div class="column is-8">
-                    <h1 class="title">
-                        Error 404: Page not found
-                    </h1>
-                    <h2 class="subtitle">
-                        The content you have requested may have been moved or deleted.
-                    </h2>
+    <body>
+        <div class="container">
+            <section class="section is-medium">
+                <div class="columns is-vcentered is-mobile">
+                    <div class="column is-8">
+                        <h1 class="title">
+                            Error 404: Page not found
+                        </h1>
+                        <h2 class="subtitle">
+                            The content you have requested may have been moved or deleted.
+                        </h2>
+                    </div>
+                    <div class="column">
+                        <figure class="image">
+                            <img src="res/birds.png">
+                        </figure>
+                    </div>
                 </div>
-                <div class="column">
-                    <figure class="image">
-                        <img src="res/birds.png">
-                    </figure>
-                </div>
-            </div>
-        </section>
-    </div>
-    <footer class="footer is-fixed-bottom" style="bottom: 0; left: 0; position: fixed; right: 0; z-index: 30;">
-        <div class="content has-text-centered">
-            <strong>&copy CinemaScout 2021:</strong> All rights reserved
+            </section>
         </div>
-    </footer>
-<script src="main.js"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+        <footer class="footer">
+            <div class="content has-text-centered">
+                <strong>&copy; CinemaScout 2021:</strong> All rights reserved
+            </div>
+        </footer>
+        <script src="main.js"></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    </body>
 </html>
