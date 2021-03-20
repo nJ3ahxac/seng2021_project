@@ -24,6 +24,13 @@ namespace servertest {
 static int test_port = PORT_DEFAULT;
 static std::string test_dir = "test/tmp/";
 static std::optional<MovieData> test_moviedata;
+
+static std::string init_postdata = "{\"type\":\"init\""
+                                   ",\"is_foreign\":\"true\""
+                                   ",\"is_greyscale\":\"true\""
+                                   ",\"is_silent\":\"true\""
+                                   ",\"is_pre1980\":\"true\""
+                                   ",\"is_adult\":\"true\"}";
 } // namespace servertest
 
 // Since googletest inits a new fixtures each test, we will have to work around

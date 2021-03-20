@@ -1,7 +1,8 @@
 #include "util.hh"
 
 // Request methods.
-util::request::request(const std::string& url, const long& port) {
+util::request::request(const std::string& url, const long& port,
+                       const std::string& postfields) {
     CURL* const curl = curl_easy_init();
 
     if (!curl) {
@@ -22,6 +23,9 @@ util::request::request(const std::string& url, const long& port) {
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &request_contents);
     if (port) {
         curl_easy_setopt(curl, CURLOPT_PORT, port);
+    }
+    if (postfields != std::string{}) {
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postfields.c_str());
     }
 
     this->result = curl_easy_perform(curl);

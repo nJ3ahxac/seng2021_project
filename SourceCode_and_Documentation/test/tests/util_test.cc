@@ -4,7 +4,7 @@ static void declare_internet() {
     std::cerr << "example.com is unreachable, test will auto pass\n";
 }
 
-TEST_F(UtilTest, request_good) {
+TEST_F(UtilTest, request_get_good) {
     if (!utiltest::has_internet) {
         declare_internet();
         return;
@@ -12,7 +12,17 @@ TEST_F(UtilTest, request_good) {
     EXPECT_EQ(util::request{utiltest::test_url}.is_good(), true);
 }
 
-TEST_F(UtilTest, request_code_200) {
+TEST_F(UtilTest, request_post_expected) {
+    if (!utiltest::has_internet) {
+        declare_internet();
+        return;
+    }
+    const auto request = util::request{utiltest::test_url, 0L, "test=true"};
+    ASSERT_EQ(request.is_good(), true);
+    EXPECT_NE(request.get_contents(), std::string{});
+}
+
+TEST_F(UtilTest, request_get_code_200) {
     if (!utiltest::has_internet) {
         declare_internet();
         return;
@@ -20,7 +30,7 @@ TEST_F(UtilTest, request_code_200) {
     EXPECT_EQ(util::request(utiltest::test_url).get_code(), 200L);
 }
 
-TEST_F(UtilTest, request_code_404) {
+TEST_F(UtilTest, request_get_code_404) {
     if (!utiltest::has_internet) {
         declare_internet();
         return;
@@ -28,7 +38,7 @@ TEST_F(UtilTest, request_code_404) {
     EXPECT_EQ(util::request(utiltest::test_url + "/___404").get_code(), 404L);
 }
 
-TEST_F(UtilTest, request_has_contents) {
+TEST_F(UtilTest, request_get_has_contents) {
     if (!utiltest::has_internet) {
         declare_internet();
         return;

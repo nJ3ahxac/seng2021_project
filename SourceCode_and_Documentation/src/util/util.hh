@@ -2,10 +2,10 @@
 #define UTIL_UTIL_HH_
 
 #include <algorithm>
+#include <exception>
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <exception>
 
 #define RAPIDJSON_HAS_STDSTRING 1
 #include <rapidjson/document.h>
@@ -33,7 +33,9 @@ private:
     long code = 0;
 
 public:
-    request(const std::string& url, const long& port = 0);
+    // Port and postfields are optional.
+    request(const std::string& url, const long& port = 0,
+            const std::string& postfields = {});
     const CURLcode& get_result() const noexcept { return result; }
     const long& get_code() const noexcept { return code; }
     const std::string& get_contents() const noexcept { return contents; }

@@ -23,7 +23,6 @@ TEST_F(ServerTest, resources_code_200) {
 }
 
 TEST_F(ServerTest, non_existent_code_404) {
-    const PageHandler handler{*servertest::test_moviedata};
     const auto url = "localhost/_____DOES_NOT_EXIST.wav";
     EXPECT_EQ(util::request(url, servertest::test_port).get_code(), 404L);
 }
@@ -55,5 +54,105 @@ TEST_F(ServerTest, resources_first_same_file) {
         const auto url = "localhost" + r.first;
         EXPECT_EQ(file,
                   util::request(url, servertest::test_port).get_contents());
+    }
+}
+
+static bool contents_contains_error(const std::string& contents) {
+    const auto pos = contents.find("error");
+    return pos != std::string::npos;
+}
+
+TEST_F(ServerTest, post_token_init) {
+    const auto url = "localhost";
+    const auto init_request =
+        util::request(url, servertest::test_port, servertest::init_postdata);
+    EXPECT_EQ(contents_contains_error(init_request.get_contents()), false);
+}
+
+static std::string get_token_from_contents(const std::string& contents) {
+    const auto token_start = contents.find(":", contents.find("\"token\"")) + 1;
+    const auto token_end = contents.find(",", token_start);
+    return contents.substr(token_start, token_end - token_start);
+}
+
+static std::string get_advance_request_contents(const std::string& token,
+                                                const bool& should_include) {
+    const std::string arg = should_include ? "true" : "false";
+    return "{\"type\":\"advance\","
+           "\"token\":\"" +
+           token + "\",\"remove\":\"" + arg + "\"}";
+}
+
+TEST_F(ServerTest, post_token_init_advance_true) {
+    const auto url = "localhost";
+    const auto init_request =
+        util::request(url, servertest::test_port, servertest::init_postdata);
+    const auto token = get_token_from_contents(init_request.get_contents());
+    ASSERT_EQ(contents_contains_error(init_request.get_contents()), false);
+    const auto postdata = get_advance_request_contents(token, true);
+    const auto advance_request =
+        util::request(url, servertest::test_port, postdata);
+    ASSERT_EQ(contents_contains_error(advance_request.get_contents()), false);
+}
+
+TEST_F(ServerTest, post_token_init_advance_false) {
+    const auto url = "localhost";
+    const auto init_request =
+        util::request(url, servertest::test_port, servertest::init_postdata);
+    const auto token = get_token_from_contents(init_request.get_contents());
+    ASSERT_EQ(contents_contains_error(init_request.get_contents()), false);
+    const auto postdata = get_advance_request_contents(token, false);
+    const auto advance_request =
+        util::request(url, servertest::test_port, postdata);
+    ASSERT_EQ(contents_contains_error(advance_request.get_contents()), false);
+}
+
+TEST_F(ServerTest, post_token_init_advance_multiple) {
+    const auto url = "localhost";
+    const auto init_request =
+        util::request(url, servertest::test_port, servertest::init_postdata);
+    const auto token = get_token_from_contents(init_request.get_contents());
+    ASSERT_EQ(contents_contains_error(init_request.get_contents()), false);
+    for (auto i = 0; i < 5; ++i) {
+        const auto postdata = get_advance_request_contents(token, i % 2);
+        const auto advance_request =
+            util::request(url, servertest::test_port, postdata);
+        EXPECT_EQ(contents_contains_error(advance_request.get_contents()),
+                  false);
+    }
+}
+
+static std::string get_info_request_contents(const std::string& token) {
+    return "{\"type\":\"info\","
+           "\"token\":\"" +
+           token + "\"}";
+}
+
+TEST_F(ServerTest, post_token_init_info) {
+    const auto url = "localhost";
+    const auto init_request =
+        util::request(url, servertest::test_port, servertest::init_postdata);
+    ASSERT_EQ(contents_contains_error(init_request.get_contents()), false);
+    const auto token = get_token_from_contents(init_request.get_contents());
+    const auto info_request = util::request(url, servertest::test_port,
+                                            get_info_request_contents(token));
+    EXPECT_EQ(contents_contains_error(info_request.get_contents()), false);
+}
+
+TEST_F(ServerTest, post_token_init_advance_info_multiple) {
+    const auto url = "localhost";
+    const auto init_request =
+        util::request(url, servertest::test_port, servertest::init_postdata);
+    ASSERT_EQ(contents_contains_error(init_request.get_contents()), false);
+    const auto token = get_token_from_contents(init_request.get_contents());
+    for (auto i = 0; i < 5; ++i) {
+        const auto postdata = get_advance_request_contents(token, i % 2);
+        const auto advance_request =
+            util::request(url, servertest::test_port, postdata);
+        EXPECT_EQ(contents_contains_error(advance_request.get_contents()),
+                  false);
+        const auto info_request = util::request(
+            url, servertest::test_port, get_info_request_contents(token));
+        EXPECT_EQ(contents_contains_error(info_request.get_contents()), false);
     }
 }
