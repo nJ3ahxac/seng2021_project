@@ -69,6 +69,14 @@ TEST_F(ServerTest, post_token_init) {
     EXPECT_EQ(contents_contains_error(init_request.get_contents()), false);
 }
 
+TEST_F(ServerTest, post_token_init_invalid) {
+    const auto url = "localhost";
+    const auto init_request =
+        util::request(url, servertest::test_port,
+                      servertest::init_postdata + "Now invalid json");
+    EXPECT_EQ(contents_contains_error(init_request.get_contents()), true);
+}
+
 static std::string get_token_from_contents(const std::string& contents) {
     const auto token_start = contents.find(":", contents.find("\"token\"")) + 1;
     const auto token_end = contents.find(",", token_start);
@@ -107,6 +115,19 @@ TEST_F(ServerTest, post_token_init_advance_false) {
     ASSERT_EQ(contents_contains_error(advance_request.get_contents()), false);
 }
 
+TEST_F(ServerTest, post_token_init_advance_invalid) {
+    const auto url = "localhost";
+    const auto init_request =
+        util::request(url, servertest::test_port, servertest::init_postdata);
+    const auto token = get_token_from_contents(init_request.get_contents());
+    ASSERT_EQ(contents_contains_error(init_request.get_contents()), false);
+    const auto postdata =
+        get_advance_request_contents(token, false) + "Now invalid json";
+    const auto advance_request =
+        util::request(url, servertest::test_port, postdata);
+    ASSERT_EQ(contents_contains_error(advance_request.get_contents()), true);
+}
+
 TEST_F(ServerTest, post_token_init_advance_multiple) {
     const auto url = "localhost";
     const auto init_request =
@@ -137,6 +158,18 @@ TEST_F(ServerTest, post_token_init_info) {
     const auto info_request = util::request(url, servertest::test_port,
                                             get_info_request_contents(token));
     EXPECT_EQ(contents_contains_error(info_request.get_contents()), false);
+}
+
+TEST_F(ServerTest, post_token_init_info_invalid) {
+    const auto url = "localhost";
+    const auto init_request =
+        util::request(url, servertest::test_port, servertest::init_postdata);
+    ASSERT_EQ(contents_contains_error(init_request.get_contents()), false);
+    const auto token = get_token_from_contents(init_request.get_contents());
+    const auto info_request =
+        util::request(url, servertest::test_port,
+                      get_info_request_contents(token) + "Now invalid json");
+    EXPECT_EQ(contents_contains_error(info_request.get_contents()), true);
 }
 
 TEST_F(ServerTest, post_token_init_advance_info_multiple) {
