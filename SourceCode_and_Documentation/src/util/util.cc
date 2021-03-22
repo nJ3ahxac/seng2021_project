@@ -16,8 +16,8 @@ util::request::request(const std::string& url, const long& port,
         return size * nmemb;
     };
 
-    // curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, 2);
-    // curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, 5);
+    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, 2);
+    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, 5);
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, *write_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &request_contents);
@@ -42,7 +42,11 @@ util::request::request(const std::string& url, const long& port,
 
 // Utility functions.
 std::string util::download_url(const std::string& url) {
-    return request(url).get_contents();
+    auto request = util::request(url);
+    while (!request.is_good()) {
+        request = util::request(url);
+    }
+    return request.get_contents();
 }
 
 json::Document util::download_url_json(const std::string& url) {

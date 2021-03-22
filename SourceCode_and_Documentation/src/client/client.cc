@@ -203,27 +203,20 @@ static void update_movie_omdb_data(json::Document& doc) {
 
         const std::string index = movie_it->name.GetString();
 
-        std::optional<json::Document> result_opt;
-        while (!result_opt.has_value()) {
-            try {
-                result_opt = util::download_url_json(url_base + index);
-            } catch (...) {
-                continue;
-            }
+        const json::Document result = util::download_url_json(url_base + index);
+        const auto result_has_good = [&](const std::string& str) {
+            return result.HasMember(str) && result[str].IsString();
+        };
 
-            const auto result_has_good = [&](const std::string& str) {
-                return result_opt->HasMember(str) &&
-                       (*result_opt)[str].IsString();
-            };
+        static const std::string elements[] = 
+                              {"Plot", "imdbRating", "imdbVotes",
+                               "Language", "Year", "Director",
+                               "Awards", "Actors", "Runtime", "BoxOffice"};
 
-            if (!result_opt->IsObject() || !result_has_good("Plot") ||
-                !result_has_good("imdbRating") ||
-                !result_has_good("imdbVotes") || !result_has_good("Language") ||
-                !result_has_good("Year")) {
-                return true;
-            }
+        if (!result.IsObject()
+                || !std::ranges::all_of(elements, result_has_good)) {
+            return true;
         }
-        const auto& result = *result_opt;
 
         json::Value keyword_value(json::kArrayType);
         for (const std::string& word :
@@ -279,6 +272,30 @@ static void update_movie_omdb_data(json::Document& doc) {
                                    doc.GetAllocator()};
         movie_it->value.AddMember(language_key, language_value,
                                   doc.GetAllocator());
+
+        json::Value plot_key{"plot"};
+        json::Value plot_value{result["Plot"].GetString(), doc.GetAllocator()};
+        movie_it->value.AddMember(plot_key, plot_value, doc.GetAllocator());
+        
+        json::Value director_key{"director"};
+        json::Value director_value{result["Director"].GetString(), doc.GetAllocator()};
+        movie_it->value.AddMember(director_key, director_value, doc.GetAllocator());
+
+        json::Value awards_key{"awards"};
+        json::Value awards_value{result["Awards"].GetString(), doc.GetAllocator()};
+        movie_it->value.AddMember(awards_key, awards_value, doc.GetAllocator());
+
+        json::Value actors_key{"actors"};
+        json::Value actors_value{result["Actors"].GetString(), doc.GetAllocator()};
+        movie_it->value.AddMember(actors_key, actors_value, doc.GetAllocator());
+        
+        json::Value runtime_key{"runtime"};
+        json::Value runtime_value{result["Runtime"].GetString(), doc.GetAllocator()};
+        movie_it->value.AddMember(runtime_key, runtime_value, doc.GetAllocator());
+        
+        json::Value box_office_key{"box_office"};
+        json::Value box_office_value{result["BoxOffice"].GetString(), doc.GetAllocator()};
+        movie_it->value.AddMember(box_office_key, box_office_value, doc.GetAllocator());
 
         return true;
     };
