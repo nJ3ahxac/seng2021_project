@@ -173,6 +173,18 @@ function update_global_variables(json) {
     if (is_genre) {
         g_is_genre = is_genre;
     }
+    let poster = json["poster"];
+    if (poster) {
+        g_best_image = poster;
+    }
+    let year = json["year"];
+    if (year) {
+        g_best_year = year;
+    }
+    let title = json["title"];
+    if (title) {
+        g_best_title = title;
+    }
 }
 
 function set_column_padding(value) {
