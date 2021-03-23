@@ -213,7 +213,7 @@ static void update_movie_omdb_data(json::Document& doc) {
         static const std::string elements[] = 
                               {"Plot", "imdbRating", "imdbVotes",
                                "Language", "Year", "Director",
-                               "Awards", "Actors", "Runtime", "BoxOffice"};
+                               "Awards", "Actors", "Runtime", "BoxOffice", "Poster"};
 
         if (!result.IsObject()
                 || !std::ranges::all_of(elements, result_has_good)) {
@@ -299,6 +299,10 @@ static void update_movie_omdb_data(json::Document& doc) {
         json::Value box_office_value{result["BoxOffice"].GetString(), doc.GetAllocator()};
         movie_it->value.AddMember(box_office_key, box_office_value, doc.GetAllocator());
 
+        json::Value poster_key{"poster"};
+        json::Value poster_value{result["Poster"].GetString(), doc.GetAllocator()};
+        movie_it->value.AddMember(poster_key, poster_value, doc.GetAllocator());
+
         return true;
     };
 
@@ -315,7 +319,7 @@ static void update_movie_omdb_data(json::Document& doc) {
             if (last_percent == percent) {
                 continue;
             }
-            std::cout << percent << "%\n";
+            std::cout << std::clamp(percent, 0ul, 100ul) << "%\n";
         }
     };
 
@@ -344,6 +348,12 @@ static void prune_movie_data(json::Document& doc) {
         }
         // No rating votes?
         if (!entry.HasMember("votes") || entry["votes"].GetInt() == 0) {
+            remove = true;
+        }
+
+        // No poster?
+        if (!entry.HasMember("poster")
+                || std::string{entry["poster"].GetString()} == "N/A") {
             remove = true;
         }
 

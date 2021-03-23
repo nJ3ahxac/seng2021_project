@@ -30,6 +30,8 @@ private:
     SearchData searchdata;
     // Circular buffer of search tokens
     boost::circular_buffer<search::token> tokens;
+    // Move data
+    MovieData movie_data;
 public:
     // Caches all web files provided and associates bindings for later lookup.
     // Throws std::runtime_error if a file does not exist, hopefully before the

@@ -178,7 +178,7 @@ TEST_F(ServerTest, post_token_init_advance_info_multiple) {
         util::request(url, servertest::test_port, servertest::init_postdata);
     ASSERT_EQ(contents_contains_error(init_request.get_contents()), false);
     const auto token = get_token_from_contents(init_request.get_contents());
-    for (auto i = 0; i < 5; ++i) {
+    for (auto i = 0; i < 1; ++i) {
         const auto postdata = get_advance_request_contents(token, i % 2);
         const auto advance_request =
             util::request(url, servertest::test_port, postdata);

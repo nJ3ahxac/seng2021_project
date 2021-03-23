@@ -50,12 +50,12 @@ private:
             "{\"tt0815138\":{\"title\":\"Take\",\"genres\":[\"Crime\","
             "\"Drama\",\"Thriller\"],\"keywords\":[\"gambling\",\"meet\","
             "\"mother\",\"tragedy\",\"pass\"],\"rating\":5.900000095367432,"
-            "\"votes\":1503,\"year\":2007,\"language\":\"English\"},"
+            "\"votes\":1503,\"year\":2007,\"language\":\"English\",\"poster\":\"N/A\"},"
             "\"tt0815140\":{\"title\":\"Dale\",\"genres\":[\"Documentary\","
             "\"Sport\"],\"keywords\":[\"documentary\",\"race\",\"death\","
             "\"racing\",\"footage\",\"home\",\"legend\",\"family\"],\"rating\":"
             "8.699999809265137,\"votes\":271,\"year\":2007,\"language\":"
-            "\"English\"}}";
+            "\"English\",\"poster\":\"N/A\"}}";
         out << contents_json;
     }
 

@@ -25,6 +25,8 @@ struct token {
     bool is_filtering_genres;
     // Currently suggested movie (IMDB index)
     std::optional<std::int32_t> suggestion;
+    // Amount of times we have advanced the search
+    std::size_t advance_count;
 };
 
 struct movie_entry {
@@ -70,10 +72,19 @@ private:
     float get_genre_rating(const token& token, const std::string& genre);
     std::vector<std::int32_t> get_top_level_token_entries(const std::int16_t flags);
 
+    std::string imdb_str_from_entry(const std::int32_t entry);
+    void sort_entries_by_rating(token& token);
 public:
     SearchData(const MovieData& data);
     token create_token(const std::int16_t flags = 0);
     void advance_token(token& token, const bool remove);
+    
+    std::size_t get_suggestion_size(const token& token);
+
+    // Get the most relevant suggestion IMDB string
+    std::string get_suggestion_imdb(token& token);
+    // Get all relevant suggestion IMDB strings with descending relevancy
+    std::vector<std::string> get_suggestion_imdbs(token& token);
 };
 
 #endif

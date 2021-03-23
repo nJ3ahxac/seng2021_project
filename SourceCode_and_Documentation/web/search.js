@@ -185,6 +185,10 @@ function update_global_variables(json) {
     if (title) {
         g_best_title = title;
     }
+    let error = json["error"];
+    if (error) {
+        alert(error);
+    }
 }
 
 function set_column_padding(value) {

@@ -175,7 +175,8 @@ token SearchData::create_token(const std::int16_t flags) {
             .entries = get_top_level_token_entries(flags),
             .keyword = {},
             .is_filtering_genres = true,
-            .suggestion = std::nullopt};
+            .suggestion = std::nullopt,
+            .advance_count = 0};
     ret.keyword = rate_token_genres(ret).front().keyword;
     return ret;
 }
@@ -192,7 +193,7 @@ void SearchData::advance_token(token& token, const bool remove) {
                 should_remove_genre);
         token.entries.erase(erase_it, token.entries.end());
     } else {
-       const auto should_remove_keyword = [&](const std::int32_t index) {
+        const auto should_remove_keyword = [&](const std::int32_t index) {
             const auto& keywords = movie_from_index(index).keywords;
             return keywords.contains(token.keyword) ? remove : !remove;
         };
@@ -202,6 +203,9 @@ void SearchData::advance_token(token& token, const bool remove) {
         token.entries.erase(erase_it, token.entries.end());
     }
 
+    // increment advance count
+    ++token.advance_count;
+    
     if (token.is_filtering_genres) {
         const std::vector<genre_rating> ratings = rate_token_genres(token);
         if (ratings.front().rating != 0.0f) {
@@ -217,11 +221,43 @@ void SearchData::advance_token(token& token, const bool remove) {
         return;
     }
 
-    // No more possible questions to ask - return best according to rating.
+    token.suggestion = movie_from_index(token.entries.front()).imdb_index;
+}
+
+std::size_t SearchData::get_suggestion_size(const token& token) {
+    return token.entries.size();
+}
+
+std::string SearchData::imdb_str_from_entry(const std::int32_t entry) {
+    const std::int32_t imdb_index = movie_from_index(entry).imdb_index;
+    const std::string entry_str = std::to_string(imdb_index);
+    const std::string zero_pad = std::string(std::max(0ul, 7 - entry_str.length()), '0');
+    return "tt" + zero_pad + entry_str;
+}
+
+void SearchData::sort_entries_by_rating(token& token) {
     const auto has_better_rating = [this](const std::int32_t a, const std::int32_t b) {
         return movie_from_index(a).rating > movie_from_index(b).rating;
     };
     std::ranges::sort(token.entries, has_better_rating);
+}
 
-    token.suggestion = movie_from_index(token.entries.front()).imdb_index;
+std::string SearchData::get_suggestion_imdb(token& token) {
+    if (token.entries.empty()) {
+        throw std::runtime_error("No more possible suggestions to return");
+    }
+    sort_entries_by_rating(token);
+    const std::size_t index = 
+        std::min(token.advance_count, token.entries.size() - 1);
+    return imdb_str_from_entry(token.entries[index]);
+}
+
+std::vector<std::string> SearchData::get_suggestion_imdbs(token& token) {
+    sort_entries_by_rating(token);
+    std::vector<std::string> ret;
+    ret.reserve(token.entries.size());
+    for (const std::int32_t entry : token.entries) {
+        ret.emplace_back(imdb_str_from_entry(entry));
+    }
+    return ret;
 }
