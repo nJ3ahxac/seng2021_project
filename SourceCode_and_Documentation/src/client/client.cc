@@ -204,6 +204,8 @@ static void update_movie_omdb_data(json::Document& doc) {
         const std::string index = movie_it->name.GetString();
 
         const json::Document result = util::download_url_json(url_base + index);
+	
+	const std::unique_lock<std::mutex> guard(lock);
         const auto result_has_good = [&](const std::string& str) {
             return result.HasMember(str) && result[str].IsString();
         };
