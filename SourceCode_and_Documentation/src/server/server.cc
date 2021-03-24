@@ -9,6 +9,8 @@ static std::unordered_map<std::string, std::string> create_resources() {
                                  "/about.html",
                                  "/search.html",
                                  "/search.js",
+                                 "/list.html",
+                                 "/list.js",
                                  "/res/favicon.ico",
                                  "/res/birds.png",
                                  "/res/charizard.png",
@@ -32,11 +34,10 @@ static std::unordered_map<std::string, std::string> create_resources() {
 PageHandler::PageHandler(const MovieData& m)
     : Pistache::Http::Handler(), bindings{{"/", "/main.html"},
                                           {"/search", "/search.html"},
+                                          {"/list", "/list.html"},
                                           {"/about", "/about.html"},
                                           {"/favicon.ico", "/res/favicon.ico"}},
-      resources(create_resources()),
-      searchdata(m),
-      tokens(max_token_storage),
+      resources(create_resources()), searchdata(m), tokens(max_token_storage),
       movie_data(m) {}
 
 static std::string get_json_str(const json::Document& d,
@@ -115,16 +116,17 @@ void PageHandler::handle_token_info(const json::Document& d,
     const std::string movie_imdb = searchdata.get_suggestion_imdb(token);
     const auto it = movie_data.data.FindMember(movie_imdb);
     if (it >= movie_data.data.MemberEnd()) {
-        throw std::runtime_error("Failed to find recommended movie in movie_data");
+        throw std::runtime_error(
+            "Failed to find recommended movie in movie_data");
     }
     const auto entry = it->value.GetObject();
     const std::string msg =
         "{\"cur\":" + std::to_string(token.entries.size()) +
         ", \"keyword\": \"" + token.keyword + "\", \"is_genre\": \"" +
-        std::string{token.is_filtering_genres ? "true" : "false"}
-        + "\", \"title\": \"" + entry["title"].GetString()
-        + "\", \"year\" : " + std::to_string(entry["year"].GetInt())
-        + ", \"poster\": \"" + entry["poster"].GetString() + "\"}";
+        std::string{token.is_filtering_genres ? "true" : "false"} +
+        "\", \"title\": \"" + entry["title"].GetString() +
+        "\", \"year\" : " + std::to_string(entry["year"].GetInt()) +
+        ", \"poster\": \"" + entry["poster"].GetString() + "\"}";
     response.send(Pistache::Http::Code::Ok, msg);
 }
 

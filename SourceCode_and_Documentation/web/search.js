@@ -1,16 +1,19 @@
 // Global variables which might change based on our requests.
+// Search vars.
+var g_least_until_list = 1000;
 var g_token = "";
 var g_movies_max = 0;
 var g_movies_current = 0;
 var g_steps = 0;
-var g_keyword = "action";
+var g_keyword = "";
 var g_is_genre = false;
 
-var g_best_image =
-    "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg";
-var g_best_title = "Interstellar";
-var g_best_year = "2014";
+// Card vars.
+var g_best_image = "";
+var g_best_title = "";
+var g_best_year = "";
 
+// Initial vars.
 var g_is_foreign = false;
 var g_is_greyscale = false;
 var g_is_silent = false;
@@ -151,8 +154,21 @@ function remove_begin_elements() {
     }
 }
 
+// Early out to avoid too esoteric movies.
+async function try_list_redirect() {
+    // Not initialised yet, do nothing.
+    if (g_movies_current === 0) {
+        return;
+    }
+    if (g_movies_current <= 100) {
+        window.location.replace("/list");
+        // Sleep, fsr javascript is still executed after replace
+        await new Promise(r => setTimeout(r, 5000));
+    }
+}
+
 // Regardless of the request, this function should set the correct global vars.
-function update_global_variables(json) {
+async function update_global_variables(json) {
     let token = json["token"];
     if (token) {
         g_token = token;
@@ -189,6 +205,7 @@ function update_global_variables(json) {
     if (error) {
         alert(error);
     }
+    await try_list_redirect();
 }
 
 function set_column_padding(value) {
