@@ -47,15 +47,37 @@ private:
         auto out = util::open_file(servertest::test_dir + "title_basics.json");
         // Guaranteed valid json example dataset.
         const std::string contents_json =
-            "{\"tt0815138\":{\"title\":\"Take\",\"genres\":[\"Crime\","
-            "\"Drama\",\"Thriller\"],\"keywords\":[\"gambling\",\"meet\","
-            "\"mother\",\"tragedy\",\"pass\"],\"rating\":5.900000095367432,"
-            "\"votes\":1503,\"year\":2007,\"language\":\"English\",\"poster\":\"N/A\"},"
-            "\"tt0815140\":{\"title\":\"Dale\",\"genres\":[\"Documentary\","
-            "\"Sport\"],\"keywords\":[\"documentary\",\"race\",\"death\","
-            "\"racing\",\"footage\",\"home\",\"legend\",\"family\"],\"rating\":"
-            "8.699999809265137,\"votes\":271,\"year\":2007,\"language\":"
-            "\"English\",\"poster\":\"N/A\"}}";
+            "{\"tt0851515\":{\"title\":\"Silver "
+            "Medalist\",\"genres\":[\"Action\",\"Adventure\",\"Comedy\"],"
+            "\"keywords\":[\"cross\",\"bicycle\",\"racer\",\"body\"],"
+            "\"rating\":7.300000190734863,\"votes\":2054,\"year\":2009,"
+            "\"language\":\"Mandarin, Hokkien\",\"plot\":\"Assassins, "
+            "scammers, gangsters, cops, a washed-up bicycle racer, and a body "
+            "continually cross paths; usually with negative "
+            "outcomes.\",\"director\":\"Hao Ning\",\"awards\":\"5 wins & 10 "
+            "nominations.\",\"actors\":\"Bo Huang, Kung-Wei Lu, Morris Hsiang "
+            "Jung, Jack Kao\",\"runtime\":\"99 "
+            "min\",\"box_office\":\"N/A\",\"poster\":\"https://"
+            "m.media-amazon.com/images/M/"
+            "MV5BYTdkZmY4ODgtOTAzZi00OTA5LWIzMmQtNWEyYTVkMGM2YjY0XkEyXkFqcGdeQX"
+            "VyMjg0MTI5NzQ@._V1_SX300.jpg\"},\"tt0851530\":{\"title\":\"The "
+            "Lodger\",\"genres\":[\"Crime\",\"Mystery\",\"Thriller\"],"
+            "\"keywords\":[\"mouse\",\"cat\",\"second\",\"tale\",\"killer\","
+            "\"game\",\"serial\",\"detective\",\"first\",\"plot\","
+            "\"relationship\"],\"rating\":5.699999809265137,\"votes\":4680,"
+            "\"year\":2009,\"language\":\"English\",\"plot\":\"The tale of a "
+            "serial killer in West Hollywood has two converging plot lines. "
+            "The first involves an uneasy relationship between a "
+            "psychologically unstable landlady and her enigmatic lodger; the "
+            "second is about a troubled detective engaged in a cat-and-mouse "
+            "game with the elusive killer, who is imitating the crimes of Jack "
+            "the Ripper.\",\"director\":\"David Ondaatje\",\"awards\":\"1 "
+            "nomination.\",\"actors\":\"Alfred Molina, Hope Davis, Shane West, "
+            "Donal Logue\",\"runtime\":\"95 "
+            "min\",\"box_office\":\"N/A\",\"poster\":\"https://"
+            "m.media-amazon.com/images/M/"
+            "MV5BMjA3NDMwNzgxM15BMl5BanBnXkFtZTcwNTY1MzUyMg@@._V1_SX300.jpg\"}"
+            "}";
         out << contents_json;
     }
 
