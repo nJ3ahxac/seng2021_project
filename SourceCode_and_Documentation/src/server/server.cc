@@ -190,9 +190,11 @@ void PageHandler::handle_token_results(
         throw std::runtime_error("Out of range begin index");
     }
     if (count == 0) {
-        throw std::runtime_error("Count must be not equal to zero");
+        throw std::runtime_error("Count cannot be zero");
     }
-    const auto end = begin + count;
+    const auto end = std::min(begin + count,
+            static_cast<long>(token.entries.size()-1));
+    // This will still fail if token.entries.size() == 0, despite the clamping
     if (static_cast<std::size_t>(end) >= token.entries.size()) {
         throw std::runtime_error("Out of range end");
     }

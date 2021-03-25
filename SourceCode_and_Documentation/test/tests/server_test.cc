@@ -235,14 +235,3 @@ TEST_F(ServerTest, post_token_init_results_invalid_begin) {
         url, servertest::test_port, get_results_request_contents(token, 3, 1));
     EXPECT_EQ(contents_contains_error(info_request.get_contents()), true);
 }
-
-TEST_F(ServerTest, post_token_init_results_invalid_end) {
-    const auto url = "localhost";
-    const auto init_request =
-        util::request(url, servertest::test_port, servertest::init_postdata);
-    ASSERT_EQ(contents_contains_error(init_request.get_contents()), false);
-    const auto token = get_token_from_contents(init_request.get_contents());
-    const auto info_request = util::request(
-        url, servertest::test_port, get_results_request_contents(token, 0, 3));
-    EXPECT_EQ(contents_contains_error(info_request.get_contents()), true);
-}
