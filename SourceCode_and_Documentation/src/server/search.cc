@@ -231,7 +231,10 @@ std::size_t SearchData::get_suggestion_size(const token& token) {
 std::string SearchData::imdb_str_from_entry(const std::int32_t entry) {
     const std::int32_t imdb_index = movie_from_index(entry).imdb_index;
     const std::string entry_str = std::to_string(imdb_index);
-    const std::string zero_pad = std::string(std::max(0ul, 7 - entry_str.length()), '0');
+    std::string zero_pad = {};
+    if (entry_str.length() < 7) {
+        zero_pad = std::string(7ul - entry_str.length(), '0');
+    }
     return "tt" + zero_pad + entry_str;
 }
 
