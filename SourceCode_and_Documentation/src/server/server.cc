@@ -110,23 +110,57 @@ void PageHandler::handle_token_init(const json::Document& d,
     response.send(Pistache::Http::Code::Ok, msg);
 }
 
-void PageHandler::handle_token_info(const json::Document& d,
-                                    Pistache::Http::ResponseWriter& response) {
-    auto& token = get_token(d);
-    const std::string movie_imdb = searchdata.get_suggestion_imdb(token);
+std::string PageHandler::movie_info_from_imdb(const std::string& movie_imdb, const bool verbose) {
     const auto it = movie_data.data.FindMember(movie_imdb);
     if (it >= movie_data.data.MemberEnd()) {
         throw std::runtime_error(
             "Failed to find recommended movie in movie_data");
     }
     const auto entry = it->value.GetObject();
+
+    std::string msg = {};
+    const auto add_entry_str = [&](const std::string& elem) {
+        if (!msg.empty()) msg += ',';
+        msg += '\"' + elem + "\":\"" + entry[elem].GetString() + '\"';
+    };
+
+    const auto add_entry_int = [&](const std::string& elem) {
+        if (!msg.empty()) msg += ',';
+        msg += '\"' + elem + "\":" + std::to_string(entry[elem].GetInt());
+    };
+
+
+    const auto add_entry_float = [&](const std::string& elem) {
+        if (!msg.empty()) msg += ',';
+        msg += '\"' + elem + "\":" + std::to_string(entry[elem].GetFloat());
+    };
+
+    add_entry_str("title");
+    add_entry_int("year");
+    add_entry_str("poster");
+    if (verbose) {
+        add_entry_str("plot");
+        add_entry_float("rating");
+        add_entry_int("votes");
+        add_entry_str("director");
+        add_entry_str("awards");
+        add_entry_str("language");
+        add_entry_str("actors");
+        add_entry_str("runtime");
+        add_entry_str("box_office");
+    }
+    return msg;
+}
+
+void PageHandler::handle_token_info(const json::Document& d,
+                                    Pistache::Http::ResponseWriter& response) {
+    auto& token = get_token(d);
+    const std::string movie_imdb = searchdata.get_suggestion_imdb(token);
     const std::string msg =
         "{\"cur\":" + std::to_string(token.entries.size()) +
         ", \"keyword\": \"" + token.keyword + "\", \"is_genre\": \"" +
         std::string{token.is_filtering_genres ? "true" : "false"} +
-        "\", \"title\": \"" + entry["title"].GetString() +
-        "\", \"year\" : " + std::to_string(entry["year"].GetInt()) +
-        ", \"poster\": \"" + entry["poster"].GetString() + "\"}";
+        "\", " + movie_info_from_imdb(movie_imdb, false) + "}";
     response.send(Pistache::Http::Code::Ok, msg);
 }
 
@@ -139,7 +173,44 @@ void PageHandler::handle_token_advance(
 
 void PageHandler::handle_token_results(
     const json::Document& d, Pistache::Http::ResponseWriter& response) {
-    throw std::runtime_error("Unimplemented operation");
+    auto& token = get_token(d);
+
+    const auto begin_str = get_json_str(d, "begin");
+    const auto count_str = get_json_str(d, "count");
+
+    const auto [begin, count] = [&]() -> std::pair<long, long> {
+        try {
+            return {std::stol(begin_str), std::stol(count_str)};
+        } catch (...) {
+            throw std::runtime_error("Failed to parse begin and count arguments");
+        }
+    }();
+
+    if (static_cast<std::size_t>(begin) >= token.entries.size()) {
+        throw std::runtime_error("Out of range begin index");
+    }
+    if (count == 0) {
+        throw std::runtime_error("Count must be not equal to zero");
+    }
+    const auto end = begin + count;
+    if (static_cast<std::size_t>(end) >= token.entries.size()) {
+        throw std::runtime_error("Out of range end");
+    }
+
+    const std::vector<std::string> imdbs
+        = searchdata.get_suggestion_imdbs(token);
+
+    std::string result = "{\"movies\":[";
+    const auto append_movie_info = [&](const std::string& imdb) {
+        result += '{' + movie_info_from_imdb(imdb, true) + '}';
+    };
+
+    std::for_each(imdbs.begin() + begin,
+            imdbs.begin() + end,
+            append_movie_info);
+
+    result += "]}";
+    response.send(Pistache::Http::Code::Ok, result);
 }
 
 void PageHandler::handle_post_request(

@@ -52,6 +52,7 @@ std::ofstream open_file(const std::string& dir);
 
 void write_file_json(const std::string& dir, const json::Document& j);
 json::Document read_file_json(const std::string& dir);
+[[maybe_unused]] std::string read_file_min(const std::string& dir);
 } // namespace util
 
 #endif

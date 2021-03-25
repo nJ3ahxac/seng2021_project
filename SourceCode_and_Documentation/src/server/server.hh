@@ -48,6 +48,9 @@ public:
     const auto& get_bindings() const noexcept { return bindings; }
     const auto& get_resources() const noexcept { return resources; }
 private:
+
+    std::string movie_info_from_imdb(const std::string& imdb, const bool verbose);
+
     void handle_post_request(const Pistache::Http::Request& request,
                              Pistache::Http::ResponseWriter& response);
     void handle_get_request(const Pistache::Http::Request& request,
