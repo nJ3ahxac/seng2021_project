@@ -168,7 +168,9 @@ async function try_list_redirect() {
 }
 
 function store_token_cookie() {
-    let args = "; samesite=none; secure"
+    let url = window.location.hostname;
+    // We can't set secure, at least not yet, as we are not using HTTPS.
+    let args = "; domain=" + url + "; path=/; samesite=lax;"
     document.cookie = "token=" + g_token + args;
 }
 
