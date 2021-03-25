@@ -110,6 +110,20 @@ void PageHandler::handle_token_init(const json::Document& d,
     response.send(Pistache::Http::Code::Ok, msg);
 }
 
+static std::string escape_json_str(std::string str) {
+    static const char to_escape[] = {'\b', '\f', '\n', '\r', '\t', '\"', '\\'};
+    for (std::size_t i = 0; i < str.length(); ++i) {
+        const auto is_char = [&](const char character) {
+            return str[i] == character;
+        };
+        if (std::ranges::any_of(to_escape, is_char)) {
+            str.insert(str.begin() + static_cast<signed>(i), '\\');
+            ++i; // prevent infinite loop
+        }
+    }
+    return str;
+}
+
 std::string PageHandler::movie_info_from_imdb(const std::string& movie_imdb, const bool verbose) {
     const auto it = movie_data.data.FindMember(movie_imdb);
     if (it >= movie_data.data.MemberEnd()) {
@@ -121,7 +135,11 @@ std::string PageHandler::movie_info_from_imdb(const std::string& movie_imdb, con
     std::string msg = {};
     const auto add_entry_str = [&](const std::string& elem) {
         if (!msg.empty()) msg += ',';
-        msg += '\"' + elem + "\":\"" + entry[elem].GetString() + '\"';
+        msg += '\"'
+            + elem
+            + "\":\""
+            + escape_json_str(entry[elem].GetString())
+            + '\"';
     };
 
     const auto add_entry_int = [&](const std::string& elem) {
