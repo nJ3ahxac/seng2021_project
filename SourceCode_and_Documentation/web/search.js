@@ -161,7 +161,7 @@ async function try_list_redirect() {
         return;
     }
     if (g_movies_current <= 100) {
-        window.location.replace("/list");
+        window.location.replace("/results");
         // Sleep, fsr javascript is still executed after replace
         await new Promise(r => setTimeout(r, 5000));
     }
