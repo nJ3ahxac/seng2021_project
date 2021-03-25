@@ -222,13 +222,16 @@ void PageHandler::handle_token_results(
 
     std::string result = "{\"movies\":[";
     const auto append_movie_info = [&](const std::string& imdb) {
-        result += '{' + movie_info_from_imdb(imdb, true) + '}';
+        result += '{' + movie_info_from_imdb(imdb, true) + "},";
     };
 
     std::for_each(imdbs.begin() + begin,
             imdbs.begin() + end,
             append_movie_info);
 
+    if (result.back() == ',') {
+        result.pop_back(); // hack: pop back last comma in json array
+    }
     result += "]}";
     response.send(Pistache::Http::Code::Ok, result);
 }
