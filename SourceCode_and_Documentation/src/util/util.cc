@@ -82,6 +82,20 @@ std::string util::read_file(const std::string& dir) {
     return file_contents;
 }
 
+[[maybe_unused]] std::string util::read_file_min(const std::string& dir) {
+    auto contents = read_file(dir);
+    // For each newline, erase itself and whitespace chars after it.
+    auto i = contents.find_first_of('\n');
+    while (i != std::string::npos) {
+        auto start_it = contents.begin() + static_cast<long>(i);
+        auto end_it = std::find_if_not(start_it, contents.end(),
+                                       [](auto c) { return std::isspace(c); });
+        contents.erase(start_it, end_it);
+        i = contents.find_first_of('\n');
+    }
+    return contents;
+}
+
 std::ofstream util::open_file(const std::string& dir) {
     std::ofstream ret(dir);
     if (!ret.is_open()) {
