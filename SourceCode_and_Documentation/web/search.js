@@ -167,11 +167,17 @@ async function try_list_redirect() {
     }
 }
 
+function store_token_cookie() {
+    let args = "; samesite=none; secure"
+    document.cookie = "token=" + g_token + args;
+}
+
 // Regardless of the request, this function should set the correct global vars.
 async function update_global_variables(json) {
     let token = json["token"];
     if (token) {
         g_token = token;
+        store_token_cookie();
     }
     let max = json["max"];
     if (max) {
