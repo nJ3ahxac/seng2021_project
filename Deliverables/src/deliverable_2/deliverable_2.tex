@@ -39,9 +39,31 @@ of CinemaScout as described in the user stories.
 \end{enumerate}
 \section{Software Architecture}
 \subsection{External Data Sources}
-placeholder
+CinemaScout is a movie aggregator which requires comprehensive movie 
+related information to function.
+Foremost, we require an encompassing and comprehensive list of all
+movies to date. In addition, the user expects each movie to be listed alongisde 
+its creation date, title and rating among other title specific information. 
+This will require an API (application programming interface) which provides 
+such data for all movies in the database of CinemaScout.\newline \newline
+There exists no comprehensive API which singly provides all information 
+CinemaScout requires. As a result, we are required to source data from multiple
+external databases:
+\begin{itemize}
+\item \textbf{IMDb}: The Interactive Movie Database provides archive
+snapshots of its comprehensive movie data sets. However, the data provided
+is limited in detail as it only contains metadata for each movie in the IMDb
+database. The dataset of IMDb is sufficient in providing a list of all movies,
+although specific details such as rating and plot are not provided.
+\item \textbf{OMDb}: The Open Movie Database is a RESTful web service
+which provides comprehensive movie information for a singular, specific title. 
+OMDb completes our data requirements, compensating for the lack of detail
+provided by IMDb.
+\end{itemize}
+Most critically, the information provided by the database snapshots of IMDb
+are a requisite of making a query to OMDb. As a result, the two external data
+sources complement each other and complete our data sourcing requirements.
 \subsection{Software Components}
-placeholder
 \subsection{Component Choices}
 placeholder
 \subsection{Machine Requirements}
