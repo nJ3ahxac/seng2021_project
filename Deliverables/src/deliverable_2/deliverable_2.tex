@@ -154,13 +154,53 @@ anticipate rapid surges of website traffic.
 The use of C++ as the programming language for the server alongside the native
 C++ libraries  RapidJSON, Pistache, libCurl as well as the C++ standard library
 will allow the server to deliver accurate movie suggestions in real time for a
-responsive user experience. Bulma as a CSS framework will enable the website to
+responsive user experience. The use of JSON as a data storage format will 
+prevent unnecessary database queries, decreasing server boot time and
+individual request response time.
+\newline\newline
+Bulma as a CSS framework will enable the website to
 function responsively on both mobile and desktop user browsers. Finally,
 selecting both OMDb and IMDb as external data sources will enable the user
 to receive relevant and comprehensive movie information via the frontend.
 \section{Initial Software Design}
 \subsection{User Stories}
-placeholder
+\begin{itemize}
+\item \textbf{User Story}: As an avid film watcher, I want to receive 
+tailored, specific recommendations relevant to me.
+\newline\textbf{Sequence Diagram}: See Figure 1.
+\item \textbf{User Story}: As someone who enjoys multiple movie genres, I want
+to receive recommendations which are not based on my previous viewing sessions.
+\newline\textbf{Sequence Diagram}: See Figure 1.
+\item \textbf{User Story}: As a power user, I wish to be able to receive many 
+movie recommendations over a short period of time.
+\newline\textbf{Sequence Diagram}: See Figure 1.
+\item \textbf{User Story}: As a first time website visitor, I wish to be able 
+to perform a search without offering my credentials and other personal
+information to first generate an account.
+\newline\textbf{Sequence Diagram}: See Figure 1.
+\item \textbf{User Story}: As a user of the service, I wish to be able to use 
+the service in its full capability without malicious content from ever 
+corrupting my movie suggestions.
+\newline\textbf{Sequence Diagram}: See Figure 1.
+\item \textbf{User Story}: As a user of the service, I do not wish to receive
+recommendations based on corporate interests or monetary influence.
+\newline\textbf{Sequence Diagram}: See Figure 1.
+\item \textbf{User Story}: As a returning user of the service, I wish to be able
+to view my recommendations and come back to my search results later.
+\newline\textbf{Sequence Diagram}: See Figure 2.
+\item \textbf{User Story}: As a user of CinemaScout who likes to watch trailers
+before the film, I wish to be able to view trailers for my recommendations
+in the CinemaScout website.
+\newline\textbf{Sequence Diagram}: See Figure 3.
+\item \textbf{User Story}: As a user of CinemaScout who wishes to view
+the results of the search offline, I want to be able to download the search
+results in a readable format for offline use.
+\newline\textbf{Sequence Diagram}: See Figure 4.
+\item \textbf{User Story}: As a user of CinemaScout who wants to print out my
+results, I wish to be able to print out a formatted version of the results page
+tailored for readability on an A4 page.
+\newline\textbf{Sequence Diagram}: See Figure 5.
+\end{itemize}
 \subsection{Sequence Diagrams}
 \begin{figure}[H]
 \includegraphics[width=\columnwidth]{res/sequence_diagram.png}
