@@ -167,59 +167,75 @@ to receive relevant and comprehensive movie information via the frontend.
 \begin{itemize}
 \item \textbf{User Story}: As an avid film watcher, I want to receive 
 tailored, specific recommendations relevant to me.
-\newline \textbf {Scenario:} Given that I am on the website and that I perform a movie search, when I receive results, then I should see results which are most relevant to me.
+\newline \textbf {Scenario:} Given that I am on the website and that I perform
+a movie search, when I receive results, then I should see results which are
+most relevant to me.
 \newline\textbf{Sequence Diagram}: See Figure 1.
 
 \item \textbf{User Story}: As someone who enjoys multiple movie genres, I want
 to receive recommendations which are not based on my previous viewing sessions.
-\newline \textbf {Scenario:} Given that I am on the website and I have previously made a search and I 
-perform a new search, when I receive results, then the results should not be
-an amalgamation of my previous sessions.
+\newline \textbf {Scenario:} Given that I am on the website and I have
+previously made a search and I perform a new search, when I receive results,
+then the results should not be an amalgamation of my previous sessions.
 \newline\textbf{Sequence Diagram}: See Figure 1.
 
 \item \textbf{User Story}: As a power user, I wish to be able to receive many 
 movie recommendations over a short period of time.
-\newline \textbf {Scenario:} Given that I have performed many searches recently, and I want to perform a new search, when I receive results, then the new results are not rate limited.
+\newline \textbf {Scenario:} Given that I have performed many searches recently,
+and I want to perform a new search, when I receive results, then the new 
+results are not rate limited.
 \newline\textbf{Sequence Diagram}: See Figure 1.
 
 \item \textbf{User Story}: As a first time website visitor, I wish to be able 
 to perform a search without offering my credentials and other personal
 information to first generate an account.
-\newline \textbf {Scenario:} Given that I have visited the website, and I want to make my first search, when I attempt to search, then I am not prompted to first create an account.
+\newline \textbf {Scenario:} Given that I have visited the website, and I want 
+to make my first search, when I attempt to search, then I am not prompted 
+to first create an account.
 \newline\textbf{Sequence Diagram}: See Figure 1.
 
 \item \textbf{User Story}: As a user of the service, I wish to be able to use 
 the service in its full capability without malicious content from ever 
 corrupting my movie suggestions.
-\newline \textbf {Scenario:}  Given that I have visited the website, and I make my search, when I receive my results, then the results should be free from user generated content.
+\newline \textbf {Scenario:}  Given that I have visited the website, and I make
+my search, when I receive my results, then the results should be free from user
+generated content.
 \newline\textbf{Sequence Diagram}: See Figure 1.
 
 \item \textbf{User Story}: As a user of the service, I do not wish to receive
 recommendations based on corporate interests or monetary influence.
-\newline \textbf {Scenario:} Given that I have visited the website, and I make my search, when I receive my results, then the results should be free from corporate bias.
+\newline \textbf {Scenario:} Given that I have visited the website, and I make
+my search, when I receive my results, then the results should be free from
+corporate bias.
 \newline\textbf{Sequence Diagram}: See Figure 1.
 
 \item \textbf{User Story}: As a returning user of the service, I wish to be able
 to view my recommendations and come back to my search results later.
-\newline \textbf {Scenario:} Given that I am on research result page, and I want to view my recommendation page, then I can return back to result page at any time.
+\newline \textbf {Scenario:} Given that I am on the website, and I have
+previously made a search, then I can return back to the result page and view
+my former results.
 \newline\textbf{Sequence Diagram}: See Figure 2.
 
 \item \textbf{User Story}: As a user of CinemaScout who likes to watch trailers
 before the film, I wish to be able to view trailers for my recommendations
 in the CinemaScout website.
-\newline \textbf {Scenario:} Given that I am on a movie detail page, and I open the trailer, then I can watch the trailer.
+\newline \textbf {Scenario:} Given that I am on a result page, and I open
+the modal for a movie, then I can watch the trailer of that movie.
 \newline\textbf{Sequence Diagram}: See Figure 3.
 
 \item \textbf{User Story}: As a user of CinemaScout who wishes to view
 the results of the search offline, I want to be able to download the search
 results in a readable format for offline use.
-\newline \textbf {Scenario:} Given that I am on the research result page, and I download the result, then a txt file of results will be downloaded.
+\newline \textbf {Scenario:} Given that I am on the result page, and I click
+'Download Results", then a JSON formatted text file of my results will be
+downoaded.
 \newline\textbf{Sequence Diagram}: See Figure 4.
 
 \item \textbf{User Story}: As a user of CinemaScout who wants to print out my
 results, I wish to be able to print out a formatted version of the results page
 tailored for readability on an A4 page.
-\newline \textbf {Scenario:} Given that I am on the research result page, and I print the result, then a A4 page of result will be printed.
+\newline \textbf {Scenario:} Given that I am on the result page, and I click
+'Print Results', then a prompt to print my results will be opened.
 \newline\textbf{Sequence Diagram}: See Figure 5.
 
 \end{itemize}
