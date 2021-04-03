@@ -14,6 +14,7 @@
                 flex-direction: column;
             }
         </style>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.24/dist/css/bulma-carousel.min.css">
     </head>
 
     <section header>
@@ -66,17 +67,36 @@
                     The results are in!
                 </h1>
                 <h2 class="subtitle">
-                    Here's what we reccommend.
+                    Here's what we recommend.
                 </h2>
             </div>
         </section>
         <div class="container">
-            <section class="section is-medium">
-                Hero carosel goes here?
-            </section>
-            <section>
-                Big table goes here?
-            </section>
+            <div id="top_carousel" class="carousel">
+            </div>
+            <nav class="level is-mobile">
+                <div class="level-left">
+                    Print button soon
+                </div>
+                <div class="level-right">
+                    something else idk
+                </div>
+            </nav>
+            <div class="box">
+                <div class="table-container">
+                    <table class="table is-fullwidth is-hoverable">
+                        <thead>
+                            <tr>
+                                <th class="is-clickable">Name</th>
+                                <th class="is-clickable">Year</th>
+                                <th class="is-clickable">Tags</th>
+                                <th class="is-clickable">Rating</th>
+                                <th class="is-clickable">Runtime</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
         </div>
         <footer class="footer">
             <div class="content has-text-centered">
@@ -84,6 +104,7 @@
             </div>
         </footer>
         <script src="results.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.24/dist/js/bulma-carousel.min.js"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     </body>
 </html>
