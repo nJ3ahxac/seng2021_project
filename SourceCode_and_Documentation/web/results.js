@@ -114,9 +114,91 @@ function attach_carousels() {
     });
 }
 
+function update_cell(cell, rpos, cpos) {
+    let contents = "";
+    let value = null;
+    switch (cpos) {
+        case 0: {
+            contents = g_results.movies[rpos]["title"];
+            break;
+        }
+        case 1: {
+            contents = g_results.movies[rpos]["year"];
+            break;
+        }
+        case 2: {
+            contents = g_results.movies[rpos]["rating"];
+            break;
+        }
+        case 3: {
+            contents = g_results.movies[rpos]["votes"];
+            break;
+        }
+        case 4: {
+            contents = g_results.movies[rpos]["runtime"];
+            if (contents === "N/A") {
+                value = "0";
+            } else {
+                value = contents.slice(0, -4);
+            }
+            break;
+        }
+    }
+    cell.innerHTML = contents;
+    if (value) {
+        cell.setAttribute("value", value);
+    }
+}
+
+function populate_table() {
+    let table = document.getElementById("movie_table");
+    let table_body = table.tBodies[0];
+    table_body.innerHTML = ""; // resets the table body, if it exists.
+    for (let i = 0; i < g_results.movies.length; ++i) {
+        let row = table_body.insertRow(-1);
+        for (let j = 0; j < 5; ++j) {
+            let cell = row.insertCell(j);
+            update_cell(cell, i, j);
+        }
+        row.setAttribute("movie", i); // store movie for click event
+    }
+}
+
+function attach_table() {
+    const getCellValue = (tr, idx) =>
+        tr.children[idx].getAttribute("value") || tr.children[idx].textContent;
+
+    const comparer = (idx, asc) => (a, b) =>
+        ((v1, v2) => v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2)
+                         ? v1 - v2
+                         : v1.toString().localeCompare(v2))(
+            getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+    // Set sorting of table events
+    document.querySelectorAll('th').forEach(
+        th => th.addEventListener('click', function() {
+            document.querySelectorAll('th').forEach(th => {
+                if (th.lastElementChild) {
+                    th.removeChild(th.lastElementChild);
+                }
+            });
+            let table = document.getElementById("movie_table");
+            const table_body = table.tBodies[0];
+            Array.from(table_body.querySelectorAll('tr'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th),
+                               this.asc = !this.asc))
+                .forEach(tr => table_body.appendChild(tr));
+            let sorted = document.createElement("i");
+            sorted.className = "fas fa-sort";
+            th.appendChild(sorted);
+        }))
+}
+
 function draw_results() {
     populate_top_carousel();
     attach_carousels();
+    populate_table();
+    attach_table();
 }
 
 // Since we can't use the youtube API for this, we will scrape our results.
@@ -203,8 +285,11 @@ async function draw_movie_modal(entry) {
         "<strong>Popularity: </strong>" + g_results.movies[entry]["votes"];
     let runtime = document.createElement("div");
     runtime.setAttribute("class", "subtitle has-text-centered");
-    runtime.innerHTML =
-        "<strong>Runtime: </strong>" + g_results.movies[entry]["runtime"];
+    let runtime_value = g_results.movies[entry]["runtime"];
+    if (runtime_value != "N/A") {
+        runtime_value = runtime_value.slice(0, -2);
+    }
+    runtime.innerHTML = "<strong>Runtime: </strong>" + runtime_value;
     let director = document.createElement("div");
     director.setAttribute("class", "subtitle has-text-centered");
     director.innerHTML = "<strong>Directed by: </strong>" +
@@ -220,7 +305,7 @@ async function draw_movie_modal(entry) {
     let plot = document.createElement("div");
     plot.setAttribute("class", "content is-medium");
     plot.innerHTML = "<strong>Plot: </strong>" +
-                     g_results.movies[entry].plot.split('. ', 1)[0] + ".";
+                     g_results.movies[entry].plot;
 
     document.body.append(modal);
     modal.appendChild(modal_background);
@@ -269,7 +354,7 @@ async function draw_movie_modal(entry) {
 // For every div with a "movie=n" (where n maps to g_results.movies[n]), this
 // function binds a modal click listener with that info.
 function bind_movie_listeners() {
-    let divs = document.getElementsByTagName("div");
+    let divs = document.getElementsByTagName("*");
     for (const div of divs) {
         let n = parseInt(div.getAttribute("movie"));
         if (isNaN(n)) {
@@ -283,14 +368,40 @@ function bind_movie_listeners() {
     }
 }
 
+function bind_button_listeners() {
+    let button_save = document.getElementById("button_save");
+    button_save.addEventListener("click", event => {
+        let contents = JSON.stringify(g_results);
+        // TODO
+        event.stopPropagation();
+    });
+    let button_print = document.getElementById("button_print");
+    button_print.addEventListener("click", event => {
+        window.print();
+        event.stopPropagation();
+    });
+}
+
+function bind_listeners() {
+    bind_movie_listeners();
+    bind_button_listeners();
+}
+
+function fix_visual_bugs() {
+    let box_shader_fix = document.getElementsByClassName("slider-container")[0];
+    let style = box_shader_fix.getAttribute("style");
+    box_shader_fix.setAttribute("style", style + "height: 490px");
+}
+
 async function handle_page_load() {
     if (!read_token_cookie()) {
-        // No token? You have to go back.
         await redirect_search();
     }
     await make_results_request();
     draw_results();
-    bind_movie_listeners();
+    bind_listeners();
+    fix_visual_bugs();
+    await new Promise(r => setTimeout(r, 1000)); // fake loading screen
     unshow_pageloader();
 }
 

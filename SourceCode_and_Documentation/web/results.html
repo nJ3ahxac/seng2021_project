@@ -58,7 +58,7 @@
     <body>
         <div class="pageloader is-active" id="loader">
             <span class="title">
-                Loading your recommendations.
+                Loading your recommendations...
             </span>
         </div>
         <section class="hero is-primary has-text-centered">
@@ -72,31 +72,73 @@
             </div>
         </section>
         <div class="container">
-            <div id="top_carousel" class="carousel">
+            <div id="top_carousel" class="carousel is-unselectable">
             </div>
+            <section class="section is-small">
+                <h1 class="title">
+                    The breakdown.
+                </h1>
+                <h2 class="subtitle">
+                    Save your results - or just make a new search!
+                </h2>
+            </section>
             <nav class="level is-mobile">
                 <div class="level-left">
-                    Print button soon
+                    <button class="button" id="button_save">
+                        <span class="icon">
+                            <i class="fas fa-save">
+                            </i>
+                        </span>
+                        <span>
+                            Save
+                        </span>
+                    </button>
                 </div>
                 <div class="level-right">
-                    something else idk
+                    <button class="button ml-1" id="button_print">
+                        <span>
+                            Print
+                        </span>
+                        <span class="icon">
+                            <i class="fas fa-print">
+                            </i>
+                        </span>
+                    </button>
                 </div>
             </nav>
             <div class="box">
-                <div class="table-container">
-                    <table class="table is-fullwidth is-hoverable">
+                <div class="table-container is-unselectable">
+                    <table class="table is-fullwidth is-hoverable" id="movie_table">
                         <thead>
                             <tr>
-                                <th class="is-clickable">Name</th>
-                                <th class="is-clickable">Year</th>
-                                <th class="is-clickable">Tags</th>
-                                <th class="is-clickable">Rating</th>
-                                <th class="is-clickable">Runtime</th>
+                                <th class="is-clickable">Name </th>
+                                <th class="is-clickable">Year </th>
+                                <th class="is-clickable">Rating </th>
+                                <th class="is-clickable">Popularity </th>
+                                <th class="is-clickable">Runtime </th>
                             </tr>
                         </thead>
+                        <tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
+            <section class="section is-small">
+                <div class="level">
+                    <div class="level-item has-text-centered">
+                        <div class="column is-half">
+                            <h1 class="title">
+                                Thanks for using CinemaScout!
+                            </h1>
+                            <form action="search">
+                                <button class="button is-large is-link mt-4">
+                                    Make another search
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
         <footer class="footer">
             <div class="content has-text-centered">
