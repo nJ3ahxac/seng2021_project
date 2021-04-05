@@ -1,3 +1,6 @@
 [submodule "SourceCode_and_Documentation/lib/googletest"]
 	path = SourceCode_and_Documentation/lib/googletest
 	url = https://github.com/google/googletest
+[submodule "SourceCode_and_Documentation/lib/cpp-httplib"]
+	path = SourceCode_and_Documentation/lib/cpp-httplib
+	url = https://github.com/yhirose/cpp-httplib.git

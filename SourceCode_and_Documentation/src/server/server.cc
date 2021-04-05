@@ -31,14 +31,15 @@ static std::unordered_map<std::string, std::string> create_resources() {
     return resources;
 }
 
-PageHandler::PageHandler(const MovieData& m)
-    : Pistache::Http::Handler(), bindings{{"/", "/main.html"},
-                                          {"/search", "/search.html"},
-                                          {"/results", "/results.html"},
-                                          {"/about", "/about.html"},
-                                          {"/favicon.ico", "/res/favicon.ico"}},
+ServerData::ServerData(const MovieData& m)
+    : bindings{{"/", "/main.html"},
+               {"/search", "/search.html"},
+               {"/results", "/results.html"},
+               {"/about", "/about.html"},
+               {"/favicon.ico", "/res/favicon.ico"}},
       resources(create_resources()), searchdata(m), tokens(max_token_storage),
-      movie_data(m) {}
+      movie_data(m) {
+}
 
 static std::string get_json_str(const json::Document& d,
                                 const std::string& value) {
@@ -56,7 +57,7 @@ static std::string get_json_str(const json::Document& d,
     return {it->value.GetString(), it->value.GetStringLength()};
 }
 
-search::token& PageHandler::get_token(const std::int64_t id) {
+search::token& ServerData::get_token(const std::int64_t id) {
     const auto token_has_identifier = [id](const search::token& token) {
         return token.identifier == id;
     };
@@ -69,7 +70,7 @@ search::token& PageHandler::get_token(const std::int64_t id) {
     throw std::runtime_error(msg);
 }
 
-search::token& PageHandler::get_token(const json::Document& d) {
+search::token& ServerData::get_token(const json::Document& d) {
     const std::string token_str = get_json_str(d, "token");
     try {
         const std::int64_t id = std::stol(token_str);
@@ -83,8 +84,8 @@ search::token& PageHandler::get_token(const json::Document& d) {
     }
 }
 
-void PageHandler::handle_token_init(const json::Document& d,
-                                    Pistache::Http::ResponseWriter& response) {
+void ServerData::handle_token_init(const json::Document& d,
+                                    httplib::Response& response) {
     std::int16_t flags = 0;
     static std::string checked = "true";
     if (get_json_str(d, "is_foreign") == checked) {
@@ -107,7 +108,9 @@ void PageHandler::handle_token_init(const json::Document& d,
     const std::string msg =
         "{\"token\":" + std::to_string(tokens.front().identifier) +
         ", \"max\":" + std::to_string(tokens.front().entries.size()) + "}";
-    response.send(Pistache::Http::Code::Ok, msg);
+
+    response.status = 200; // ok
+    response.set_content(msg, "text/plain");
 }
 
 static std::string escape_json_str(std::string str) {
@@ -124,7 +127,8 @@ static std::string escape_json_str(std::string str) {
     return str;
 }
 
-std::string PageHandler::movie_info_from_imdb(const std::string& movie_imdb, const bool verbose) {
+std::string ServerData::movie_info_from_imdb(const std::string& movie_imdb,
+                                              const bool verbose) {
     const auto it = movie_data.data.FindMember(movie_imdb);
     if (it >= movie_data.data.MemberEnd()) {
         throw std::runtime_error(
@@ -134,22 +138,21 @@ std::string PageHandler::movie_info_from_imdb(const std::string& movie_imdb, con
 
     std::string msg = {};
     const auto add_entry_str = [&](const std::string& elem) {
-        if (!msg.empty()) msg += ',';
-        msg += '\"'
-            + elem
-            + "\":\""
-            + escape_json_str(entry[elem].GetString())
-            + '\"';
+        if (!msg.empty())
+            msg += ',';
+        msg += '\"' + elem + "\":\"" +
+               escape_json_str(entry[elem].GetString()) + '\"';
     };
 
     const auto add_entry_int = [&](const std::string& elem) {
-        if (!msg.empty()) msg += ',';
+        if (!msg.empty())
+            msg += ',';
         msg += '\"' + elem + "\":" + std::to_string(entry[elem].GetInt());
     };
 
-
     const auto add_entry_float = [&](const std::string& elem) {
-        if (!msg.empty()) msg += ',';
+        if (!msg.empty())
+            msg += ',';
         msg += '\"' + elem + "\":" + std::to_string(entry[elem].GetFloat());
     };
 
@@ -170,27 +173,31 @@ std::string PageHandler::movie_info_from_imdb(const std::string& movie_imdb, con
     return msg;
 }
 
-void PageHandler::handle_token_info(const json::Document& d,
-                                    Pistache::Http::ResponseWriter& response) {
+void ServerData::handle_token_info(const json::Document& d,
+                                    httplib::Response& response) {
     auto& token = get_token(d);
     const std::string movie_imdb = searchdata.get_suggestion_imdb(token);
     const std::string msg =
         "{\"cur\":" + std::to_string(token.entries.size()) +
         ", \"keyword\": \"" + token.keyword + "\", \"is_genre\": \"" +
-        std::string{token.is_filtering_genres ? "true" : "false"} +
-        "\", " + movie_info_from_imdb(movie_imdb, false) + "}";
-    response.send(Pistache::Http::Code::Ok, msg);
+        std::string{token.is_filtering_genres ? "true" : "false"} + "\", " +
+        movie_info_from_imdb(movie_imdb, false) + "}";
+    
+    response.status = 200; // ok
+    response.set_content(msg, "text/plain");
 }
 
-void PageHandler::handle_token_advance(
-    const json::Document& d, Pistache::Http::ResponseWriter& response) {
+void ServerData::handle_token_advance(const json::Document& d,
+                                       httplib::Response& response) {
     auto& token = get_token(d);
     searchdata.advance_token(token, get_json_str(d, "remove") == "true");
-    response.send(Pistache::Http::Code::Ok, "{}");
+
+    response.status = 200; // ok
+    response.set_content("{}", "text/plain");
 }
 
-void PageHandler::handle_token_results(
-    const json::Document& d, Pistache::Http::ResponseWriter& response) {
+void ServerData::handle_token_results(const json::Document& d,
+                                       httplib::Response& response) {
     auto& token = get_token(d);
 
     const auto begin_str = get_json_str(d, "begin");
@@ -200,7 +207,8 @@ void PageHandler::handle_token_results(
         try {
             return {std::stol(begin_str), std::stol(count_str)};
         } catch (...) {
-            throw std::runtime_error("Failed to parse begin and count arguments");
+            throw std::runtime_error(
+                "Failed to parse begin and count arguments");
         }
     }();
 
@@ -210,39 +218,36 @@ void PageHandler::handle_token_results(
     if (count == 0) {
         throw std::runtime_error("Count cannot be zero");
     }
-    const auto end = std::min(begin + count,
-            static_cast<long>(token.entries.size()-1));
+    const auto end =
+        std::min(begin + count, static_cast<long>(token.entries.size() - 1));
     // This will still fail if token.entries.size() == 0, despite the clamping
     if (static_cast<std::size_t>(end) >= token.entries.size()) {
         throw std::runtime_error("Out of range end");
     }
 
-    const std::vector<std::string> imdbs
-        = searchdata.get_suggestion_imdbs(token);
+    const std::vector<std::string> imdbs =
+        searchdata.get_suggestion_imdbs(token);
 
     std::string result = "{\"movies\":[";
     const auto append_movie_info = [&](const std::string& imdb) {
         result += '{' + movie_info_from_imdb(imdb, true) + "},";
     };
 
-    std::for_each(imdbs.begin() + begin,
-            imdbs.begin() + end,
-            append_movie_info);
+    std::for_each(imdbs.begin() + begin, imdbs.begin() + end,
+                  append_movie_info);
 
     if (result.back() == ',') {
         result.pop_back(); // hack: pop back last comma in json array
     }
     result += "]}";
-    response.send(Pistache::Http::Code::Ok, result);
+    response.status = 200; // ok
+    response.set_content(result, "text/plain");
 }
 
-void PageHandler::handle_post_request(
-    const Pistache::Http::Request& request,
-    Pistache::Http::ResponseWriter& response) {
-    response.headers().add<Pistache::Http::Header::ContentType>(
-        MIME(Application, Json));
+void ServerData::handle_post_request(const httplib::Request& request,
+                                      httplib::Response& response) {
     json::Document d(json::kObjectType);
-    d.Parse(request.body());
+    d.Parse(request.body);
 
     const std::string type = get_json_str(d, "type");
 
@@ -259,45 +264,26 @@ void PageHandler::handle_post_request(
     }
 }
 
-void PageHandler::handle_get_request(const Pistache::Http::Request& request,
-                                     Pistache::Http::ResponseWriter& response) {
+void ServerData::handle_get_request(const httplib::Request& request,
+                                     httplib::Response& response) {
     // There are three cases for providing files here.
     // 1. The page requested is in our bindings, eg "/" -> "main.html"
-    if (const auto it = bindings.find(request.resource());
+    if (const auto it = bindings.find(request.path);
         it != bindings.end()) {
-        response.send(Pistache::Http::Code::Ok, resources.at(it->second));
+        response.status = 200; // ok
+        response.set_content(resources.at(it->second), "");
         return;
     }
 
     // 2. The page requested is in our std::map of files (usually .js)
-    if (const auto it = resources.find(request.resource());
+    if (const auto it = resources.find(request.path);
         it != resources.end()) {
-        response.send(Pistache::Http::Code::Ok, it->second);
+        response.status = 200; // ok
+        response.set_content(it->second, "");
         return;
     }
 
     // 3. The page does not exist, in which case we return 404.
-    response.send(Pistache::Http::Code::Not_Found, resources.at("/404.html"));
-}
-
-void PageHandler::onRequest(const Pistache::Http::Request& request,
-                            Pistache::Http::ResponseWriter response) {
-    try {
-        switch (request.method()) {
-        case Pistache::Http::Method::Post:
-            handle_post_request(request, response);
-            break;
-        case Pistache::Http::Method::Get:
-            handle_get_request(request, response);
-            break;
-        default:
-            break;
-        }
-    } catch (const std::runtime_error& e) {
-        const std::string msg = "{\"error\":\"" + std::string{e.what()} + "\"}";
-        response.send(Pistache::Http::Code::Bad_Request, msg);
-    } catch (...) {
-        const std::string msg = "{\"error\":\"Unknown\"}";
-        response.send(Pistache::Http::Code::Bad_Request, msg);
-    }
+    response.status = 404; // not found
+    response.set_content(resources.at("/404.html"), "text/plain");
 }

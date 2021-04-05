@@ -10,8 +10,9 @@ project(webserver)
 include_directories(
     src
     $(PROJECT_SOURCE_DIR)/src/server
+    $(PROJECT_SOURCE_DIR)/lib/cpp-httplib
 )
 
 add_subdirectory(src)
 add_subdirectory(lib/googletest)
-add_subdirectory(test)
+#add_subdirectory(test)
