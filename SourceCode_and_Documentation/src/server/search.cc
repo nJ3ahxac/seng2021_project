@@ -58,7 +58,7 @@ static std::int16_t calc_movie_flags(const movie_entry& movie, const std::string
 }
 
 static std::int64_t generate_token_identifier() {
-    return std::random_device{"/dev/random"}();
+    return std::random_device{"/dev/urandom"}();
 }
 
 static bool movie_matches_flags(const movie_entry& movie, const std::int16_t flags) {

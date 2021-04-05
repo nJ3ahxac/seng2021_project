@@ -94,29 +94,6 @@ int main(const int argc, const char* argv[]) {
 
     httplib::Server server;
 
-/*void ServerData::onRequest(const httplib::Request& request,
-                            httplib::Response response) {
-    try {
-        switch (request.method()) {
-        case Pistache::Http::Method::Post:
-            handle_post_request(request, response);
-            break;
-        case Pistache::Http::Method::Get:
-            handle_get_request(request, response);
-            break;
-        default:
-            break;
-        }
-    } catch (const std::runtime_error& e) {
-        const std::string msg = "{\"error\":\"" + std::string{e.what()} + "\"}";
-        response.status = 400; // bad request
-        response.set_content(msg, "text/plain");
-    } catch (...) {
-        const std::string msg = "{\"error\":\"Unknown\"}";
-        response.status = 400; // bad request
-        response.set_content(msg, "text/plain");
-    }
-}*/
     ServerData server_data(*moviedata);
 
     const auto error_wrapper = [&](const bool is_get,
