@@ -91,48 +91,10 @@ int main(const int argc, const char* argv[]) {
     std::cout << "Initialising search database with: "
               << moviedata->data.MemberCount() << " films.\n";
 
-
-    httplib::Server server;
-
-    ServerData server_data(*moviedata);
-
-    const auto error_wrapper = [&](const bool is_get,
-            const httplib::Request& request,
-            httplib::Response& response) {
-        try {
-            if (is_get) {
-                server_data.handle_get_request(request, response);
-            } else {
-                server_data.handle_post_request(request, response);
-            }
-        } catch (const std::runtime_error& e) {
-            const std::string msg = "{\"error\":\"" + std::string{e.what()} + "\"}";
-            response.status = 400; // bad request
-            response.set_content(msg, "text/plain");
-        } catch (...) {
-            const std::string msg = "{\"error\":\"Unknown\"}";
-            response.status = 400; // bad request
-            response.set_content(msg, "text/plain");
-        }
-    };
-
-    const auto get_fn = [&](const httplib::Request& request, httplib::Response& response) {
-        error_wrapper(true, request, response);
-    };
-    
-    const auto post_fn = [&](const httplib::Request& request, httplib::Response& response) {
-        error_wrapper(false, request, response);
-    };
-
-    const auto all = "/(.*?)";
-    server.Get(all, get_fn);
-    server.Post(all, post_fn);
-
     try {
         std::cout << "Port: " << port << "\nThreads: " << threads << '\n';
-        server.listen("0.0.0.0", port);
-    }
-    catch (const std::exception& e) {
+        const ServerData server(*moviedata, port);
+    } catch (const std::exception& e) {
         std::cerr << "Uncaught server exception: " << e.what() << '\n';
     }
 }

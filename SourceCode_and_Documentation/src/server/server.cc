@@ -31,7 +31,8 @@ static std::unordered_map<std::string, std::string> create_resources() {
     return resources;
 }
 
-ServerData::ServerData(const MovieData& m)
+ServerData::ServerData(const MovieData& m, const std::uint16_t port,
+                       const bool exit_on_delete)
     : bindings{{"/", "/main.html"},
                {"/search", "/search.html"},
                {"/results", "/results.html"},
@@ -39,6 +40,46 @@ ServerData::ServerData(const MovieData& m)
                {"/favicon.ico", "/res/favicon.ico"}},
       resources(create_resources()), searchdata(m), tokens(max_token_storage),
       movie_data(m) {
+    // Set up handlers for post and get requests, calling either
+    // handle_get_request or handle_post_request as appropriate.
+    const auto error_wrapper = [&]<bool is_get>(const httplib::Request& request,
+                                                httplib::Response& response) {
+        try {
+            if constexpr (is_get) {
+                handle_get_request(request, response);
+            } else {
+                handle_post_request(request, response);
+            }
+        } catch (const std::runtime_error& e) {
+            const std::string msg =
+                "{\"error\":\"" + std::string{e.what()} + "\"}";
+            response.status = 400; // bad request
+            response.set_content(msg, "text/plain");
+        } catch (...) {
+            const std::string msg = "{\"error\":\"Unknown\"}";
+            response.status = 400; // bad request
+            response.set_content(msg, "text/plain");
+        }
+    };
+
+    const auto all_regex = "/(.*?)";
+    server.Get(all_regex, [&](const httplib::Request& request,
+                              httplib::Response& response) {
+        error_wrapper.operator()<true>(request, response);
+    });
+
+    server.Post(all_regex, [&](const httplib::Request& request,
+                               httplib::Response& response) {
+        error_wrapper.operator()<false>(request, response);
+    });
+
+    if (exit_on_delete) {
+        server.Delete(all_regex, [&](const httplib::Request& request,
+                                     httplib::Response& response) {
+            server.stop();
+        });
+    }
+    server.listen("0.0.0.0", port);
 }
 
 static std::string get_json_str(const json::Document& d,
@@ -85,7 +126,7 @@ search::token& ServerData::get_token(const json::Document& d) {
 }
 
 void ServerData::handle_token_init(const json::Document& d,
-                                    httplib::Response& response) {
+                                   httplib::Response& response) {
     std::int16_t flags = 0;
     static std::string checked = "true";
     if (get_json_str(d, "is_foreign") == checked) {
@@ -128,7 +169,7 @@ static std::string escape_json_str(std::string str) {
 }
 
 std::string ServerData::movie_info_from_imdb(const std::string& movie_imdb,
-                                              const bool verbose) {
+                                             const bool verbose) {
     const auto it = movie_data.data.FindMember(movie_imdb);
     if (it >= movie_data.data.MemberEnd()) {
         throw std::runtime_error(
@@ -174,7 +215,7 @@ std::string ServerData::movie_info_from_imdb(const std::string& movie_imdb,
 }
 
 void ServerData::handle_token_info(const json::Document& d,
-                                    httplib::Response& response) {
+                                   httplib::Response& response) {
     auto& token = get_token(d);
     const std::string movie_imdb = searchdata.get_suggestion_imdb(token);
     const std::string msg =
@@ -182,13 +223,13 @@ void ServerData::handle_token_info(const json::Document& d,
         ", \"keyword\": \"" + token.keyword + "\", \"is_genre\": \"" +
         std::string{token.is_filtering_genres ? "true" : "false"} + "\", " +
         movie_info_from_imdb(movie_imdb, false) + "}";
-    
+
     response.status = 200; // ok
     response.set_content(msg, "text/plain");
 }
 
 void ServerData::handle_token_advance(const json::Document& d,
-                                       httplib::Response& response) {
+                                      httplib::Response& response) {
     auto& token = get_token(d);
     searchdata.advance_token(token, get_json_str(d, "remove") == "true");
 
@@ -197,7 +238,7 @@ void ServerData::handle_token_advance(const json::Document& d,
 }
 
 void ServerData::handle_token_results(const json::Document& d,
-                                       httplib::Response& response) {
+                                      httplib::Response& response) {
     auto& token = get_token(d);
 
     const auto begin_str = get_json_str(d, "begin");
@@ -245,7 +286,7 @@ void ServerData::handle_token_results(const json::Document& d,
 }
 
 void ServerData::handle_post_request(const httplib::Request& request,
-                                      httplib::Response& response) {
+                                     httplib::Response& response) {
     json::Document d(json::kObjectType);
     d.Parse(request.body);
 
@@ -265,19 +306,17 @@ void ServerData::handle_post_request(const httplib::Request& request,
 }
 
 void ServerData::handle_get_request(const httplib::Request& request,
-                                     httplib::Response& response) {
+                                    httplib::Response& response) {
     // There are three cases for providing files here.
     // 1. The page requested is in our bindings, eg "/" -> "main.html"
-    if (const auto it = bindings.find(request.path);
-        it != bindings.end()) {
+    if (const auto it = bindings.find(request.path); it != bindings.end()) {
         response.status = 200; // ok
         response.set_content(resources.at(it->second), "");
         return;
     }
 
     // 2. The page requested is in our std::map of files (usually .js)
-    if (const auto it = resources.find(request.path);
-        it != resources.end()) {
+    if (const auto it = resources.find(request.path); it != resources.end()) {
         response.status = 200; // ok
         response.set_content(it->second, "");
         return;
