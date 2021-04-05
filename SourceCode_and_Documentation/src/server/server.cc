@@ -285,5 +285,5 @@ void ServerData::handle_get_request(const httplib::Request& request,
 
     // 3. The page does not exist, in which case we return 404.
     response.status = 404; // not found
-    response.set_content(resources.at("/404.html"), "text/plain");
+    response.set_content(resources.at("/404.html"), "");
 }
