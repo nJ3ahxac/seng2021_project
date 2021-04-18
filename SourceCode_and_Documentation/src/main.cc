@@ -1,54 +1,6 @@
 #include "main.hh"
 
-[[maybe_unused]] static void test_textmode_client() {
-    std::optional<MovieData> movies;
-    try {
-        std::cout << "Loading pre-existing movie data cache.\n";
-        movies = MovieData(MovieData::construct::with_cache);
-    } catch (const MovieData::cache_error& e) {
-        std::cout << "Failed to load movie data from pre-existing cache.\n"
-                     "Regenerating cache. This may take a while.\n";
-        movies = MovieData(MovieData::construct::without_cache);
-        std::cout << "Movie data cache regenerated.\n";
-    } catch (const std::exception& e) {
-        std::cerr << "Bad movie data initialisation: " << e.what() << '\n';
-        std::exit(EXIT_FAILURE);
-    }
-
-    std::cout << "Initialising search database with "
-              << movies->data.MemberCount() << " films.\n";
-
-    SearchData searchdata{*movies};
-
-    std::cout << "Search initialized, creating token\n";
-
-    search::token t = searchdata.create_token();
-    while (!t.suggestion.has_value()) {
-        std::cout << t.entries.size() << " movies left, best keyword is "
-                  << t.keyword << '\n';
-        std::cout << "(r)emove or (k)eep keyword? ";
-
-        char answer;
-        std::cin >> answer;
-        if (answer != 'r' && answer != 'k') {
-            continue;
-        }
-
-        searchdata.advance_token(t, answer == 'r');
-    }
-
-    std::cout << "Your movie suggestion is IMDB index " << t.suggestion.value()
-              << '\n';
-    if (t.entries.size() > 1) {
-        std::cout << "However, there are " << t.entries.size() - 1
-                  << " alternatives\n";
-    }
-
-    std::exit(EXIT_SUCCESS);
-}
-
 int main(const int argc, const char* argv[]) {
-    // test_textmode_client();
     if (argc > 3) {
         std::cout << "Too many arguments: <port=9080> <threads=1>\n";
         std::exit(EXIT_FAILURE);

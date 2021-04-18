@@ -23,10 +23,11 @@ struct token {
     std::string keyword;
     // Are we filtering genres or keywords?
     bool is_filtering_genres;
-    // Currently suggested movie (IMDB index)
-    std::optional<std::int32_t> suggestion;
-    // Amount of times we have advanced the search
-    std::size_t advance_count;
+    // history of suggested movies (IMDB index)
+    // in order to not recommend the same movie twice
+    std::vector<std::int32_t> suggested;
+    //
+    bool suggestion_needs_update = true;
 };
 
 struct movie_entry {
