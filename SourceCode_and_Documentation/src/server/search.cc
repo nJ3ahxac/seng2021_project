@@ -168,6 +168,12 @@ SearchData::SearchData(const MovieData& movies) {
             .keywords = array_to_set(movie.value["keywords"], all_keywords)});
         entry.flags = calc_movie_flags(entry, movie.value["language"].GetString());
     }
+
+    // Prevent recommending a genre when it appears as a keyword
+    for (std::string genre : all_genres) {
+        boost::algorithm::to_lower(genre);
+        all_keywords.erase(genre);
+    }
 }
 
 token SearchData::create_token(const std::int16_t flags) {
