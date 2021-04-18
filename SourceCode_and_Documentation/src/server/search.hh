@@ -18,15 +18,14 @@ struct token {
     // (internal use only, NOT imdb index)
     std::vector<std::int32_t> entries;
     // Current keyword to send to the client for filtering
-    // If keyword.empty(), no more filtering is possible and
-    // it is likely that the suggestion optional has a value
+    // If keyword.empty(), no more filtering is possible
     std::string keyword;
     // Are we filtering genres or keywords?
     bool is_filtering_genres;
     // history of suggested movies (IMDB index)
     // in order to not recommend the same movie twice
     std::vector<std::int32_t> suggested;
-    //
+    // Internal use, does a new suggestion need to be generated?
     bool suggestion_needs_update = true;
 };
 
