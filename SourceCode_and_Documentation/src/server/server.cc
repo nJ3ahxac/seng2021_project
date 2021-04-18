@@ -44,6 +44,7 @@ ServerData::ServerData(const MovieData& m, const std::uint16_t port)
     const auto error_wrapper = [&]<bool is_get>(const httplib::Request& request,
                                                 httplib::Response& response) {
         try {
+            util::log(request.remote_addr + ' ' + request.path + '\n');
             if constexpr (is_get) {
                 handle_get_request(request, response);
             } else {

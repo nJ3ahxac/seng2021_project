@@ -96,8 +96,9 @@ std::string util::read_file(const std::string& dir) {
     return contents;
 }
 
-std::ofstream util::open_file(const std::string& dir) {
-    std::ofstream ret(dir);
+std::ofstream util::open_file(const std::string& dir,
+                              const std::ios_base::openmode mode) {
+    std::ofstream ret(dir, mode);
     if (!ret.is_open()) {
         throw std::runtime_error("Failed to open writable file: " + dir);
     }

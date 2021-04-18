@@ -6,6 +6,7 @@
 #include "client/client.hh"
 #include "server/search.hh"
 #include "util/util.hh"
+#include "util/log.hh"
 
 #include <boost/circular_buffer.hpp>
 
