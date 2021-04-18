@@ -1,12 +1,14 @@
 # SENG2021 Project
 
-A webserver which communicates with an API.
+A webserver which communicates with an API. The project, named CinemaScout, is an ultra-fast movie database traversal tool which procedurally generates a series of questions to filter the entire IMDb database. 
+
+A live deployment of this project might be available at [cinemascout.xyz](http://cinemascout.xyz).
 
 # Dependencies
 Build dependencies:
 - [CMake](https://cmake.org) : CMake is a cross platform, open-source build system generator.
 - [Googletest](https://github.com/google/googletest) : Googletest is a modern C++ testing framework.
-- [Pistache](http://pistache.io) : Pistache is a modern and elegant asynchronous HTTP and REST framework for C++.
+- [cpp-httplib](https://github.com/yhirose/cpp-httplib) : A C++11 single-file header-only cross platform HTTP/HTTPS library.
 - [Boost](https://www.boost.org) : Boost provides free peer-reviewed portable C++ source libraries.
 - [Curl](https://curl.se/libcurl) : Curl is a free and easy-to-use client side URL transfer library.
 
@@ -43,7 +45,6 @@ The webserver binary should be executed when the current working directory is <s
 ```console
     $ ./src/webserver
 ```
-You may provide two optional arguments to the webserver, specifying the port and the the number of threads of execution. If no arguments are provided, the default values of 9080 and 1 are used respectively. If an argument of 0 is provided to threads, the amount of threads utilised will be equal to the return value of `std::thread::hardware_concurrency`.
 
 On first launch, the webserver will update the database cache via the runtime dependencies. One of the dependencies, `OMDb`, requires an api key, which may be acquired [here](https://www.omdbapi.com/apikey.aspx). Put the key into `SourceCode_and_Documentation/key.txt`.
 
@@ -55,4 +56,4 @@ After the cache has been updated, the webserver can typically be accessed at `lo
 
 We are using the testing framework [Googletest](https://github.com/google/googletest). By default, unit tests are automatically executed during the build process. Ensure that no test failures are present before making a pull request. Attempt to follow the current testing layout style. For example, non-statically linked functions that may server a purpose in other areas should be placed in `src/util/util.cc` and tested accordingly in `test/tests/utiltest.cc`. 
 
-For code which it is not viable to test directly, it is acceptable that the expected behaviour is instead tested more generally through networked means (see `test/tests/servertest.cc` for an example).
+For code which it is not viable to test directly, it is acceptable that the expected behaviour is instead tested through networked means (see `test/tests/servertest.cc` for an example of system tests).
