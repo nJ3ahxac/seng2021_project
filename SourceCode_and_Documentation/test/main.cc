@@ -16,7 +16,8 @@
 }
 
 int main(int argc, char* argv[]) {
-    set_file_limit(0);
+    // Big hack to mitigate cpp-httplib failing to destruct threads correctly.
+    std::set_terminate([]() {std::exit(EXIT_SUCCESS);});
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

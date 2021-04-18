@@ -31,8 +31,7 @@ static std::unordered_map<std::string, std::string> create_resources() {
     return resources;
 }
 
-ServerData::ServerData(const MovieData& m, const std::uint16_t port,
-                       const bool exit_on_delete)
+ServerData::ServerData(const MovieData& m, const std::uint16_t port)
     : bindings{{"/", "/main.html"},
                {"/search", "/search.html"},
                {"/results", "/results.html"},
@@ -73,12 +72,6 @@ ServerData::ServerData(const MovieData& m, const std::uint16_t port,
         error_wrapper.operator()<false>(request, response);
     });
 
-    if (exit_on_delete) {
-        server.Delete(all_regex, [&](const httplib::Request& request,
-                                     httplib::Response& response) {
-            server.stop();
-        });
-    }
     server.listen("0.0.0.0", port);
 }
 
@@ -179,21 +172,18 @@ std::string ServerData::movie_info_from_imdb(const std::string& movie_imdb,
 
     std::string msg = {};
     const auto add_entry_str = [&](const std::string& elem) {
-        if (!msg.empty())
-            msg += ',';
+        if (!msg.empty()) msg += ',';
         msg += '\"' + elem + "\":\"" +
                escape_json_str(entry[elem].GetString()) + '\"';
     };
 
     const auto add_entry_int = [&](const std::string& elem) {
-        if (!msg.empty())
-            msg += ',';
+        if (!msg.empty()) msg += ',';
         msg += '\"' + elem + "\":" + std::to_string(entry[elem].GetInt());
     };
 
     const auto add_entry_float = [&](const std::string& elem) {
-        if (!msg.empty())
-            msg += ',';
+        if (!msg.empty()) msg += ',';
         msg += '\"' + elem + "\":" + std::to_string(entry[elem].GetFloat());
     };
 

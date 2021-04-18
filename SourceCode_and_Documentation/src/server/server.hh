@@ -36,22 +36,19 @@ private:
     // Manages everything http related.
     httplib::Server server;
 
-    const auto& get_bindings() const noexcept { return bindings; }
-    const auto& get_resources() const noexcept { return resources; }
-
 public:
     // Caches all provided web files and associates bindings for later lookup.
     // Throws a std::runtime_error if a requested file does not exist.
     // Begins hosting the server on localhost@port once initialisation finishes.
-    // If exit_on_delete is true, the server will exit if it receives any DELETE
-    // http request (useful for tests).
-    ServerData(const MovieData& m, const std::uint16_t port,
-               bool exit_on_delete = false);
+    ServerData(const MovieData& m, const std::uint16_t port);
 
     void handle_post_request(const httplib::Request& request,
                              httplib::Response& response);
     void handle_get_request(const httplib::Request& request,
                             httplib::Response& response);
+
+    const auto& get_bindings() const noexcept { return bindings; }
+    const auto& get_resources() const noexcept { return resources; }
 
 private:
     std::string movie_info_from_imdb(const std::string& imdb,

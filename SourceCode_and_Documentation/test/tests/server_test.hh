@@ -21,25 +21,29 @@
 #include "util/util.hh"
 
 namespace servertest {
-static int test_port = PORT_DEFAULT;
-static std::string test_dir = "test/tmp/";
+static constexpr int test_port = PORT_DEFAULT + 1;
+static const std::string test_dir = "test/tmp/";
 static std::optional<MovieData> test_moviedata;
+static std::optional<ServerData> test_serverdata;
 
-static std::string init_postdata = "{\"type\":\"init\""
-                                   ",\"is_foreign\":\"true\""
-                                   ",\"is_greyscale\":\"true\""
-                                   ",\"is_silent\":\"true\""
-                                   ",\"is_pre1980\":\"true\""
-                                   ",\"is_adult\":\"true\"}";
+static const std::string init_postdata = "{\"type\":\"init\""
+                                         ",\"is_foreign\":\"true\""
+                                         ",\"is_greyscale\":\"true\""
+                                         ",\"is_silent\":\"true\""
+                                         ",\"is_pre1980\":\"true\""
+                                         ",\"is_adult\":\"true\"}";
 } // namespace servertest
 
-// Since googletest inits a new fixtures each test, we will have to work around
-// failing to bind to the same port within short periods by incrementing
-// test_port each time we construct ServerTest.
+// cpphttplib seems to have thread joining issues, making starting/stopping
+// the server in quick succession impossible.
+// As a workaround, we will only start the server once.
+namespace {
+inline std::thread server_thread;
+inline std::once_flag server_flag;
+} // namespace
+
 class ServerTest : public ::testing::Test {
 private:
-    std::thread server_thread;
-
     // Creates a small cache so that we can test our operations on a less
     // encompassing and expensive dataset. Cleaned up in destructor.
     void create_test_moviedata_cache() {
@@ -93,15 +97,13 @@ protected:
             MovieData moviedata{MovieData::construct::with_cache,
                                 servertest::test_dir};
             servertest::test_moviedata = moviedata;
-
-            server.init(opts);
-            server.setHandler(
-                Pistache::Http::make_handler<PageHandler>(moviedata));
-            server.serve();
+            servertest::test_serverdata.emplace(moviedata,
+                                                servertest::test_port);
         };
-        ++servertest::test_port;
+
         create_test_moviedata_cache();
-        this->server_thread = std::thread(start_server);
+        std::call_once(::server_flag,
+                       [&]() { ::server_thread = std::thread(start_server); });
 
         // To avoid a race condition, we must wait for the server to init on the
         // other thread before running any tests.
@@ -115,7 +117,6 @@ protected:
         }
     }
     virtual ~ServerTest() {
-        server_thread.detach();
         std::filesystem::remove_all(servertest::test_dir);
     };
 };

@@ -1,22 +1,14 @@
 #include "server_test.hh"
 
-TEST_F(ServerTest, visible_web_directory) {
-    // The ctor of PageHandler throws a std::runtime_error if it cannot
-    // access a requested resource, which is caught by gtest, failing the test.
-    PageHandler{*servertest::test_moviedata};
-}
-
 TEST_F(ServerTest, bindings_code_200) {
-    const PageHandler handler{*servertest::test_moviedata};
-    for (const auto& b : handler.get_bindings()) {
+    for (const auto& b : servertest::test_serverdata->get_bindings()) {
         const auto url = "localhost" + b.first;
         EXPECT_EQ(util::request(url, servertest::test_port).get_code(), 200L);
     }
 }
 
 TEST_F(ServerTest, resources_code_200) {
-    const PageHandler handler{*servertest::test_moviedata};
-    for (const auto& r : handler.get_resources()) {
+    for (const auto& r : servertest::test_serverdata->get_resources()) {
         const auto url = "localhost" + r.first;
         EXPECT_EQ(util::request(url, servertest::test_port).get_code(), 200L);
     }
@@ -28,8 +20,7 @@ TEST_F(ServerTest, non_existent_code_404) {
 }
 
 TEST_F(ServerTest, bindings_first_same_file) {
-    const PageHandler handler{*servertest::test_moviedata};
-    for (const auto& b : handler.get_bindings()) {
+    for (const auto& b : servertest::test_serverdata->get_bindings()) {
         const std::string file = util::read_file("web" + b.second);
         const auto url = "localhost" + b.first;
         EXPECT_EQ(file,
@@ -38,8 +29,7 @@ TEST_F(ServerTest, bindings_first_same_file) {
 }
 
 TEST_F(ServerTest, bindings_second_same_file) {
-    const PageHandler handler{*servertest::test_moviedata};
-    for (const auto& b : handler.get_bindings()) {
+    for (const auto& b : servertest::test_serverdata->get_bindings()) {
         const std::string file = util::read_file("web" + b.second);
         const auto url = "localhost" + b.second;
         EXPECT_EQ(file,
@@ -48,8 +38,7 @@ TEST_F(ServerTest, bindings_second_same_file) {
 }
 
 TEST_F(ServerTest, resources_first_same_file) {
-    const PageHandler handler{*servertest::test_moviedata};
-    for (const auto& r : handler.get_resources()) {
+    for (const auto& r : servertest::test_serverdata->get_resources()) {
         const std::string file = util::read_file("web" + r.first);
         const auto url = "localhost" + r.first;
         EXPECT_EQ(file,
@@ -145,20 +134,16 @@ TEST_F(ServerTest, post_token_init_advance_multiple) {
 
 static std::string get_info_request_contents(const std::string& token) {
     return "{\"type\":\"info\","
-           "\"token\":\"" +
-           token + "\"}";
+           "\"token\":\"" + token + "\"}";
 }
 
 static std::string get_results_request_contents(const std::string& token,
-        const int begin,
-        const int count) {
+                                                const int begin,
+                                                const int count) {
     return "{\"type\":\"results\","
-           "\"token\":\"" +
-           token 
-           + "\",\"begin\":\""
-           + std::to_string(begin)
-           + "\",\"count\":\""
-           + std::to_string(count)
+           "\"token\":\"" + token 
+           + "\",\"begin\":\"" + std::to_string(begin)
+           + "\",\"count\":\"" + std::to_string(count)
            + "\"}";
 }
 
