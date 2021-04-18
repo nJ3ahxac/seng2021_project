@@ -1,7 +1,7 @@
 #ifndef SERVER_SERVER_HH_
 #define SERVER_SERVER_HH_
 
-#include "httplib.h"
+#include "../../lib/cpp-httplib/httplib.h"
 
 #include "client/client.hh"
 #include "server/search.hh"
