@@ -27,3 +27,4 @@ googletest
 # Runtime ignores
 key.txt
 keywords.txt
+*.pem

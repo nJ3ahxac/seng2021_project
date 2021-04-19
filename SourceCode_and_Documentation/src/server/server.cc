@@ -62,20 +62,32 @@ ServerData::ServerData(const MovieData& m, const std::uint16_t port)
         }
     };
 
-    const auto all_regex = "/(.*?)";
-    server.Get(all_regex, [&](const httplib::Request& request,
-                              httplib::Response& response) {
-        error_wrapper.operator()<true>(request, response);
-    });
+    const auto bind_routes = [error_wrapper, port](auto& srv) {
+        const auto all_regex = "/(.*?)";
+        srv.Get(all_regex, [&](const httplib::Request& request,
+                                  httplib::Response& response) {
+            error_wrapper.operator()<true>(request, response);
+        });
 
-    server.Post(all_regex, [&](const httplib::Request& request,
-                               httplib::Response& response) {
-        error_wrapper.operator()<false>(request, response);
-    });
+        srv.Post(all_regex, [&](const httplib::Request& request,
+                                   httplib::Response& response) {
+            error_wrapper.operator()<false>(request, response);
+        });
 
-    server.listen("0.0.0.0", port);
+        srv.listen("0.0.0.0", port);
+    };
+
+    server.emplace<httplib::SSLServer>("cert.pem", "key.pem");
+    if (std::get<httplib::SSLServer>(server).is_valid()) {
+        bind_routes(std::get<httplib::SSLServer>(server));
+    } else {
+        // fall back to http
+        server.emplace<httplib::Server>();
+        bind_routes(std::get<httplib::Server>(server));
+    }
 }
 
+    
 static std::string get_json_str(const json::Document& d,
                                 const std::string& value) {
     const auto it = d.FindMember(value);

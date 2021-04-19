@@ -1,6 +1,7 @@
 #ifndef SERVER_SERVER_HH_
 #define SERVER_SERVER_HH_
 
+#define CPPHTTPLIB_OPENSSL_SUPPORT
 #include "../../lib/cpp-httplib/httplib.h"
 
 #include "client/client.hh"
@@ -17,6 +18,7 @@
 #include <ranges>
 #include <string>
 #include <unordered_map>
+#include <variant>
 
 namespace json = rapidjson;
 
@@ -35,7 +37,7 @@ private:
     // Movie data, utilised during webserver queries.
     MovieData movie_data;
     // Manages everything http related.
-    httplib::Server server;
+    std::variant<httplib::Server, httplib::SSLServer> server;
 
 public:
     // Caches all provided web files and associates bindings for later lookup.

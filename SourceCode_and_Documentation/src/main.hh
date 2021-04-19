@@ -1,6 +1,7 @@
 #ifndef MAIN_HH_
 #define MAIN_HH_
 
+#define CPPHTTPLIB_OPENSSL_SUPPORT
 #include "../lib/cpp-httplib/httplib.h"
 
 #include "server/server.hh"
