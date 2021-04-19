@@ -26,9 +26,12 @@ async function update_global_variables(json) {
 
 // Returns true if it exists.
 function read_token_cookie() {
-    let token_cookie_value = document.cookie.split("; ")
-                                 .find(row => row.startsWith("token="))
-                                 .split('=')[1];
+    let cookie = document.cookie;
+    if (!cookie) {
+        return false;
+    }
+    let token_cookie_value =
+        cookie.split("; ").find(row => row.startsWith("token=")).split('=')[1];
     if (!token_cookie_value) {
         return false;
     }
@@ -201,27 +204,6 @@ function draw_results() {
     attach_table();
 }
 
-// Since we can't use the youtube API for this, we will scrape our results.
-// This does not work because of CORS. We could forward this to our server,
-// but the added complexity just for a youtube video is bad. We will defer
-// running trailers until we can find a better solution.
-async function get_yt_code(string) {
-    // Not many urls like spacebars.
-    let search_string = string.split(' ').join('+');
-    let url = "https://www.youtube.com/results?search_query=" + search_string;
-    console.log("Making request to: " + url);
-    let results = "";
-    await fetch(url)
-        .then(response => response.text())
-        .then(response => { results = response; });
-    console.log(results);
-    let scrape_start = "watch?v=";
-    let scrape_end = "\"";
-    let startpos = results.indexOf("watch?v=");
-    let endpos = results.indexOf(scrape_end, startpos);
-    return results.substring(startpos, endpos);
-}
-
 async function draw_movie_modal(entry) {
     let modal = document.createElement("div");
     modal.setAttribute("class", "modal is-active");
@@ -368,11 +350,41 @@ function bind_movie_listeners() {
     }
 }
 
+async function remove_after(div, timeout) {
+    await new Promise(r => setTimeout(r, timeout)); // fake loading screen
+    if (div) {
+        div.remove();
+    }
+}
+
+function draw_saved_modal() {
+    let notification = document.createElement("div");
+    notification.setAttribute("class", "notification is-primary mb-4 mr-4");
+    notification.setAttribute("style", "position: fixed; bottom: 0; right: 0;");
+    let close_button = document.createElement("div");
+    close_button.setAttribute("class", "delete");
+    let contents = document.createElement("div");
+    contents.innerHTML = "Results saved <strong>successfully!</strong>";
+
+    document.body.append(notification);
+    notification.appendChild(close_button);
+    notification.appendChild(contents);
+
+    close_button.addEventListener("click", event => {
+        event.stopPropagation();
+        notification.remove();
+    });
+    remove_after(notification, 2000);
+}
+
 function bind_button_listeners() {
     let button_save = document.getElementById("button_save");
     button_save.addEventListener("click", event => {
         let contents = JSON.stringify(g_results);
-        // TODO
+
+        localStorage.setItem("saved", contents);
+
+        draw_saved_modal();
         event.stopPropagation();
     });
     let button_print = document.getElementById("button_print");
@@ -393,11 +405,23 @@ function fix_visual_bugs() {
     box_shader_fix.setAttribute("style", style + "height: 490px");
 }
 
-async function handle_page_load() {
-    if (!read_token_cookie()) {
+async function read_saved() {
+    let value = localStorage.getItem("saved");
+    if (!value) {
         await redirect_search();
     }
-    await make_results_request();
+    g_results = JSON.parse(value);
+}
+
+async function handle_page_load() {
+    if (window.location.href.includes("view_saved")) {
+        await read_saved();
+    } else {
+        if (!read_token_cookie()) {
+            await redirect_search();
+        }
+        await make_results_request();
+    }
     draw_results();
     bind_listeners();
     fix_visual_bugs();
