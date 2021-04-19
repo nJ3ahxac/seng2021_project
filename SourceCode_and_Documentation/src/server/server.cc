@@ -31,7 +31,9 @@ static std::unordered_map<std::string, std::string> create_resources() {
     return resources;
 }
 
-ServerData::ServerData(const MovieData& m, const std::uint16_t port)
+ServerData::ServerData(const MovieData& m,
+        const std::uint16_t port,
+        const bool attempt_https)
     : bindings{{"/", "/main.html"},
                {"/search", "/search.html"},
                {"/results", "/results.html"},
@@ -77,14 +79,15 @@ ServerData::ServerData(const MovieData& m, const std::uint16_t port)
         srv.listen("0.0.0.0", port);
     };
 
-    server.emplace<httplib::SSLServer>("cert.pem", "key.pem");
-    if (std::get<httplib::SSLServer>(server).is_valid()) {
-        bind_routes(std::get<httplib::SSLServer>(server));
-    } else {
-        // fall back to http
-        server.emplace<httplib::Server>();
-        bind_routes(std::get<httplib::Server>(server));
+    if (attempt_https) {
+        server.emplace<httplib::SSLServer>("cert.pem", "key.pem");
+        if (std::get<httplib::SSLServer>(server).is_valid()) {
+            bind_routes(std::get<httplib::SSLServer>(server));
+            return;
+        }   
     }
+    // fall back to http
+    bind_routes(server.emplace<httplib::Server>());
 }
 
     
