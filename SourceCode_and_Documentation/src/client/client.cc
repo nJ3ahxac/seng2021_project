@@ -162,14 +162,19 @@ static std::unordered_set<std::string> string_words(std::string in) {
     return words;
 }
 
+static std::string get_keyword_list() {
+    try {
+        return util::read_file("keywords.txt");
+    } catch (...) {
+        const std::string url =
+            "http://www.desiquintans.com/downloads/nounlist/nounlist.txt";
+        return util::download_url(url);
+    }
+}
+
 static std::unordered_set<std::string> get_keywords() {
-    const std::string url =
-        "http://www.desiquintans.com/downloads/nounlist/nounlist.txt";
-    const std::string nouns = util::download_url(url);
-
     std::unordered_set<std::string> keywords;
-    boost::split(keywords, nouns, boost::is_any_of("\n"));
-
+    boost::split(keywords, get_keyword_list(), boost::is_any_of("\n"));
     return keywords;
 }
 
@@ -204,19 +209,19 @@ static void update_movie_omdb_data(json::Document& doc) {
         const std::string index = movie_it->name.GetString();
 
         const json::Document result = util::download_url_json(url_base + index);
-	
-	const std::unique_lock<std::mutex> guard(lock);
+
+        const std::unique_lock<std::mutex> guard(lock);
         const auto result_has_good = [&](const std::string& str) {
             return result.HasMember(str) && result[str].IsString();
         };
 
-        static const std::string elements[] = 
-                              {"Plot", "imdbRating", "imdbVotes",
-                               "Language", "Year", "Director",
-                               "Awards", "Actors", "Runtime", "BoxOffice", "Poster"};
+        static const std::string elements[] = {
+            "Plot",    "imdbRating", "imdbVotes", "Language",
+            "Year",    "Director",   "Awards",    "Actors",
+            "Runtime", "BoxOffice",  "Poster"};
 
-        if (!result.IsObject()
-                || !std::ranges::all_of(elements, result_has_good)) {
+        if (!result.IsObject() ||
+            !std::ranges::all_of(elements, result_has_good)) {
             return true;
         }
 
@@ -278,29 +283,38 @@ static void update_movie_omdb_data(json::Document& doc) {
         json::Value plot_key{"plot"};
         json::Value plot_value{result["Plot"].GetString(), doc.GetAllocator()};
         movie_it->value.AddMember(plot_key, plot_value, doc.GetAllocator());
-        
+
         json::Value director_key{"director"};
-        json::Value director_value{result["Director"].GetString(), doc.GetAllocator()};
-        movie_it->value.AddMember(director_key, director_value, doc.GetAllocator());
+        json::Value director_value{result["Director"].GetString(),
+                                   doc.GetAllocator()};
+        movie_it->value.AddMember(director_key, director_value,
+                                  doc.GetAllocator());
 
         json::Value awards_key{"awards"};
-        json::Value awards_value{result["Awards"].GetString(), doc.GetAllocator()};
+        json::Value awards_value{result["Awards"].GetString(),
+                                 doc.GetAllocator()};
         movie_it->value.AddMember(awards_key, awards_value, doc.GetAllocator());
 
         json::Value actors_key{"actors"};
-        json::Value actors_value{result["Actors"].GetString(), doc.GetAllocator()};
+        json::Value actors_value{result["Actors"].GetString(),
+                                 doc.GetAllocator()};
         movie_it->value.AddMember(actors_key, actors_value, doc.GetAllocator());
-        
+
         json::Value runtime_key{"runtime"};
-        json::Value runtime_value{result["Runtime"].GetString(), doc.GetAllocator()};
-        movie_it->value.AddMember(runtime_key, runtime_value, doc.GetAllocator());
-        
+        json::Value runtime_value{result["Runtime"].GetString(),
+                                  doc.GetAllocator()};
+        movie_it->value.AddMember(runtime_key, runtime_value,
+                                  doc.GetAllocator());
+
         json::Value box_office_key{"box_office"};
-        json::Value box_office_value{result["BoxOffice"].GetString(), doc.GetAllocator()};
-        movie_it->value.AddMember(box_office_key, box_office_value, doc.GetAllocator());
+        json::Value box_office_value{result["BoxOffice"].GetString(),
+                                     doc.GetAllocator()};
+        movie_it->value.AddMember(box_office_key, box_office_value,
+                                  doc.GetAllocator());
 
         json::Value poster_key{"poster"};
-        json::Value poster_value{result["Poster"].GetString(), doc.GetAllocator()};
+        json::Value poster_value{result["Poster"].GetString(),
+                                 doc.GetAllocator()};
         movie_it->value.AddMember(poster_key, poster_value, doc.GetAllocator());
 
         return true;
@@ -352,8 +366,8 @@ static void prune_movie_data(json::Document& doc) {
         }
 
         // No poster?
-        if (!entry.HasMember("poster")
-                || std::string{entry["poster"].GetString()} == "N/A") {
+        if (!entry.HasMember("poster") ||
+            std::string{entry["poster"].GetString()} == "N/A") {
             remove = true;
         }
 
