@@ -13,8 +13,6 @@
 
 #include <curl/curl.h>
 
-#include <pistache/endpoint.h>
-
 #include "client/client.hh"
 #include "main.hh"
 #include "server/server.hh"
@@ -88,12 +86,6 @@ private:
 protected:
     ServerTest() {
         const auto start_server = [&]() {
-            const Pistache::Address addr(Pistache::Ipv4::any(),
-                                         Pistache::Port(servertest::test_port));
-            const auto opts =
-                Pistache::Http::Endpoint::options().threads(THREADS_DEFAULT);
-            Pistache::Http::Endpoint server(addr);
-
             MovieData moviedata{MovieData::construct::with_cache,
                                 servertest::test_dir};
             servertest::test_moviedata = moviedata;
