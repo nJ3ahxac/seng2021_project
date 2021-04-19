@@ -2,7 +2,7 @@
 
 A webserver which communicates with an API. The project, named CinemaScout, is an ultra-fast movie database traversal tool which procedurally generates a series of questions to filter the entire IMDb database. 
 
-A live deployment of this project might be available at [cinemascout.xyz](http://cinemascout.xyz).
+A live deployment of this project might be available at [cinemascout.xyz](https://cinemascout.xyz).
 
 # Dependencies
 Build dependencies:
