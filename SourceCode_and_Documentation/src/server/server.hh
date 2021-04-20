@@ -6,8 +6,8 @@
 
 #include "client/client.hh"
 #include "server/search.hh"
-#include "util/util.hh"
 #include "util/log.hh"
+#include "util/util.hh"
 
 #include <boost/circular_buffer.hpp>
 
@@ -43,7 +43,8 @@ public:
     // Caches all provided web files and associates bindings for later lookup.
     // Throws a std::runtime_error if a requested file does not exist.
     // Begins hosting the server on localhost@port once initialisation finishes.
-    ServerData(const MovieData& m, const std::uint16_t port, const bool attempt_https = true);
+    ServerData(const MovieData& m, const std::uint16_t port,
+               const bool attempt_https = true);
 
     void handle_post_request(const httplib::Request& request,
                              httplib::Response& response);

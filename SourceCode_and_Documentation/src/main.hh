@@ -14,6 +14,5 @@
 #include <boost/lexical_cast.hpp>
 
 constexpr int PORT_DEFAULT = 9080;
-constexpr int THREADS_DEFAULT = 1;
 
 #endif

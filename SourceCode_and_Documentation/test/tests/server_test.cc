@@ -134,17 +134,17 @@ TEST_F(ServerTest, post_token_init_advance_multiple) {
 
 static std::string get_info_request_contents(const std::string& token) {
     return "{\"type\":\"info\","
-           "\"token\":\"" + token + "\"}";
+           "\"token\":\"" +
+           token + "\"}";
 }
 
 static std::string get_results_request_contents(const std::string& token,
                                                 const int begin,
                                                 const int count) {
     return "{\"type\":\"results\","
-           "\"token\":\"" + token 
-           + "\",\"begin\":\"" + std::to_string(begin)
-           + "\",\"count\":\"" + std::to_string(count)
-           + "\"}";
+           "\"token\":\"" +
+           token + "\",\"begin\":\"" + std::to_string(begin) +
+           "\",\"count\":\"" + std::to_string(count) + "\"}";
 }
 
 TEST_F(ServerTest, post_token_init_info) {

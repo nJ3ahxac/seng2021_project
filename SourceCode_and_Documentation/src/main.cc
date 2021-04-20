@@ -1,23 +1,16 @@
 #include "main.hh"
 
 int main(const int argc, const char* argv[]) {
-    if (argc > 3) {
-        std::cout << "Too many arguments: <port=9080> <threads=1>\n";
+    if (argc > 2) {
+        std::cout << "Too many arguments: <port=9080>\n";
         std::exit(EXIT_FAILURE);
     }
 
     std::uint16_t port = PORT_DEFAULT;
-    int threads = THREADS_DEFAULT;
 
     try {
         if (argc > 1) {
             port = boost::lexical_cast<std::uint16_t>(argv[1]);
-        }
-        if (argc > 2) {
-            threads = boost::lexical_cast<int>(argv[2]);
-            if (threads == 0) {
-                threads = static_cast<int>(std::thread::hardware_concurrency());
-            }
         }
     } catch (const boost::bad_lexical_cast& e) {
         std::cerr << "Bad argument conversion: " << e.what() << '\n';
@@ -44,9 +37,10 @@ int main(const int argc, const char* argv[]) {
               << moviedata->data.MemberCount() << " films.\n";
 
     try {
-        std::cout << "Port: " << port << "\nThreads: " << threads << '\n';
+        std::cout << "Port: " << port << '\n';
         const ServerData server(*moviedata, port);
     } catch (const std::exception& e) {
         std::cerr << "Uncaught server exception: " << e.what() << '\n';
+        std::exit(EXIT_FAILURE);
     }
 }

@@ -1,6 +1,6 @@
 // Global variables which might change based on our requests.
 // Search vars.
-var g_least_until_list = 1000;
+var g_least_until_list = 100;
 var g_token = "";
 var g_movies_max = 0;
 var g_movies_current = 0;
@@ -160,7 +160,7 @@ async function try_list_redirect() {
     if (g_movies_current === 0) {
         return;
     }
-    if (g_movies_current <= 100) {
+    if (g_movies_current <= g_least_until_list) {
         window.location.replace("/results");
         // Sleep, fsr javascript is still executed after replace
         await new Promise(r => setTimeout(r, 5000));

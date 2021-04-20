@@ -70,15 +70,17 @@ private:
 
     float get_keyword_rating(const token& token, const std::string& keyword);
     float get_genre_rating(const token& token, const std::string& genre);
-    std::vector<std::int32_t> get_top_level_token_entries(const std::int16_t flags);
+    std::vector<std::int32_t>
+    get_top_level_token_entries(const std::int16_t flags);
 
     std::string imdb_str_from_entry(const std::int32_t entry);
     void sort_entries_by_rating(token& token);
+
 public:
     SearchData(const MovieData& data);
     token create_token(const std::int16_t flags = 0);
     void advance_token(token& token, const bool remove);
-    
+
     std::size_t get_suggestion_size(const token& token);
 
     // Get the most relevant suggestion IMDB string

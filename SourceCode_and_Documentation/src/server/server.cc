@@ -31,9 +31,8 @@ static std::unordered_map<std::string, std::string> create_resources() {
     return resources;
 }
 
-ServerData::ServerData(const MovieData& m,
-        const std::uint16_t port,
-        const bool attempt_https)
+ServerData::ServerData(const MovieData& m, const std::uint16_t port,
+                       const bool attempt_https)
     : bindings{{"/", "/main.html"},
                {"/search", "/search.html"},
                {"/results", "/results.html"},
@@ -67,12 +66,12 @@ ServerData::ServerData(const MovieData& m,
     const auto bind_routes = [error_wrapper, port](auto& srv) {
         const auto all_regex = "/(.*?)";
         srv.Get(all_regex, [&](const httplib::Request& request,
-                                  httplib::Response& response) {
+                               httplib::Response& response) {
             error_wrapper.operator()<true>(request, response);
         });
 
         srv.Post(all_regex, [&](const httplib::Request& request,
-                                   httplib::Response& response) {
+                                httplib::Response& response) {
             error_wrapper.operator()<false>(request, response);
         });
 
@@ -84,13 +83,12 @@ ServerData::ServerData(const MovieData& m,
         if (std::get<httplib::SSLServer>(server).is_valid()) {
             bind_routes(std::get<httplib::SSLServer>(server));
             return;
-        }   
+        }
     }
     // fall back to http
     bind_routes(server.emplace<httplib::Server>());
 }
 
-    
 static std::string get_json_str(const json::Document& d,
                                 const std::string& value) {
     const auto it = d.FindMember(value);

@@ -8,7 +8,6 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
-// Library for making requests.
 #include <curl/curl.h>
 
 #include <filesystem>
