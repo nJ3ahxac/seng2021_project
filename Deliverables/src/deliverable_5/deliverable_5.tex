@@ -6,7 +6,7 @@
 \begin{document}
 \title{%
  Deliverable 5\\
- \large An explanation of the system, information on implemenation and\\
+ \large An explanation of the system, information on implementation and\\
  \large conclusion of the project
 }
 \author{Epic Group}
@@ -19,46 +19,190 @@ CinemaScout, the ultrafast movie search tool. The report will contain the follow
 components:
 \subsubsection*{Part 1}
 \begin{enumerate}
-\item \textbf{System Summary}: An explanation of the purpose of the system\\
+\item \textbf{System Summary}: An explanation of the purpose of the system
 and the problems addressed.
-\item \textbf{Feature List}: An enumeration over a list of features currently\\
+\item \textbf{Feature List}: An enumeration over a list of features currently
 implemented.
-\item \textbf{User Stories}: An updated list of user stories relating to the\\
+\item \textbf{User Stories}: An updated list of user stories relating to the
 previous report.
-\item \textbf{Final Interface}: A series of screenshots capturing the final\\
+\item \textbf{Final Interface}: A series of screenshots capturing the final
 implementation of the interface.
 \end{enumerate}
 \subsubsection*{Part 2}
 \begin{enumerate}
-\item \textbf{Implementation Summary}: A summary on the requirements of\\
+\item \textbf{Implementation Summary}: A summary on the requirements of
 implementation and its current deployment status.
-\item \textbf{Software Architecture}: A description of the software\\
+\item \textbf{Software Architecture}: A description of the software
 architecture currently implemented via ER and UML diagrams.
-\item \textbf{Sequence Diagrams}: A series of sequence diagrams for\\
+\item \textbf{Sequence Diagrams}: A series of sequence diagrams for
 use cases of CinemaScout.
-\item \textbf{Design Outcomes}: A summary of the benefits the implementation\\
-of CinemaScout provides.
+\item \textbf{Design Outcomes}: A summary of the benefits the current 
+implementation of CinemaScout provides.
 \end{enumerate}
 \subsection*{Part 3}
 \begin{enumerate}
-\item \textbf{Team Organisation}: A description of the responsibilities and\\
+\item \textbf{Team Organisation}: A description of the responsibilities and
 organisation of the team.
-\item \textbf{Issues}: A series of technical and non-technical problems\\
+\item \textbf{Issues}: A series of technical and non-technical problems
 encountered.
-\item \textbf{Project Reflection}: A final reflection over the outcome of the\\
+\item \textbf{Project Reflection}: A final reflection over the outcome of the
 course.
 \end{enumerate}
 
 \section{Part 1}
 \subsection{System Summary}
-Placeholder.
+CinemaScout is a movie search tool which aims to provide a faster and more
+accurate method of receiving movie suggestions. This is achieved 
+through the rectification of a number of harmful design choices made by other 
+movie suggestion platforms, most often in place as an unintended consequence 
+of centralisation. These include:
+\begin{itemize}
+\item \textbf{Restricted Movie Database}: Only movies which are available for
+viewing on the same platform are recommended, restricting the scope of movies
+available.
+\item \textbf{History Poisoning}: Movie recommendations are based on previous
+browsing history or via similar metadata, producing unwanted and erroneous
+movie suggestions due to the indeterminant browsing habits of most users.
+\item \textbf{Low Computational Requirement}: Movie recommendation is often a
+smaller, neglected module of a larger platform, elliciting a low computational 
+requirement and therefore poor quality results.
+\item \textbf{Corporate Bias}: Private business deals between platforms force
+suggestions to benefit its business partners, degrading the quality and
+integrity of results.
+\end{itemize}
 \subsection{Feature List}
-Placeholder.
+Principally, CinemaScout provides the ability for a user to traverse the entire
+IMDb database via a procedurally generated questionaire. The questionaire 
+enables a user to identify an extremely specific and unique subset of high
+quality movies. In addition, CinemaScout provides the following auxillary 
+features:
+\begin{itemize}
+\item \textbf{Automatic Exclusion}: The ability for a search to preemptively 
+remove movies based on commonly disliked criteria.
+\item \textbf{Search Progress Bar}: A progress bar which represents the amount
+of movies which have been filtered by the questionaire so far.
+\item \textbf{Current Best Result}: A repeatedly updating hint describing a
+movie which the questionaire references.
+\item \textbf{Additional Information}: Additional information for each
+movie such as year, runtime, plot, director and many more.
+\item \textbf{Movie Posters}: The official poster image for each movie as a 
+visual guide for easy identification.
+\item \textbf{Results Table}: A condensed, tabulated form of the results.
+Movies can be sorted by name, year, rating, popularity and runtime.
+\item \textbf{Print Results}: The ability to print the results in an easy to
+read format.
+\item \textbf{Save Results}: The ability to save results, which remain 
+persistent between browser, computer and server restarts.
+\end{itemize}
 \subsection{User Stories}
-Placeholder.
-\subsection{Final Interface}
-Placeholder.
+The following user stories have been corrected, primarily to accomodate for the
+`View Saved Search' button and the lack of a feasbile way to present
+trailers of movies due to YouTube API restrictions. The user stories now
+correctly reflect the final stage of the design.
+\begin{itemize}
+\item \textbf{User Story}: As an avid film watcher, I want to receive
+tailored, specific recommendations relevant to me.
+\newline \textbf {Scenario:} Given that I am on the website and that I perform
+a movie search, when I receive results, then I should see results which are
+most relevant to me.
 
+\item \textbf{User Story}: As someone who enjoys multiple movie genres, I want
+to receive recommendations which are not based on my previous viewing sessions.
+\newline \textbf {Scenario:} Given that I am on the website and I have
+previously made a search and I perform a new search, when I receive results,
+then the results should not be an amalgamation of my previous sessions.
+
+\item \textbf{User Story}: As a power user, I wish to be able to receive many
+movie recommendations over a short period of time.
+\newline \textbf {Scenario:} Given that I have performed many searches recently,
+and I want to perform a new search, when I receive results, then the new
+results are not rate limited.
+
+\item \textbf{User Story}: As a first time website visitor, I wish to be able
+to perform a search without offering my credentials and other personal
+information to first generate an account.
+\newline \textbf {Scenario:} Given that I have visited the website, and I want
+to make my first search, when I attempt to search, then I am not prompted
+to first create an account.
+
+\item \textbf{User Story}: As a user of the service, I wish to be able to use
+the service in its full capability without malicious content from ever
+corrupting my movie suggestions.
+\newline \textbf {Scenario:}  Given that I have visited the website, and I make
+my search, when I receive my results, then the results should be free from user
+generated content.
+
+\item \textbf{User Story}: As a user of the service, I do not wish to receive
+recommendations based on corporate interests or monetary influence.
+\newline \textbf {Scenario:} Given that I have visited the website, and I make
+my search, when I receive my results, then the results should be free from
+corporate bias.
+
+\item \textbf{User Story}: As a returning user of the service, I wish to be able
+to view my recommendations and come back to my search results later.
+\newline \textbf {Scenario:} Given that I am on the website, and I have
+previously made and saved a search, then I can return back to the result page 
+and view my former results by clicking `View Saved Seach'.
+
+\item \textbf{User Story}: As a user of CinemaScout who wants to print out my
+results, I wish to be able to print out a formatted version of the results page
+tailored for readability on an A4 page.
+\newline \textbf {Scenario:} Given that I am on the result page, and I click
+`Print Results', then a prompt to print my results will be opened.
+
+\item \textbf{User Story}: As a user of CinemaScout who wishes to view
+the results of the search offline, I want to be able to download the search
+results in a readable format for offline use.
+\newline \textbf {Scenario:} Given that I am on the result page, and I click
+`Print Results', then a PDF copy of the current page may be copied via the
+browser.
+\end{itemize}
+\newpage
+\subsection{Final Interface}
+All images were captured at a resolution of 1920 x 1080 using a default
+Chromium browser on Arch Linux. This implementation of CinemaScout was captured
+at cinemascout.xyz.
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/main_0.png}
+\caption{Landing page.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/main_1.png}
+\caption{Middle of landing page.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/main_2.png}
+\caption{End of landing page.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/search_0.png}
+\caption{Search page, without further user input.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/search_1.png}
+\caption{Search page, during a search.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/results_0.png}
+\caption{Results page, without further user input.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/results_1.png}
+\caption{Results page after clicking on a movie and opening a modal.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/results_2.png}
+\caption{Results page after pressing save and sorting the table by runtime.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/results_3.png}
+\caption{End of the results page.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/about.png}
+\caption{About page.}
+\end{figure}
+\newpage
 \section{Part 2}
 \subsection{Implementation Summary}
 Placeholder.
