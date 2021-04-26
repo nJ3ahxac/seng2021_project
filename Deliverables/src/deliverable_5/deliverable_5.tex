@@ -20,7 +20,7 @@ components:
 \subsubsection*{Part 1}
 \begin{enumerate}
 \item \textbf{System Summary}: An explanation of the purpose of the system
-and the problems addressed.
+and the problems addressed, including problem statements.
 \item \textbf{Feature List}: An enumeration over a list of features currently
 implemented.
 \item \textbf{User Stories}: An updated list of user stories relating to the
@@ -55,7 +55,7 @@ CinemaScout is a movie search tool which aims to provide a faster and more
 accurate method of receiving movie suggestions. This is achieved 
 through the rectification of a number of harmful design choices made by other 
 movie suggestion platforms, most often in place as an unintended consequence 
-of centralisation. These include:
+of centralisation. These include the following problem statements:
 \begin{itemize}
 \item \textbf{Restricted Movie Database}: Only movies which are available for
 viewing on the same platform are recommended, restricting the scope of movies
@@ -66,6 +66,13 @@ movie suggestions due to the indeterminant browsing habits of most users.
 \item \textbf{Low Computational Requirement}: Movie recommendation is often a
 smaller, neglected module of a larger platform, elliciting a low computational 
 requirement and therefore poor quality results.
+\item \textbf{User Registration Requirement}: Movie recommendation platforms
+often gratuitously require users to register before the use of a service is
+allowed, needlessly creating the opportunity for user data to be leaked through
+inevitable database leaks and security breaches.
+\item \textbf{User Sanitisation Requirement}: Movie recommendation platform
+algorithms rely on user input to function, enabling the insertion of dangerous
+or illicit content to other users by malicious actors.
 \item \textbf{Corporate Bias}: Private business deals between platforms force
 suggestions to benefit its business partners, degrading the quality and
 integrity of results.
@@ -205,11 +212,72 @@ at cinemascout.xyz.
 \newpage
 \section{Part 2}
 \subsection{Implementation Summary}
-Placeholder.
+Foremost, the requirements for compiling, executing and maintaining the
+CinemaScout webserver were actively reduced during software development in order
+to minimise running costs and maximise profit potential. Consequently, the
+choice of backend and frontend stack language targeted speed and efficiency over
+ease of programming and simplicity. The backend stack was written in the 
+statically typed C++ programming language while the frontend stack was written
+in a combination of HTML5 (Hyper Text Markup Language 5), CSS (Cascading Style
+Sheets) and JavaScript. In addition, a number of external dependencies were
+introduced to reduce programming complexity, increase reliability and enable
+a number of difficult operations for which it was not feasible to design given
+the constrictive time limit in place. These include the following:
+\subsubsection*{Build Dependencies}
+\begin{itemize}
+\item \textbf{CMake}: CMake is a cross platform, open-source build system
+generator.
+\item \textbf{Googletest}: Googletest is a modern C++ testing framework.
+\item \textbf{cpp-httplib}: cpp-httplib is a C++11 single file cross platform
+HTTP/HTTPS library.
+\item \textbf{Boost}: Boost provides free peer-reviewed portable C++ source 
+libraries.
+\item \textbf{Libcurl}: Libcurl is a free and easy-to-use client side URL
+transfer library.
+\end{itemize}
+\subsubsection*{Runtime Dependencies}
+\begin{itemize}
+\item \textbf{IMDb}: IMDb is an online database of information related to films
+and other visual media.
+\item \textbf{OMDb}: The OMDb API is a RESTful web service to obtain movie
+information.
+\item \textbf{Bulma}: Bulma is a free and open source CSS framework.
+\end{itemize}
+In general, operations made by the webserver backend may be split into either 
+client or server modules. The client portion of the webserver, always loaded
+directly after webserver execution, serves to populate the backend with data
+so that the server portion may operate. The server module, interdependent with
+the client portion, enables the serving of static files such as HTML5 or CSS
+pages along with certain RESTful functionality such as GET and POST requests,
+ultimately enabling the frontend to operate. Pertinently, an effort was made to
+reduce network bandwidth to increase backend reliability, resulting in defensive
+design choices such as the pre-caching of all potential API requests to OMDb so
+that no API requests are made when the server is active.
 \subsection{Software Architecture}
 Placeholder.
 \subsection{Sequence Diagrams}
-Placeholder.
+The following sequence diagrams differ slightly from those of the previous
+report to accomodate for design changes in the frontend user interface. 
+Additionally, the sequence diagram for viewing movie trailers was removed 
+entirely due to recent YouTube API restrictions making it infeasible to
+implement.
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/sequence_diagram.png}
+\caption{Typical CinemaScout Use Case.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/sequence_diagram2.png}
+\caption{View Saved Search Use Case.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/sequence_diagram5.png}
+\caption{Print Results Use Case.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/sequence_diagram4.png}
+\caption{Save Search Use Case.}
+\end{figure}
+\newpage
 \subsection{Design Outcomes}
 Placeholder.
 
