@@ -21,8 +21,7 @@ components:
 \begin{enumerate}
 \item \textbf{System Summary}: An explanation of the purpose of the system
 and the problems addressed, including problem statements.
-\item \textbf{Feature List}: An enumeration over a list of features currently
-implemented.
+\item \textbf{Feature List}: A list of features currently implemented.
 \item \textbf{User Stories}: An updated list of user stories relating to the
 previous report.
 \item \textbf{Final Interface}: A series of screenshots capturing the final
@@ -45,6 +44,8 @@ implementation of CinemaScout provides.
 organisation of the team.
 \item \textbf{Issues}: A series of technical and non-technical problems
 encountered.
+\item \textbf{Project Timeline}: A timeline describing the development stages
+of the project.
 \item \textbf{Project Reflection}: A final reflection over the outcome of the
 course.
 \end{enumerate}
@@ -222,7 +223,7 @@ the constrictive time limit in place. These include the following:
 generator.
 \item \textbf{Googletest}: Googletest is a modern C++ testing framework.
 \item \textbf{cpp-httplib}: cpp-httplib is a C++11 single file cross platform
-HTTP/HTTPS library.
+HTTP and HTTPS library.
 \item \textbf{Boost}: Boost provides free peer-reviewed portable C++ source 
 libraries.
 \item \textbf{Libcurl}: Libcurl is a free and easy-to-use client side URL
@@ -247,7 +248,14 @@ reduce network bandwidth to increase backend reliability, resulting in defensive
 design choices such as the pre-caching of all potential API requests to OMDb so
 that no API requests are made when the server is active.
 \subsection{Software Architecture}
-Placeholder.
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/ER diagram.png}
+\caption{ER diagram of internal webserver data structures.}
+\end{figure}
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/class_uml_diagram.png}
+\caption{Class UML diagram of internal webserver components.}
+\end{figure}
 \subsection{Sequence Diagrams}
 The following sequence diagrams differ slightly from those of the previous
 report to accommodate for design changes in the frontend user interface. 
@@ -255,7 +263,7 @@ Additionally, the sequence diagram for viewing movie trailers was removed
 entirely due to recent YouTube API restrictions making it infeasible to
 implement.
 \begin{figure}[H]
-\includegraphics[width=\columnwidth]{res/sequence_diagram.png}
+\includegraphics[width=.9\columnwidth]{res/sequence_diagram.png}
 \caption{Typical CinemaScout Use Case.}
 \end{figure}
 \begin{figure}[H]
@@ -309,13 +317,13 @@ secured our project as functional and useful.
 
 \section{Teamwork}
 \subsection{Team Organisation}
-Our team employed a flat organizational structure to meet the project's
+Our team employed a flat organisational structure to meet the project's
 requirements. Little to no hierarchy allowed the group to respond quicker
 to emerging problems, as no formal permission was required by others for
 a team member to begin working on an aspect of the project. The flat
-organizational structure was particulary beneficial for the members of our
+organisational structure was particulary beneficial for the members of our
 group due to differences in time zones between each group member, as
-synchronous communication via direct meetings were problematic to organize.
+synchronous communication via direct meetings were problematic to organise.
 As a result, any communication between group members was generally
 asynchronous, typically occurring through the medium of text chat in Microsoft
 Teams. In general, the responsibilities for each team member settled as:
@@ -340,7 +348,7 @@ Similarly, the dated design of rapidjson, a
 library for managing JSON objects used in the backend to categorise movie data,
 reduced the readability of the codebase. Alternatives with greater readability
 suffered from weak performance, and were deemed unsuitable. The interface of
-rapidjson was convoluted to the point that some of the server code manipulated
+rapidjson was convoluted to the point where some of the server code manipulated
 JSON objects with raw strings rather than via rapidjson's API, resulting in
 a degree of code duplication. The documentation of rapidjson is largely
 incomplete, and several server bugs were the result of incorrect assumptions
@@ -354,6 +362,11 @@ was planned to occur a day after deliverable 4 - the online, live demonstration
 of the project. Additionally, the distributed location of several group members
 across several time zones complicated team communication. To rectify the issue,
 asynchronous communication was relied upon for the entirety of the project.
+\subsection{Project Timeline}
+\begin{figure}[H]
+\includegraphics[width=\columnwidth]{res/timeline.png}
+\caption{Timeline of project development.}
+\end{figure}
 \subsection{Project Reflection}
 The team is satisfied with the result of the project, and substantial
 experience has been gained by reflecting on issues encountered during the
@@ -372,6 +385,7 @@ result in unconventional team situations and work environments.
 It is an essential skill for engineers to be proficient in communicating
 effectively both in person and via online mediums, through both synchronous and
 asynchronous methods. Failing to adapt to changes in work situations can result
-in a lack of team cohesion and the failure of a project.
+in a lack of team cohesion and the failure of a project. Fortunately, our team
+was able to adapt to these circumstances.
 
 \end{document}
