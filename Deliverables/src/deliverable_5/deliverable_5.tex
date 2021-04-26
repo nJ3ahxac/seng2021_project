@@ -215,10 +215,69 @@ Placeholder.
 
 \section{Part 3}
 \subsection{Team Organisation}
-Placeholder.
+Our team employed a flat organizational structure to meet the project's
+requirements. Little to no hierarchy allowed the group to respond quicker
+to emerging problems, as no formal permission was required by others for
+a team member to begin working on an aspect of the project. The flat
+organizational structure was particulary beneficial for the members of our
+group due to differences in time zones between each group member, as
+synchronous communication via direct meetings were problematic to organize.
+As a result, any communication between group members was generally
+asynchronous, typically occuring through the medium of text chat in Microsoft
+Teams. In general, the responsibilities for each team member settled as:
+\begin{itemize}
+\item \textbf{Ben S}: Lead backend programmer; supporting frontend programmer
+\item \textbf{Bowei P}: Algorithm specialist; frontend tester
+\item \textbf{Nic S}: Lead frontend programmer; supporting backend programmer
+\item \textbf{Ruqi L}: Deliverable maintaner; backend tester; quality
+assurance
+\end{itemize}
 \subsection{Issues}
-Placeholder.
+The project encountered both technical and non-technical issues. The backend,
+initially powered with pistache for HTTP requests, was unsuitable for
+deployment on any VPS due to the library's immaturity. Pistache is no longer
+actively maintained, and suffers from several debilitating networking bugs
+exposing the server to denial of service attacks. Additionally, the library is
+not header-only, decreasing the server's portability among linux distributions
+that do not supply packages for pistache. Switching to cpp-httplib, a
+header-only and actively maintained HTTP library similar in design to python's
+flask library rectified the issues. Similarly, the dated design of rapidjson, a
+library for managing JSON objects used in the backend to categorise movie data,
+reduced the readability of the codebase. Alternatives with greater readability
+suffered from weak performance, and were deemed unsuitable. The interface of
+rapidjson was convoluted to the point that some of the server code manipulated
+JSON objects with raw strings rather than via rapidjson's API, resulting in
+a degree of code duplication. The documentation of rapidjson is largely
+incomplete, and several server bugs were the result of incorrect assumptions
+regarding the thread safety of several rapidjson operations.\\
+The main non technical issues encountered by the group were due to real world
+circumstances. During the final stages of the project, half of the team were
+without a stable internet connection due to a change in living arrangements.
+Careful planning was required to synchronise project due dates with periods
+of time when utilities were available. Most prominently, the move of house
+was planned to occur a day after deliverable 4 - the online, live demonstration
+of the project. Additionally, the distributed location of several group members
+across several time zones complicated team communcation. To rectify the issue,
+asynchronous communication was relied upon for the entirety of the project.
+ 
 \subsection{Project Reflection}
-Placeholder.
+The team is satisfied with the result of the project, and substantial
+experience has been gained by reflecting on issues encountered during the
+project's development.\\
+The team has learned to carefully analyse and vet all project dependencies
+before including them in the codebase, as they can quickly become a permanent
+fixture in the software's design. Had the dependency not meet expectations,
+the project can become significantly impeded, as development time required
+to find and integrate a replacement prevents the project from maturing in
+other directions. Dependencies should all be checked to have acceptable
+licensing, performance and reliability, preferably via real-world tests, before
+they are to be considered for inclusion in the project.\\
+The ability to adapt to change is particularly relevant within the field of
+software engineering. The decentralised and online nature of programming can
+result in unconventional team situations and work environments.
+It is an essential skill for engineers to be proficient in communicating
+effectively both in person and via online mediums, through both synchronous and
+asynchronous methods. Failing to adapt to changes in work situations can result
+in a lack of team cohesion and the failure of a project.
 
 \end{document}
