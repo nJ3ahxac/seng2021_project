@@ -17,7 +17,7 @@
 The purpose of this report is to provide a summary and update on the status of
 CinemaScout, the ultrafast movie search tool. The report will contain the following
 components:
-\subsubsection*{Part 1}
+\subsubsection*{1: Business}
 \begin{enumerate}
 \item \textbf{System Summary}: An explanation of the purpose of the system
 and the problems addressed, including problem statements.
@@ -28,7 +28,7 @@ previous report.
 \item \textbf{Final Interface}: A series of screenshots capturing the final
 implementation of the interface.
 \end{enumerate}
-\subsubsection*{Part 2}
+\subsubsection*{2: Design}
 \begin{enumerate}
 \item \textbf{Implementation Summary}: A summary on the requirements of
 implementation and its current deployment status.
@@ -39,7 +39,7 @@ use cases of CinemaScout.
 \item \textbf{Design Outcomes}: A summary of the benefits the current 
 implementation of CinemaScout provides.
 \end{enumerate}
-\subsection*{Part 3}
+\subsection*{3: Teamwork}
 \begin{enumerate}
 \item \textbf{Team Organisation}: A description of the responsibilities and
 organisation of the team.
@@ -49,7 +49,7 @@ encountered.
 course.
 \end{enumerate}
 
-\section{Part 1}
+\section{Business}
 \subsection{System Summary}
 CinemaScout is a movie search tool which aims to provide a faster and more
 accurate method of receiving movie suggestions. This is achieved 
@@ -62,9 +62,9 @@ viewing on the same platform are recommended, restricting the scope of movies
 available.
 \item \textbf{History Poisoning}: Movie recommendations are based on previous
 browsing history or via similar metadata, producing unwanted and erroneous
-movie suggestions due to the indeterminant browsing habits of most users.
+movie suggestions due to the indeterminate browsing habits of most users.
 \item \textbf{Low Computational Requirement}: Movie recommendation is often a
-smaller, neglected module of a larger platform, elliciting a low computational 
+smaller, neglected module of a larger platform, eliciting a low computational 
 requirement and therefore poor quality results.
 \item \textbf{User Registration Requirement}: Movie recommendation platforms
 often gratuitously require users to register before the use of a service is
@@ -79,17 +79,17 @@ integrity of results.
 \end{itemize}
 \subsection{Feature List}
 Principally, CinemaScout provides the ability for a user to traverse the entire
-IMDb database via a procedurally generated questionaire. The questionaire 
+IMDb database via a procedurally generated questionnaire. The questionnaire 
 enables a user to identify an extremely specific and unique subset of high
-quality movies. In addition, CinemaScout provides the following auxillary 
+quality movies. In addition, CinemaScout provides the following auxilliary 
 features:
 \begin{itemize}
 \item \textbf{Automatic Exclusion}: The ability for a search to preemptively 
 remove movies based on commonly disliked criteria.
 \item \textbf{Search Progress Bar}: A progress bar which represents the amount
-of movies which have been filtered by the questionaire so far.
+of movies which have been filtered by the questionnaire so far.
 \item \textbf{Current Best Result}: A repeatedly updating hint describing a
-movie which the questionaire references.
+movie which the questionnaire references.
 \item \textbf{Additional Information}: Additional information for each
 movie such as year, runtime, plot, director and many more.
 \item \textbf{Movie Posters}: The official poster image for each movie as a 
@@ -102,8 +102,8 @@ read format.
 persistent between browser, computer and server restarts.
 \end{itemize}
 \subsection{User Stories}
-The following user stories have been corrected, primarily to accomodate for the
-`View Saved Search' button and the lack of a feasbile way to present
+The following user stories have been corrected, primarily to accommodate for the
+`View Saved Search' button and the lack of a feasible way to present
 trailers of movies due to YouTube API restrictions. The user stories now
 correctly reflect the final stage of the design.
 \begin{itemize}
@@ -112,51 +112,43 @@ tailored, specific recommendations relevant to me.
 \newline \textbf {Scenario:} Given that I am on the website and that I perform
 a movie search, when I receive results, then I should see results which are
 most relevant to me.
-
 \item \textbf{User Story}: As someone who enjoys multiple movie genres, I want
 to receive recommendations which are not based on my previous viewing sessions.
 \newline \textbf {Scenario:} Given that I am on the website and I have
 previously made a search and I perform a new search, when I receive results,
 then the results should not be an amalgamation of my previous sessions.
-
 \item \textbf{User Story}: As a power user, I wish to be able to receive many
 movie recommendations over a short period of time.
 \newline \textbf {Scenario:} Given that I have performed many searches recently,
 and I want to perform a new search, when I receive results, then the new
 results are not rate limited.
-
 \item \textbf{User Story}: As a first time website visitor, I wish to be able
 to perform a search without offering my credentials and other personal
 information to first generate an account.
 \newline \textbf {Scenario:} Given that I have visited the website, and I want
 to make my first search, when I attempt to search, then I am not prompted
 to first create an account.
-
 \item \textbf{User Story}: As a user of the service, I wish to be able to use
 the service in its full capability without malicious content from ever
 corrupting my movie suggestions.
 \newline \textbf {Scenario:}  Given that I have visited the website, and I make
 my search, when I receive my results, then the results should be free from user
 generated content.
-
 \item \textbf{User Story}: As a user of the service, I do not wish to receive
 recommendations based on corporate interests or monetary influence.
 \newline \textbf {Scenario:} Given that I have visited the website, and I make
 my search, when I receive my results, then the results should be free from
 corporate bias.
-
 \item \textbf{User Story}: As a returning user of the service, I wish to be able
 to view my recommendations and come back to my search results later.
 \newline \textbf {Scenario:} Given that I am on the website, and I have
 previously made and saved a search, then I can return back to the result page 
 and view my former results by clicking `View Saved Seach'.
-
 \item \textbf{User Story}: As a user of CinemaScout who wants to print out my
 results, I wish to be able to print out a formatted version of the results page
 tailored for readability on an A4 page.
 \newline \textbf {Scenario:} Given that I am on the result page, and I click
 `Print Results', then a prompt to print my results will be opened.
-
 \item \textbf{User Story}: As a user of CinemaScout who wishes to view
 the results of the search offline, I want to be able to download the search
 results in a readable format for offline use.
@@ -210,7 +202,8 @@ at cinemascout.xyz.
 \caption{About page.}
 \end{figure}
 \newpage
-\section{Part 2}
+
+\section{Design}
 \subsection{Implementation Summary}
 Foremost, the requirements for compiling, executing and maintaining the
 CinemaScout webserver were actively reduced during software development in order
@@ -257,7 +250,7 @@ that no API requests are made when the server is active.
 Placeholder.
 \subsection{Sequence Diagrams}
 The following sequence diagrams differ slightly from those of the previous
-report to accomodate for design changes in the frontend user interface. 
+report to accommodate for design changes in the frontend user interface. 
 Additionally, the sequence diagram for viewing movie trailers was removed 
 entirely due to recent YouTube API restrictions making it infeasible to
 implement.
@@ -279,9 +272,42 @@ implement.
 \end{figure}
 \newpage
 \subsection{Design Outcomes}
-Placeholder.
+As previously discussed, deliberate attempts were made to harden CinemaScout
+in terms of efficiency and reliability so deployment viability could be ensured.
+Moreover, efforts were also made to reduce code complexity via the non-inclusion
+of certain superfluous features such as logging in and its exceedingly complex
+entailments including password recovery, database storage, etc. In addition, 
+numerous stack choices targeting performance and efficiency over programming
+simpliciy and language complexity culminated in an extremely lightweight, 
+performant and ultimately deployable, commercially viable product. A summary
+of the benefits are as follows:
+\begin{itemize}
+\item \textbf{Performance}: The use of the C++ programming language delivers
+approximately 100 times the performance of the mediocre standard Python.
+\item \textbf{Reliability}: The use of the statically typed compiled C++
+programming language ensures type errors and illogical statements are rectified
+at compile time, avoiding any impact on the user. The use of the Googletest
+testing framework provides a similar benefit.
+\item \textbf{Efficiency}: Design choices such as the pre-caching of all 
+potential user-made requests and a responsible frontend-backend request 
+interaction lowers webserver bandwidth requirements and increases overall 
+efficiency.
+\item \textbf{Maintainability}: The use of the C++ programming language with
+heavy use of the standard library and its assortment of algorithms ensures ease
+of code readability and maintainability.
+\item \textbf{Simplicity}: The lack of any secondary functionality avoids 
+the need to implement otherwise complex elements, enabling simplicity in 
+both design and codebase. The lack of any complex frontend JavaScript frameworks
+such as JQuery or React aids this design outcome.
+\item \textbf{Useability}: The use of Bulma as a frontend CSS framework, which
+targets simplicity and intuitiveness, has enabled our frontend to be both
+lightweight and useable.
+\item \textbf{Novelty}: A focus on delivering a novel idea and implementing a
+unique concept, contrary to rewriting something which already exists, has
+secured our project as functional and useful.
+\end{itemize}
 
-\section{Part 3}
+\section{Teamwork}
 \subsection{Team Organisation}
 Our team employed a flat organizational structure to meet the project's
 requirements. Little to no hierarchy allowed the group to respond quicker
@@ -291,13 +317,13 @@ organizational structure was particulary beneficial for the members of our
 group due to differences in time zones between each group member, as
 synchronous communication via direct meetings were problematic to organize.
 As a result, any communication between group members was generally
-asynchronous, typically occuring through the medium of text chat in Microsoft
+asynchronous, typically occurring through the medium of text chat in Microsoft
 Teams. In general, the responsibilities for each team member settled as:
 \begin{itemize}
 \item \textbf{Ben S}: Lead backend programmer; supporting frontend programmer
 \item \textbf{Bowei P}: Algorithm specialist; frontend tester
 \item \textbf{Nic S}: Lead frontend programmer; supporting backend programmer
-\item \textbf{Ruqi L}: Deliverable maintaner; backend tester; quality
+\item \textbf{Ruqi L}: Deliverable maintainer; backend tester; quality
 assurance
 \end{itemize}
 \subsection{Issues}
@@ -309,7 +335,8 @@ exposing the server to denial of service attacks. Additionally, the library is
 not header-only, decreasing the server's portability among linux distributions
 that do not supply packages for pistache. Switching to cpp-httplib, a
 header-only and actively maintained HTTP library similar in design to python's
-flask library rectified the issues. Similarly, the dated design of rapidjson, a
+flask library rectified the issues. \\\\
+Similarly, the dated design of rapidjson, a
 library for managing JSON objects used in the backend to categorise movie data,
 reduced the readability of the codebase. Alternatives with greater readability
 suffered from weak performance, and were deemed unsuitable. The interface of
@@ -317,7 +344,7 @@ rapidjson was convoluted to the point that some of the server code manipulated
 JSON objects with raw strings rather than via rapidjson's API, resulting in
 a degree of code duplication. The documentation of rapidjson is largely
 incomplete, and several server bugs were the result of incorrect assumptions
-regarding the thread safety of several rapidjson operations.\\
+regarding the thread safety of several rapidjson operations.\\\\
 The main non technical issues encountered by the group were due to real world
 circumstances. During the final stages of the project, half of the team were
 without a stable internet connection due to a change in living arrangements.
@@ -325,13 +352,12 @@ Careful planning was required to synchronise project due dates with periods
 of time when utilities were available. Most prominently, the move of house
 was planned to occur a day after deliverable 4 - the online, live demonstration
 of the project. Additionally, the distributed location of several group members
-across several time zones complicated team communcation. To rectify the issue,
+across several time zones complicated team communication. To rectify the issue,
 asynchronous communication was relied upon for the entirety of the project.
- 
 \subsection{Project Reflection}
 The team is satisfied with the result of the project, and substantial
 experience has been gained by reflecting on issues encountered during the
-project's development.\\
+development of the project.\\\\
 The team has learned to carefully analyse and vet all project dependencies
 before including them in the codebase, as they can quickly become a permanent
 fixture in the software's design. Had the dependency not meet expectations,
@@ -339,7 +365,7 @@ the project can become significantly impeded, as development time required
 to find and integrate a replacement prevents the project from maturing in
 other directions. Dependencies should all be checked to have acceptable
 licensing, performance and reliability, preferably via real-world tests, before
-they are to be considered for inclusion in the project.\\
+they are to be considered for inclusion in the project.\\\\
 The ability to adapt to change is particularly relevant within the field of
 software engineering. The decentralised and online nature of programming can
 result in unconventional team situations and work environments.
